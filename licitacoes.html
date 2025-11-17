@@ -81,33 +81,38 @@ body{
   gap:28px;
 }
 
-/* CARD */
 .card{
   background:var(--card);
   border-radius:var(--radius);
-  padding:26px;
+  padding:18px;                     /* antes era 26px */
   border:1px solid #eaecef;
   box-shadow:var(--shadow);
   transition:.3s ease;
 }
-.card:hover{ transform:translateY(-6px); box-shadow:0 10px 30px rgba(0,0,0,.15); }
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 22px rgba(0,0,0,.12);
+}
 .card h3{
-  font-size:22px;
+  font-size:18px;                   /* antes 22px */
   font-weight:800;
   color:var(--azul-escuro);
-  margin-bottom:14px;
+  margin-bottom:10px;
+}
+
 }
 .info-block{
-  margin-top:10px;
-  padding:14px 16px;
+  margin-top:6px;
+  padding:10px 12px;                /* antes 14px 16px */
   background:#f8fafc;
-  border-radius:14px;
+  border-radius:12px;
   border:1px solid #e3e6ea;
 }
 .info-line{
-  font-size:14.5px;
-  margin-bottom:6px;
+  font-size:13.5px;                 /* antes 14.5px */
+  margin-bottom:4px;
 }
+
 
 /* STATUS */
 .badge{
