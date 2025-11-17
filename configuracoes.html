@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurações • LICITAR</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#eef2f7;
+  --card:#ffffff;
+  --azul:#0b1e39;
+  --muted:#6f7883;
+  --radius:18px;
+  --shadow:0 8px 25px rgba(0,0,0,.10);
+}
+
+/* BASE */
+body{
+  margin:0;
+  padding:40px;
+  background:var(--bg);
+  font-family:Inter, sans-serif;
+  color:var(--azul);
+}
+
+h1{
+  font-size:34px;
+  font-weight:800;
+  margin-bottom:28px;
+}
+
+/* GRID DE CARDS */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+  gap:20px;
+  max-width:1100px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  padding:18px;
+  border-radius:var(--radius);
+  border:1px solid #e3e6ea;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition:.25s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+.card-title{
+  font-size:17px;
+  font-weight:700;
+}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.55);
+  z-index:999;
+  padding:20px;
+}
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:480px;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:var(--shadow);
+}
+.modal h2{
+  margin-top:0;
+  margin-bottom:18px;
+}
+
+/* FORM */
+label{
+  font-weight:600;
+  font-size:14px;
+  display:block;
+  margin-bottom:4px;
+}
+input, select{
+  width:100%;
+  padding:12px;
+  border:1px solid #d0d5dd;
+  border-radius:12px;
+  margin-bottom:14px;
+  font-size:14px;
+}
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+.btnSalvar{
+  background:var(--azul);
+  color:white;
+  width:100%;
+}
+.btnFechar{
+  background:#ccc;
+  width:100%;
+  margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Configurações</h1>
+
+<div class="grid">
+  <div class="card" onclick="abrirModal('empresa')">
+    <div class="card-title">Cadastrar Empresa</div>
+  </div>
+
+  <div class="card" onclick="window.location.href='itens.html'">
+    <div class="card-title">Gerenciar Itens</div>
+  </div>
+
+  <div class="card" onclick="window.location.href='licitacoes.html'">
+    <div class="card-title">Gerenciar Licitações</div>
+  </div>
+
+  <div class="card" onclick="alert('Mais funções em breve!')">
+    <div class="card-title">Outras Configurações</div>
+  </div>
+</div>
+
+<!-- MODAL EMPRESA -->
+<div class="modal" id="modalEmpresa">
+  <div class="modal-box">
+    <h2>Nova Empresa</h2>
+
+    <label>Código</label>
+    <input id="empCodigo" placeholder="EMP-0001">
+
+    <label>Nome</label>
+    <input id="empNome" placeholder="Nome da Empresa">
+
+    <label>CNPJ</label>
+    <input id="empCnpj" placeholder="00.000.000/0000-00">
+
+    <label>UF</label>
+    <select id="empUf">
+      <option value="">Selecione</option>
+      <option>BA</option>
+      <option>MG</option>
+      <option>SP</option>
+      <option>RJ</option>
+      <option>GO</option>
+    </select>
+
+    <button class="btnSalvar" onclick="salvarEmpresa()">Salvar Empresa</button>
+    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
+  </div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbwg9ZmsZpisEOI3J_3D0rS-Wwn0-dUD4yLVwxa7Yi1_pm0PAuu_HS3d7cB7Z5p0Il8s/exec";
+
+/* ABRE MODAL */
+function abrirModal(tipo){
+  if(tipo === "empresa"){
+    document.getElementById("modalEmpresa").style.display="flex";
+  }
+}
+
+/* FECHAR MODAL */
+function fecharModal(){
+  document.querySelectorAll(".modal").forEach(m=>m.style.display="none");
+}
+
+/* ENVIAR EMPRESA */
+async function salvarEmpresa(){
+  const codigo = empCodigo.value.trim();
+  const nome   = empNome.value.trim();
+  const cnpj   = empCnpj.value.trim();
+  const uf     = empUf.value;
+
+  if(!codigo || !nome || !cnpj || !uf){
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  const dados = {
+    action:"addEmpresa",
+    codigo, nome, cnpj, uf
+  };
+
+  const r = await fetch(API,{
+    method:"POST",
+    body:JSON.stringify(dados)
+  });
+
+  const j = await r.json();
+
+  if(j.ok){
+    alert("Empresa cadastrada com sucesso!");
+    fecharModal();
+  }else{
+    alert("Erro ao salvar!");
+  }
+}
+</script>
+
+</body>
+</html>
