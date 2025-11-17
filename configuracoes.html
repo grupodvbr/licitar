@@ -65,7 +65,7 @@ h1{
   inset:0;
   display:none;
   justify-content:center;
-  align-items:center;
+  align-items:flex-start;
   background:rgba(0,0,0,.55);
   z-index:999;
   padding:20px;
@@ -73,9 +73,10 @@ h1{
 .modal-box{
   background:white;
   width:100%;
-  max-width:480px;
+  max-width:600px;
   border-radius:18px;
   padding:25px;
+  margin-top:30px;
   box-shadow:var(--shadow);
 }
 .modal h2{
@@ -117,6 +118,28 @@ button{
   margin-top:8px;
 }
 
+/* LISTA DE EMPRESAS */
+.emp-card{
+  background:#fff;
+  padding:12px 16px;
+  border:1px solid #e3e6ea;
+  border-radius:12px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:.2s;
+}
+.emp-card:hover{
+  background:#f3f6fa;
+  transform:translateY(-2px);
+}
+.emp-nome{
+  font-size:15px;
+  font-weight:600;
+}
+.emp-codigo{
+  font-size:13px;
+  color:#6f7883;
+}
 </style>
 </head>
 
@@ -125,11 +148,11 @@ button{
 <h1>Configurações</h1>
 
 <div class="grid">
-  <div class="card" onclick="abrirModal('cadEmpresa')">
+  <div class="card" onclick="abrirCadastroEmpresas()">
     <div class="card-title">Cadastrar Empresa</div>
   </div>
 
-  <div class="card" onclick="listarEmpresas()">
+  <div class="card" onclick="listarEmpresasDireto()">
     <div class="card-title">Editar Empresa</div>
   </div>
 
@@ -169,6 +192,21 @@ button{
 
     <button class="btnSalvar" onclick="salvarEmpresa()">Salvar</button>
     <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
+
+    <hr style="margin:25px 0; border:0; border-top:1px solid #ddd;">
+
+    <h3 style="margin:0 0 10px 0;">Empresas cadastradas</h3>
+
+    <input 
+      type="text" 
+      id="buscaEmpresa"
+      placeholder="Buscar empresa..."
+      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc;margin-bottom:15px;"
+      oninput="filtrarEmpresas()"
+    >
+
+    <div id="listaEmpresas" style="max-height:260px; overflow:auto;"></div>
+
   </div>
 </div>
 
@@ -241,65 +279,108 @@ function fecharModal(){
   document.querySelectorAll(".modal").forEach(m=>m.style.display="none");
 }
 
-/* ============= EMPRESA ============= */
+/* ======================================================
+   EMPRESAS
+====================================================== */
 
-async function salvarEmpresa(){
-  const payload = {
-    action: "addEmpresa",
-    codigo: empCodigo.value,
-    nome: empNome.value,
-    cnpj: empCnpj.value,
-    uf: empUf.value
-  };
-
-  const r = await fetch(API, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  });
-
-  alert("Empresa cadastrada!");
-  fecharModal();
-}
-
-/* LISTAR E EDITAR */
 let empresas = [];
 
-async function listarEmpresas(){
+/* Abre modal e carrega lista */
+async function abrirCadastroEmpresas(){
+  abrirModal("cadEmpresa");
+  await carregarEmpresas();
+}
+
+/* Carrega todas empresas */
+async function carregarEmpresas(){
   const r = await fetch(API + "?action=listEmpresas");
   empresas = await r.json();
+  renderEmpresas(empresas);
+}
 
-  const nome = prompt("Digite o código da empresa que deseja editar:");
+/* Renderiza lista */
+function renderEmpresas(lista){
+  const box = document.getElementById("listaEmpresas");
+  box.innerHTML = lista.map(e => `
+    <div class="emp-card" onclick="editarRapido('${e.codigo}')">
+      <div class="emp-nome">${e.nome}</div>
+      <div class="emp-codigo">${e.codigo} • ${e.uf}</div>
+    </div>
+  `).join('');
+}
 
-  const emp = empresas.find(e => e.codigo === nome);
+/* Filtro da pesquisa */
+function filtrarEmpresas(){
+  const termo = document.getElementById("buscaEmpresa").value.toLowerCase();
+  const filtradas = empresas.filter(e =>
+       e.nome.toLowerCase().includes(termo)
+    || e.codigo.toLowerCase().includes(termo)
+    || e.cnpj.toLowerCase().includes(termo)
+  );
+  renderEmpresas(filtradas);
+}
 
-  if(!emp){ alert("Empresa não encontrada"); return; }
+/* Atalho para editar */
+function editarRapido(codigo){
+  const emp = empresas.find(e => e.codigo === codigo);
 
   editCodigo.value = emp.codigo;
   editNome.value = emp.nome;
   editCnpj.value = emp.cnpj;
   editUf.value = emp.uf;
 
+  fecharModal();
   abrirModal("editEmpresa");
 }
 
+/* Salvar nova empresa */
+async function salvarEmpresa(){
+  const payload = {
+    action:"addEmpresa",
+    codigo:empCodigo.value,
+    nome:empNome.value,
+    cnpj:empCnpj.value,
+    uf:empUf.value
+  };
+
+  await fetch(API,{ method:"POST", body:JSON.stringify(payload) });
+
+  empCodigo.value = "";
+  empNome.value = "";
+  empCnpj.value = "";
+  empUf.value = "";
+
+  await carregarEmpresas();
+  filtrarEmpresas();
+
+  alert("Empresa cadastrada!");
+}
+
+/* Editar */
+async function listarEmpresasDireto(){
+  abrirCadastroEmpresas();
+}
+
+/* Salvar edição */
 async function salvarEdicao(){
   const payload = {
-    action: "updateEmpresa",
-    codigo: editCodigo.value,
-    nome: editNome.value,
-    cnpj: editCnpj.value,
-    uf: editUf.value
+    action:"updateEmpresa",
+    codigo:editCodigo.value,
+    nome:editNome.value,
+    cnpj:editCnpj.value,
+    uf:editUf.value
   };
 
   await fetch(API, {
-    method: "POST",
-    body: JSON.stringify(payload)
+    method:"POST",
+    body:JSON.stringify(payload)
   });
 
   alert("Empresa atualizada!");
   fecharModal();
 }
 
+/* Excluir */
 async function excluirEmpresa(){
   if(!confirm("Tem certeza?")) return;
 
@@ -307,7 +388,7 @@ async function excluirEmpresa(){
     method:"POST",
     body: JSON.stringify({
       action:"deleteEmpresa",
-      codigo: editCodigo.value
+      codigo:editCodigo.value
     })
   });
 
@@ -315,7 +396,10 @@ async function excluirEmpresa(){
   fecharModal();
 }
 
-/* ============= LICITAÇÃO ============= */
+
+/* ======================================================
+   LICITAÇÕES
+====================================================== */
 
 async function salvarLicitacao(){
   const dados = {
@@ -337,12 +421,14 @@ async function salvarLicitacao(){
   fecharModal();
 }
 
-/* ============= IMPORTAR EXCEL ============= */
+/* ======================================================
+   IMPORTAÇÃO EXCEL
+====================================================== */
 
 async function enviarExcel(){
-  alert("Envio de Excel será configurado junto ao backend GAS.");
+  alert("Importação Excel será configurada posteriormente.");
 }
-
 </script>
+
 </body>
 </html>
