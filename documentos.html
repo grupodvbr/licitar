@@ -9,119 +9,130 @@
 
 <style>
 :root{
-  --bg:#f5f5f7;
-  --glass:#ffffffaa;
-  --border:#e5e5e7;
-  --shadow:0 6px 20px rgba(0,0,0,0.08);
-  --text:#2b2b2b;
-  --muted:#7c7c7c;
-  --radius:14px;
+  --bg:#eef1f6;
+  --card:#ffffff;
+  --glass:#ffffffcc;
+  --border:#d9dce3;
+  --text:#1f1f1f;
+  --muted:#6f6f6f;
+  --radius:18px;
+  --shadow:0 8px 22px rgba(0,0,0,0.07);
 }
 
 /* ===== GERAL ===== */
 body{
   margin:0;
-  padding:20px;
+  padding:0;
   background:var(--bg);
   font-family:'Inter',sans-serif;
   color:var(--text);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
 }
 
 #container{
-  max-width:1250px;
+  width:92%;
+  max-width:1650px;
+  margin-top:35px;
   background:var(--glass);
+  padding:45px;
+  border-radius:25px;
+  box-shadow:var(--shadow);
   backdrop-filter:blur(25px) saturate(180%);
-  padding:25px 35px;
-  margin:auto;
-  border-radius:18px;
-  border:1px solid var(--border);
-  animation:fade .4s ease;
-}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(12px);}
-  to{opacity:1;transform:none;}
 }
 
 /* ===== TÍTULO ===== */
 #titulo{
   text-align:center;
-  margin-bottom:25px;
-  font-size:26px;
-  font-weight:600;
+  margin:0 0 35px 0;
+  font-size:34px;
+  font-weight:700;
+  color:#0b1e39;
+  letter-spacing:-0.5px;
 }
 
 /* ===== BUSCA ===== */
 #busca{
   width:100%;
-  padding:12px 15px;
-  border-radius:10px;
-  border:1px solid #d0d0d4;
-  background:#fafafa;
-  font-size:15px;
-  transition:.2s;
+  padding:15px 20px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  background:white;
+  font-size:17px;
+  transition:.25s;
 }
 
 #busca:focus{
-  background:white;
   border-color:#007aff;
   outline:none;
+  box-shadow:0 0 0 3px #007aff33;
 }
 
-/* ===== BREADCRUMBS ===== */
+/* ===== BREADCRUMB ===== */
 #breadcrumbs{
-  margin:15px 0;
-  font-size:15px;
-  color:#666;
+  margin:20px 0 28px 0;
+  font-size:17px;
+  color:#4b5563;
 }
 
 /* ===== TOOLBAR ===== */
 .toolbar{
   display:flex;
   gap:15px;
-  margin-bottom:20px;
+  margin-bottom:35px;
+  flex-wrap:wrap;
 }
 
 .btn{
-  padding:10px 18px;
+  padding:13px 22px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   font-weight:600;
   cursor:pointer;
+  font-size:15px;
   color:white;
-  font-size:14px;
+  transition:.2s;
 }
-.btn-nova{ background:#007aff; }
-.btn-upload{ background:#6d28d9; }
-.btn-voltar{ background:#5f6368; }
+
+.btn:hover{
+  opacity:.9;
+  transform:translateY(-2px);
+}
+
+.btn-nova{ background:#2563eb; }
+.btn-upload{ background:#7c3aed; }
+.btn-voltar{ background:#6b7280; }
 
 /* ===== GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:22px;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:30px;
 }
 
 /* CARD */
 .item{
   background:white;
   text-align:center;
-  padding:18px 10px;
-  border-radius:var(--radius);
+  padding:28px 15px;
+  border-radius:22px;
   cursor:pointer;
-  transition:.2s;
-  border:1px solid #e5e5e7;
+  transition:.22s;
+  border:1px solid var(--border);
   box-shadow:var(--shadow);
 }
 
 .item:hover{
-  transform:translateY(-4px);
+  transform:translateY(-6px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.12);
 }
 
 .thumb{
-  width:85px;
-  height:85px;
-  border-radius:10px;
+  width:100px;
+  height:100px;
+  border-radius:16px;
   object-fit:cover;
   background:#e5e5e5;
   margin:auto;
@@ -129,19 +140,19 @@ body{
 }
 
 .itemNome{
-  margin-top:10px;
-  font-size:14px;
+  margin-top:16px;
+  font-size:16px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  font-weight:500;
+  font-weight:600;
 }
 
 /* POPUPS */
 #popupCriar, #popupUpload{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.48);
   display:none;
   justify-content:center;
   align-items:center;
@@ -151,26 +162,31 @@ body{
 #popupBox, #uploadBox{
   background:white;
   width:90%;
-  max-width:420px;
-  padding:25px;
-  border-radius:var(--radius);
+  max-width:460px;
+  padding:32px;
+  border-radius:22px;
   border:1px solid #ddd;
-  animation:fade .3s;
+  animation:fade .25s ease-out;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:none;}
 }
 
 .colorRow{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
-  margin-top:10px;
+  gap:14px;
+  margin-top:14px;
 }
 
 .colorSelect{
-  width:28px;
-  height:28px;
+  width:35px;
+  height:35px;
   border-radius:50%;
   cursor:pointer;
-  border:2px solid transparent;
+  border:3px solid transparent;
 }
 
 .colorSelect.active{
@@ -180,15 +196,16 @@ body{
 /* Upload box */
 #dropArea{
   border:2px dashed #b5b5b5;
-  padding:30px;
+  padding:45px;
   text-align:center;
-  border-radius:12px;
-  margin-top:15px;
+  border-radius:18px;
+  margin-top:20px;
   background:#fafafa;
+  font-size:16px;
 }
 #dropArea.dragover{
   border-color:#007aff;
-  background:#eef5ff;
+  background:#e9f2ff;
 }
 
 /* MODAL PREVIEW */
@@ -204,26 +221,26 @@ body{
 
 #modalBox{
   background:white;
-  padding:25px;
-  border-radius:15px;
-  width:90%;
-  max-width:750px;
+  padding:30px;
+  border-radius:20px;
+  width:95%;
+  max-width:900px;
 }
 
 #modalPreview{
   width:100%;
-  height:450px;
+  height:520px;
   border:none;
-  border-radius:10px;
+  border-radius:16px;
   background:#f2f2f2;
-  margin-top:10px;
+  margin-top:12px;
 }
 
 /* Skeleton */
 .skeleton{
   background:#e5e5e5;
-  border-radius:14px;
-  height:150px;
+  border-radius:22px;
+  height:190px;
 }
 </style>
 </head>
@@ -252,12 +269,12 @@ body{
 <!-- POPUP CRIAR PASTA -->
 <div id="popupCriar">
   <div id="popupBox">
-    <h3>Criar nova pasta</h3>
+    <h3 style="margin-top:0">Criar nova pasta</h3>
 
     <label>Nome:</label>
-    <input id="nomePasta" style="width:100%;padding:10px;margin-top:6px;" type="text">
+    <input id="nomePasta" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc;margin-top:8px;" type="text">
 
-    <p>Cor:</p>
+    <p style="margin-top:18px;">Cor da pasta:</p>
     <div class="colorRow">
       <div class="colorSelect" style="background:#2563eb" data-cor="azul"></div>
       <div class="colorSelect" style="background:#4caf50" data-cor="verde"></div>
@@ -271,8 +288,8 @@ body{
       <div class="colorSelect" style="background:#8b5e3c" data-cor="marrom"></div>
     </div>
 
-    <button onclick="criarPasta()" class="btn btn-nova" style="width:100%;margin-top:15px;">Criar</button>
-    <button onclick="fecharPopupCriar()" style="margin-top:10px;border:none;background:#ddd;padding:10px;width:100%;border-radius:10px;">Cancelar</button>
+    <button onclick="criarPasta()" class="btn btn-nova" style="width:100%;margin-top:20px;">Criar pasta</button>
+    <button onclick="fecharPopupCriar()" style="margin-top:12px;border:none;background:#e5e7eb;padding:12px;width:100%;border-radius:12px;">Cancelar</button>
   </div>
 </div>
 
@@ -281,17 +298,16 @@ body{
 <div id="popupUpload">
   <div id="uploadBox">
 
-    <h3>Enviar arquivo</h3>
+    <h3 style="margin-top:0">Enviar arquivo</h3>
 
-    <label>Selecione a pasta de destino:</label>
-    <select id="uploadDestino" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ccc;"></select>
+    <label>Enviar para:</label>
+    <select id="uploadDestino" style="width:100%;padding:12px;margin-top:8px;border-radius:12px;border:1px solid #ccc;"></select>
 
     <div id="dropArea">Arraste arquivos aqui ou clique para selecionar</div>
-
     <input id="uploadInput" type="file" multiple style="display:none">
 
-    <button onclick="enviarUpload()" class="btn btn-upload" style="width:100%;margin-top:15px;">Enviar</button>
-    <button onclick="fecharUpload()" style="margin-top:10px;border:none;background:#ddd;padding:10px;width:100%;border-radius:10px;">Cancelar</button>
+    <button onclick="enviarUpload()" class="btn btn-upload" style="width:100%;margin-top:20px;">Enviar</button>
+    <button onclick="fecharUpload()" style="margin-top:12px;border:none;background:#e5e7eb;padding:12px;width:100%;border-radius:12px;">Cancelar</button>
 
   </div>
 </div>
@@ -303,17 +319,19 @@ body{
     <button class="btn btn-voltar" onclick="fecharModal()" style="float:right;">Fechar</button>
     <h2 id="modalTitulo"></h2>
     <iframe id="modalPreview"></iframe>
+
     <button onclick="baixarArquivo()" class="btn btn-upload" style="margin-top:15px;">⬇ Download</button>
-
-    <!-- BOTÃO EXCLUIR -->
     <button onclick="excluirArquivo()" class="btn" style="margin-left:10px;background:#d9534f;">🗑 Excluir</button>
-
     <button onclick="navigator.clipboard.writeText(linkAtual)" class="btn btn-nova" style="margin-left:10px;">🔗 Copiar Link</button>
   </div>
 </div>
 
 
 
+<!-- ================================
+     🔥 TODO O JAVASCRIPT ORIGINAL
+     COMPLETO, SEM CORTES
+================================ -->
 <script>
 
 const API = "https://script.google.com/macros/s/AKfycbxFxMimw5qpX6unOxE_QO08dnzl-zGFKE7WEuhvAK7n7xTIIQD9ygrpegir-Hpz9RwWFg/exec";
@@ -435,6 +453,7 @@ document.querySelectorAll(".colorSelect").forEach(c=>{
 function abrirPopupCriar(){
   document.getElementById("popupCriar").style.display="flex";
 }
+
 function fecharPopupCriar(){
   document.getElementById("popupCriar").style.display="none";
   document.getElementById("nomePasta").value="";
