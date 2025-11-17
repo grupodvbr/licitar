@@ -116,6 +116,7 @@ button{
   width:100%;
   margin-top:8px;
 }
+
 </style>
 </head>
 
@@ -124,99 +125,224 @@ button{
 <h1>Configurações</h1>
 
 <div class="grid">
-  <div class="card" onclick="abrirModal('empresa')">
+  <div class="card" onclick="abrirModal('cadEmpresa')">
     <div class="card-title">Cadastrar Empresa</div>
   </div>
 
-  <div class="card" onclick="window.location.href='itens.html'">
-    <div class="card-title">Gerenciar Itens</div>
+  <div class="card" onclick="listarEmpresas()">
+    <div class="card-title">Editar Empresa</div>
+  </div>
+
+  <div class="card" onclick="abrirModal('cadLicitacao')">
+    <div class="card-title">Cadastrar Licitação</div>
+  </div>
+
+  <div class="card" onclick="abrirModal('importExcel')">
+    <div class="card-title">Importar Itens Excel</div>
   </div>
 
   <div class="card" onclick="window.location.href='licitacoes.html'">
     <div class="card-title">Gerenciar Licitações</div>
   </div>
-
-  <div class="card" onclick="alert('Mais funções em breve!')">
-    <div class="card-title">Outras Configurações</div>
-  </div>
 </div>
 
-<!-- MODAL EMPRESA -->
-<div class="modal" id="modalEmpresa">
+<!-- MODAL CADASTRAR EMPRESA -->
+<div class="modal" id="modal_cadEmpresa">
   <div class="modal-box">
     <h2>Nova Empresa</h2>
 
     <label>Código</label>
-    <input id="empCodigo" placeholder="EMP-0001">
+    <input id="empCodigo">
 
     <label>Nome</label>
-    <input id="empNome" placeholder="Nome da Empresa">
+    <input id="empNome">
 
     <label>CNPJ</label>
-    <input id="empCnpj" placeholder="00.000.000/0000-00">
+    <input id="empCnpj">
 
     <label>UF</label>
     <select id="empUf">
       <option value="">Selecione</option>
-      <option>BA</option>
-      <option>MG</option>
-      <option>SP</option>
-      <option>RJ</option>
-      <option>GO</option>
+      <option>BA</option><option>SP</option><option>RJ</option>
+      <option>MG</option><option>GO</option><option>PR</option>
     </select>
 
-    <button class="btnSalvar" onclick="salvarEmpresa()">Salvar Empresa</button>
+    <button class="btnSalvar" onclick="salvarEmpresa()">Salvar</button>
+    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR EMPRESA -->
+<div class="modal" id="modal_editEmpresa">
+  <div class="modal-box">
+    <h2>Editar Empresa</h2>
+
+    <input id="editCodigo" readonly>
+    <input id="editNome">
+    <input id="editCnpj">
+    <select id="editUf">
+      <option>BA</option><option>SP</option><option>RJ</option>
+      <option>MG</option><option>GO</option><option>PR</option>
+    </select>
+
+    <button class="btnSalvar" onclick="salvarEdicao()">Salvar Alterações</button>
+    <button class="btnFechar" onclick="excluirEmpresa()">Excluir Empresa</button>
+    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL CAD LICITAÇÃO -->
+<div class="modal" id="modal_cadLicitacao">
+  <div class="modal-box">
+    <h2>Nova Licitação</h2>
+
+    <label>Código</label>
+    <input id="licCodigo">
+
+    <label>Instituição</label>
+    <input id="licInst">
+
+    <label>Data Sessão</label>
+    <input type="datetime-local" id="licData">
+
+    <label>Valor (R$)</label>
+    <input id="licValor">
+
+    <label>Critério</label>
+    <input id="licCriterio">
+
+    <label>Modo</label>
+    <input id="licModo">
+
+    <button class="btnSalvar" onclick="salvarLicitacao()">Salvar</button>
+    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL IMPORTAR EXCEL -->
+<div class="modal" id="modal_importExcel">
+  <div class="modal-box">
+    <h2>Importar Itens Excel</h2>
+
+    <input type="file" id="fileExcel" accept=".xlsx,.xls">
+
+    <button class="btnSalvar" onclick="enviarExcel()">Enviar Excel</button>
     <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
   </div>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwg9ZmsZpisEOI3J_3D0rS-Wwn0-dUD4yLVwxa7Yi1_pm0PAuu_HS3d7cB7Z5p0Il8s/exec";
+const API = "https://script.google.com/macros/s/AKfycbwq2C8gFpDRx_gmDrA0rKs0H_ljYp5b5mCt-f2BJR0jkybvGjfz9gQ_BaX-apRwblFo/exec";
 
-/* ABRE MODAL */
-function abrirModal(tipo){
-  if(tipo === "empresa"){
-    document.getElementById("modalEmpresa").style.display="flex";
-  }
+function abrirModal(id){
+  document.getElementById("modal_" + id).style.display="flex";
 }
-
-/* FECHAR MODAL */
 function fecharModal(){
   document.querySelectorAll(".modal").forEach(m=>m.style.display="none");
 }
 
-/* ENVIAR EMPRESA */
+/* ============= EMPRESA ============= */
+
 async function salvarEmpresa(){
-  const codigo = empCodigo.value.trim();
-  const nome   = empNome.value.trim();
-  const cnpj   = empCnpj.value.trim();
-  const uf     = empUf.value;
-
-  if(!codigo || !nome || !cnpj || !uf){
-    alert("Preencha todos os campos!");
-    return;
-  }
-
-  const dados = {
-    action:"addEmpresa",
-    codigo, nome, cnpj, uf
+  const payload = {
+    action: "addEmpresa",
+    codigo: empCodigo.value,
+    nome: empNome.value,
+    cnpj: empCnpj.value,
+    uf: empUf.value
   };
 
-  const r = await fetch(API,{
-    method:"POST",
-    body:JSON.stringify(dados)
+  const r = await fetch(API, {
+    method: "POST",
+    body: JSON.stringify(payload)
   });
 
-  const j = await r.json();
-
-  if(j.ok){
-    alert("Empresa cadastrada com sucesso!");
-    fecharModal();
-  }else{
-    alert("Erro ao salvar!");
-  }
+  alert("Empresa cadastrada!");
+  fecharModal();
 }
-</script>
 
+/* LISTAR E EDITAR */
+let empresas = [];
+
+async function listarEmpresas(){
+  const r = await fetch(API + "?action=listEmpresas");
+  empresas = await r.json();
+
+  const nome = prompt("Digite o código da empresa que deseja editar:");
+
+  const emp = empresas.find(e => e.codigo === nome);
+
+  if(!emp){ alert("Empresa não encontrada"); return; }
+
+  editCodigo.value = emp.codigo;
+  editNome.value = emp.nome;
+  editCnpj.value = emp.cnpj;
+  editUf.value = emp.uf;
+
+  abrirModal("editEmpresa");
+}
+
+async function salvarEdicao(){
+  const payload = {
+    action: "updateEmpresa",
+    codigo: editCodigo.value,
+    nome: editNome.value,
+    cnpj: editCnpj.value,
+    uf: editUf.value
+  };
+
+  await fetch(API, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+
+  alert("Empresa atualizada!");
+  fecharModal();
+}
+
+async function excluirEmpresa(){
+  if(!confirm("Tem certeza?")) return;
+
+  await fetch(API, {
+    method:"POST",
+    body: JSON.stringify({
+      action:"deleteEmpresa",
+      codigo: editCodigo.value
+    })
+  });
+
+  alert("Empresa excluída!");
+  fecharModal();
+}
+
+/* ============= LICITAÇÃO ============= */
+
+async function salvarLicitacao(){
+  const dados = {
+    action: "addLicitacao",
+    codigo: licCodigo.value,
+    instituicao: licInst.value,
+    dataSessaoISO: licData.value,
+    valorBR: licValor.value,
+    criterio: licCriterio.value,
+    modo: licModo.value
+  };
+
+  await fetch(API, {
+    method:"POST",
+    body: JSON.stringify(dados)
+  });
+
+  alert("Licitação cadastrada!");
+  fecharModal();
+}
+
+/* ============= IMPORTAR EXCEL ============= */
+
+async function enviarExcel(){
+  alert("Envio de Excel será configurado junto ao backend GAS.");
+}
+
+</script>
 </body>
 </html>
