@@ -15,7 +15,21 @@
 <meta property="og:type" content="website">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://github.com/grupodvbr/licitar/blob/main/paste/Captura%20de%20tela%202025-11-17%20163947.png?raw=true
+<meta name="twitter:image" content="https://github.com/grupodvbr/licitar/blob/main/paste/Captura%20de%20tela%202025-11-17%20163947.png?raw=true">
+
+<!-- ============================
+     PWA - ADICIONAR À TELA INICIAL
+============================= -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1e39">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LICITAR">
+
+<link rel="apple-touch-icon" href="icon-512.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -277,7 +291,8 @@ body {
 
 <script>
 setTimeout(() => {
-  document.getElementById("splash").remove();
+  const splash = document.getElementById("splash");
+  if (splash) splash.remove();
 }, 2600);
 </script>
 
@@ -389,6 +404,15 @@ function loadIframe(url){
 function loadPage(){
   homeSection.style.display="block";
   iframePage.style.display="none";
+}
+</script>
+
+<!-- ============================
+     REGISTRO DO SERVICE WORKER
+============================= -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
