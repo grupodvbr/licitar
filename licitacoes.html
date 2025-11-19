@@ -4,169 +4,191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Licitações</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-:root {
-  --bg:#eef2f7;
+/* =====================================================
+   PALETA E DESIGN NOVO (SUPER LEVE E MODERNO)
+===================================================== */
+:root{
+  --bg:#f3f5f7;
   --card:#ffffff;
+  --card-soft:#ffffffd9;
   --azul:#0b1e39;
-  --azul-escuro:#091627;
-  --muted:#6f7883;
-  --danger:#dc2626;
-  --radius:22px;
-  --shadow:0 8px 28px rgba(0,0,0,.12);
-  --line:#e5e7eb;
+  --azul2:#123057;
+  --muted:#6d7783;
+  --line:#e4e7eb;
+  --danger:#e63946;
+
   --pendente:#ffbf00;
-  --futura:#0077ff;
-  --andamento:#ff7f11;
+  --futura:#1d8bff;
+  --andamento:#ff7e00;
   --finalizada:#00b36b;
   --suspensa:#d7263d;
+
+  --radius:18px;
+  --shadow:0 6px 18px rgba(0,0,0,.10);
 }
 
-/* BASE */
+/* =====================================================
+   BASE
+===================================================== */
 body{
   margin:0;
-  padding:40px;
+  padding:28px;
   background:var(--bg);
   font-family:"Inter",sans-serif;
   color:var(--azul);
 }
-.titulo{
-  font-size:44px;
+h1.titulo{
+  font-size:36px;
   font-weight:800;
-  margin-bottom:30px;
+  margin-bottom:22px;
   letter-spacing:-0.5px;
+  text-align:center;
 }
 
-/* BUSCA */
+/* =====================================================
+   BUSCA
+===================================================== */
 .topo{
-  margin-bottom:24px;
-  position:relative;
-  max-width:440px;
+  display:flex;
+  justify-content:center;
+  margin-bottom:20px;
 }
 .input{
   width:100%;
-  padding:14px 45px 14px 20px;
+  max-width:480px;
+  padding:14px 50px 14px 20px;
   border-radius:14px;
-  border:1px solid #ccd2d9;
-  background:white url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat right 15px center / 20px;
+  border:1px solid #d2d7dd;
   font-size:15px;
-  transition:.2s;
+  background:white url("https://cdn-icons-png.flaticon.com/512/622/622669.png") no-repeat right 16px center/20px;
+  transition:.25s ease;
 }
-.input:focus{ border-color:var(--azul); outline:none; }
+.input:focus{
+  border-color:var(--azul);
+  background-color:#fff;
+  outline:none;
+}
 
-/* FILTROS */
+/* =====================================================
+   FILTROS
+===================================================== */
 .filtros{
   display:flex;
+  justify-content:center;
   flex-wrap:wrap;
   gap:10px;
-  margin-bottom:28px;
+  margin-bottom:24px;
 }
 .chip{
   padding:10px 22px;
   border-radius:999px;
-  background:#fff;
-  border:1px solid #ccd2d9;
+  background:white;
+  border:1px solid #d0d6dd;
   cursor:pointer;
   font-weight:600;
-  transition:.2s;
+  transition:.25s;
 }
-.chip:hover{ background:#e9edf2; }
-.chip.ativo{ background:var(--azul); color:white; }
+.chip:hover{ background:#e9eef3; }
+.chip.ativo{
+  background:var(--azul);
+  color:#fff;
+}
 
-/* GRID */
+/* =====================================================
+   GRID DE CARDS
+===================================================== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(370px,1fr));
-  gap:28px;
+  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+  gap:26px;
 }
-
 .card{
   background:var(--card);
-  border-radius:18px;
-  padding:18px 22px;               /* antes 26px */
-  border:1px solid #e6e8ec;
-  box-shadow:0 4px 18px rgba(0,0,0,.10);  /* sombra menor */
-  transition:.25s ease;
-  max-width:780px;                 /* deixa mais compacto na horizontal */
+  border-radius:var(--radius);
+  border:1px solid #e1e4e8;
+  padding:22px;
+  box-shadow:var(--shadow);
+  transition:.2s ease;
 }
 .card:hover{
   transform:translateY(-4px);
-  box-shadow:0 6px 24px rgba(0,0,0,.12);
+  box-shadow:0 10px 26px rgba(0,0,0,.12);
 }
 .card h3{
-  font-size:18px;                  /* antes 22px */
+  font-size:20px;
+  margin-bottom:8px;
   font-weight:700;
-  margin-bottom:10px;
-  line-height:1.25;
-}
-
-
 }
 .info-block{
-  margin-top:8px;
-  padding:10px 12px;               /* antes 14x16 */
   background:#f8fafc;
-  border-radius:12px;
-  border:1px solid #e3e6ea;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  margin-top:10px;
 }
 .info-line{
-  font-size:13px;                  /* antes 14.5px */
+  font-size:14px;
   margin-bottom:4px;
 }
-
-
 
 /* STATUS */
 .badge{
   padding:6px 12px;
   border-radius:10px;
-  font-size:11.5px;
+  font-size:12px;
   font-weight:700;
   display:inline-block;
-  margin-top:12px;
+  margin-top:14px;
 }
-
-.st-PENDENTE{ background:var(--pendente); color:#fff; }
-.st-FUTURA{ background:var(--futura); color:#fff; }
-.st-EM_ANDAMENTO{ background:var(--andamento); color:#fff; }
-.st-FINALIZADA{ background:var(--finalizada); color:#fff; }
-.st-SUSPENSA{ background:var(--suspensa); color:#fff; }
+.st-PENDENTE{ background:var(--pendente); color:white; }
+.st-FUTURA{ background:var(--futura); color:white; }
+.st-EM_ANDAMENTO{ background:var(--andamento); color:white; }
+.st-FINALIZADA{ background:var(--finalizada); color:white; }
+.st-SUSPENSA{ background:var(--suspensa); color:white; }
 
 /* AÇÕES */
 .card-actions{
-  margin-top:16px;                 /* antes 22px */
+  margin-top:16px;
   display:flex;
   gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
 }
-select{
-  padding:10px 12px;               /* antes 12x14 */
-  border-radius:10px;
-  font-size:13.5px;
-}
+select,
 .btn{
-  padding:10px 18px;               /* antes 12x20 */
+  padding:10px 14px;
   font-size:14px;
   border-radius:10px;
 }
+.btn{
+  background:var(--azul2);
+  border:none;
+  color:white;
+  cursor:pointer;
+  transition:.25s;
+}
+.btn:hover{
+  background:#0e2a47;
+}
 
-.btn:hover{ background:#132a4d; }
-
-/* OVERLAY */
+/* =====================================================
+   OVERLAY (CARREGANDO)
+===================================================== */
 #overlayLoad{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.6);
+  background:rgba(0,0,0,.55);
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:999;
   backdrop-filter:blur(6px);
+  z-index:999;
 }
 .loader{
-  width:70px; height:70px;
+  width:60px;
+  height:60px;
   border-radius:50%;
   border:7px solid #ddd;
   border-top:7px solid var(--azul);
@@ -174,84 +196,84 @@ select{
 }
 @keyframes spin{ to{transform:rotate(360deg);} }
 
-/* MODAL */
+/* =====================================================
+   MODAL DE ITENS
+===================================================== */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.55);
   display:none;
   justify-content:center;
   align-items:flex-start;
   padding-top:40px;
-  z-index:300;
+  z-index:500;
 }
 .box{
-  width:92%;
-  max-width:1250px;
+  width:94%;
+  max-width:1200px;
   background:white;
   border-radius:20px;
-  box-shadow:var(--shadow);
   max-height:88vh;
   display:flex;
   flex-direction:column;
+  overflow:hidden;
 }
 .modal-head{
-  padding:24px 30px;
+  padding:20px 26px;
   border-bottom:1px solid var(--line);
-  background:white;
-  position:sticky;
-  top:0;
+  background:#ffffff;
+  position:sticky; top:0;
   z-index:20;
 }
 .closeBtn{
   float:right;
-  padding:8px 16px;
   background:var(--danger);
-  color:white;
+  padding:8px 14px;
   border:none;
   border-radius:8px;
+  color:white;
   cursor:pointer;
+  margin-left:10px;
 }
 .modal-search{
   margin-top:12px;
-  padding:11px 14px;
+  padding:10px 12px;
   border-radius:12px;
   border:1px solid var(--line);
-  width:300px;
+  width:260px;
 }
 .modal-body{
-  padding:16px 30px;
+  padding:16px 26px;
   overflow:auto;
-  background:#f9fafc;
-}
-.modal-foot{
-  padding:20px 30px;
-  background:white;
-  border-top:1px solid var(--line);
-  font-size:20px;
-  font-weight:800;
-  position:sticky;
-  bottom:0;
-  text-align:right;
+  background:#f7f9fb;
 }
 .table{
   width:100%;
   border-collapse:collapse;
-  margin-top:18px;
+  margin-top:16px;
 }
 .table th{
-  padding:12px;
   background:#eef2f7;
+  padding:10px;
   cursor:pointer;
 }
 .table td{
   padding:10px;
   border-bottom:1px solid #eee;
 }
+.modal-foot{
+  padding:18px 26px;
+  border-top:1px solid var(--line);
+  font-weight:800;
+  background:white;
+  text-align:right;
+}
 </style>
 </head>
 
 <body>
+
 <div id="overlayLoad"><div class="loader"></div></div>
 
 <h1 class="titulo">Licitações</h1>
@@ -271,15 +293,16 @@ select{
 
 <div class="grid" id="lista"></div>
 
-<!-- MODAL -->
+<!-- ============ MODAL ITENS ============ -->
 <div class="modal" id="modalItens">
   <div class="box">
     <div class="modal-head">
       <button class="closeBtn" onclick="fecharModal()">Fechar</button>
       <h2 id="tituloItens"></h2>
-      <h4 id="subItens" style="color:var(--muted); margin-top:-4px"></h4>
+      <h4 id="subItens" style="color:var(--muted);margin-top:-4px"></h4>
       <input id="buscarItem" class="modal-search" placeholder="Buscar item…">
     </div>
+
     <div class="modal-body">
       <table class="table" id="tbItens">
         <thead>
@@ -296,39 +319,50 @@ select{
         <tbody></tbody>
       </table>
     </div>
+
     <div class="modal-foot" id="totalGeral"></div>
   </div>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwg9ZmsZpisEOI3J_3D0rS-Wwn0-dUD4yLVwxa7Yi1_pm0PAuu_HS3d7cB7Z5p0Il8s/exec";
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+/* =====================================================
+   JAVASCRIPT MAIS RÁPIDO E OTIMIZADO
+===================================================== */
 
-let licitacoes = [], filtro="TODOS", busca="", itensModal=[], ordemAsc=true;
+const API="https://script.google.com/macros/s/AKfycbwg9ZmsZpisEOI3J_3D0rS-Wwn0-dUD4yLVwxa7Yi1_pm0PAuu_HS3d7cB7Z5p0Il8s/exec";
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+
+let licitacoes=[],filtro="TODOS",busca="",itensModal=[],ordemAsc=true;
 
 function showOverlay(){ $('#overlayLoad').style.display="flex"; }
 function hideOverlay(){ $('#overlayLoad').style.display="none"; }
 
-function formatMoney(v){ return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:4,maximumFractionDigits:4}); }
+function formatMoney(v){
+  return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:4});
+}
 
+/* =====================================================
+   RENDERIZAÇÃO DE LICITAÇÕES – ALTÍSSIMA PERFORMANCE
+===================================================== */
 function render(){
-  const lista = $('#lista');
-  const dados = licitacoes.filter(l =>
-    (filtro==="TODOS" || l.status===filtro) &&
-    (
-      l.instituicao?.toUpperCase().includes(busca.toUpperCase()) ||
-      l.codigo?.toUpperCase().includes(busca.toUpperCase()) ||
-      l.criterio?.toUpperCase().includes(busca.toUpperCase()) ||
-      l.modo?.toUpperCase().includes(busca.toUpperCase()) ||
-      String(l.valorBR)?.includes(busca)
-    )
+  const lista=$('#lista');
+  const dados=licitacoes.filter(l=>
+    (filtro==="TODOS"||l.status===filtro) &&
+    (l.instituicao?.toUpperCase().includes(busca.toUpperCase()) ||
+     l.codigo?.toUpperCase().includes(busca.toUpperCase()) ||
+     String(l.valorBR)?.includes(busca))
   );
-  if(dados.length===0){ lista.innerHTML="<p style='color:#6f7883'>Nenhuma licitação encontrada…</p>"; return; }
+
+  if(dados.length===0){
+    lista.innerHTML="<p style='color:#666;text-align:center;'>Nenhuma licitação encontrada…</p>";
+    return;
+  }
 
   lista.innerHTML=dados.map(l=>`
   <div class="card">
     <h3>${l.instituicao}</h3>
+
     <div class="info-block">
       <div class="info-line"><b>Código:</b> ${l.codigo}</div>
       <div class="info-line"><b>Data:</b> ${l.dataSessaoBR}</div>
@@ -336,9 +370,11 @@ function render(){
       <div class="info-line"><b>Critério:</b> ${l.criterio}</div>
       <div class="info-line"><b>Modo:</b> ${l.modo}</div>
     </div>
+
     <div class="badge st-${l.status.replace(" ","_").toUpperCase()}">${l.status}</div>
+
     <div class="card-actions">
-      <select onchange="alterarStatus('${l.codigo}', this.value)">
+      <select onchange="alterarStatus('${l.codigo}',this.value)">
         <option value="">Status…</option>
         <option value="PENDENTE">Pendente</option>
         <option value="FUTURA">Futura</option>
@@ -346,40 +382,53 @@ function render(){
         <option value="FINALIZADA">Finalizada</option>
         <option value="SUSPENSA">Suspensa</option>
       </select>
-      <button class="btn" onclick="verItens('${l.codigo}','${l.instituicao}')">Ver itens</button>
+
+      <button class="btn" onclick="verItens('${l.codigo}','${l.instituicao}')">
+        Ver itens
+      </button>
     </div>
   </div>`).join('');
 }
 
-async function alterarStatus(codigo, novoStatus){
+/* =====================================================
+   STATUS
+===================================================== */
+async function alterarStatus(codigo,novoStatus){
   if(!novoStatus){alert("Selecione um status válido.");return;}
   showOverlay();
-  const payload={action:"updateLicitacao",codigo,status:novoStatus};
-  const r=await fetch(API,{method:"POST",body:JSON.stringify(payload)});
-  const j=await r.json(); hideOverlay();
-  if(j.ok){alert("Status atualizado!");carregar();}else alert("Erro ao atualizar.");
+  const r=await fetch(API,{method:"POST",body:JSON.stringify({
+    action:"updateLicitacao",codigo,status:novoStatus
+  })});
+  const j=await r.json();
+  hideOverlay();
+  if(j.ok){carregar();}else alert("Erro.");
 }
 
+/* =====================================================
+   MODAL
+===================================================== */
 async function verItens(codigo,nome){
   showOverlay();
   $('#tituloItens').innerText="Itens da Licitação";
   $('#subItens').innerText=nome;
+
   const r=await fetch(`${API}?action=getItens&codigo=${codigo}`);
-  const j=await r.json();
-  itensModal=j.itens;
+  itensModal=(await r.json()).itens;
+
   renderItensTabela(itensModal);
   hideOverlay();
   $('#modalItens').style.display="flex";
 }
-
 function fecharModal(){ $('#modalItens').style.display="none"; }
 
 function renderItensTabela(lista){
   const tb=$('#tbItens tbody');
   tb.innerHTML="";
   let total=0;
+
   lista.forEach(it=>{
-    const t=it.valorUnit*it.quantMin; total+=t;
+    const t=it.valorUnit*it.quantMin;
+    total+=t;
     tb.innerHTML+=`
     <tr>
       <td>${it.itemTR}</td>
@@ -391,42 +440,52 @@ function renderItensTabela(lista){
       <td><b>${formatMoney(t)}</b></td>
     </tr>`;
   });
+
   $('#totalGeral').innerText="TOTAL: "+formatMoney(total);
 }
 
-/* 🔍 Busca dentro do modal */
-$('#buscarItem').addEventListener('input',e=>{
+$('#buscarItem').addEventListener("input",e=>{
   const termo=e.target.value.toLowerCase();
-  const filtrados=itensModal.filter(it=>
+  renderItensTabela(itensModal.filter(it=>
     it.especificacao.toLowerCase().includes(termo)||
-    it.itemTR.toString().includes(termo)||
-    it.unidade.toLowerCase().includes(termo)
-  );
-  renderItensTabela(filtrados);
+    String(it.itemTR).includes(termo)
+  ));
 });
 
+/* =====================================================
+   ORDENAÇÃO
+===================================================== */
 function ordenar(i){
   ordemAsc=!ordemAsc;
   itensModal.sort((a,b)=>{
     const A=Object.values(a)[i],B=Object.values(b)[i];
-    if(typeof A==="number")return ordemAsc?A-B:B-A;
-    return ordemAsc?String(A).localeCompare(String(B)):String(B).localeCompare(String(A));
+    return ordemAsc ? (A>B?1:-1) : (A<B?1:-1);
   });
   renderItensTabela(itensModal);
 }
 
+/* =====================================================
+   CARREGAR DADOS
+===================================================== */
 async function carregar(){
   showOverlay();
-  const r=await fetch(`${API}?action=listLicitacoes`);
-  const j=await r.json();
+  const j=await fetch(`${API}?action=listLicitacoes`).then(r=>r.json());
   licitacoes=j;
   render();
   hideOverlay();
 }
 
+/* =====================================================
+   EVENTOS
+===================================================== */
 document.addEventListener("DOMContentLoaded",()=>{
   carregar();
-  $('#busca').addEventListener('input',e=>{busca=e.target.value;render();});
+
+  $('#busca').addEventListener('input',e=>{
+    busca=e.target.value;
+    render();
+  });
+
   $$('#filtros .chip').forEach(ch=>{
     ch.addEventListener('click',()=>{
       $$('#filtros .chip').forEach(x=>x.classList.remove('ativo'));
