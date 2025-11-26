@@ -12,70 +12,91 @@
   --dourado:#c9a86c;
   --bg:#eef2f7;
   --card:#ffffff;
-  --radius:20px;
-  --shadow:0 8px 25px rgba(0,0,0,0.15);
+  --radius:18px;
+  --shadow:0 8px 30px rgba(0,0,0,0.12);
 }
 
 body{
   margin:0;
-  padding:20px;
+  padding:22px;
   background:var(--bg);
   font-family:'Inter', sans-serif;
+  overflow-x:hidden;
 }
 
-/* Título */
+/* ================= OVERLAY ================= */
+#overlay{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999999;
+  font-size:26px;
+  font-weight:700;
+  color:var(--azul);
+}
+
+/* ================= TÍTULO ================= */
 h1{
   text-align:center;
-  margin-bottom:25px;
   color:var(--azul);
-  font-size:28px;
-  font-weight:700;
+  margin-bottom:25px;
+  font-size:30px;
+  font-weight:800;
 }
 
-/* Busca */
+/* ================= BUSCA ================= */
 #busca{
   width:100%;
-  max-width:420px;
+  max-width:450px;
   display:block;
-  margin:0 auto 25px auto;
-  padding:12px;
-  border:1px solid #ccc;
-  border-radius:12px;
+  margin:0 auto 25px;
+  padding:12px 15px;
+  border:1px solid #bbb;
+  border-radius:14px;
   font-size:16px;
+  transition:.2s;
+}
+#busca:focus{
+  outline:none;
+  border-color:var(--azul);
 }
 
-/* Grid */
+/* ================= GRID DE CARDS ================= */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:22px;
   margin-bottom:25px;
 }
 
-/* Card */
 .card{
   background:white;
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  padding:18px;
+  padding:20px;
   cursor:pointer;
-  transition:.2s;
+  border:2px solid transparent;
+  transition:.25s;
 }
-.card:hover{ transform:scale(1.02); }
+.card:hover{ transform:translateY(-5px); }
 .card.sel{
   border:3px solid var(--dourado);
-  background:#fff8e0;
+  background:#fff7e0;
 }
 .card h2{
   margin:0;
+  font-size:20px;
   color:var(--azul);
-  font-size:18px;
 }
 .card small{
-  color:#555;
+  color:#444;
+  font-weight:500;
 }
 
-/* Box empresa */
+/* ================= BOX EMPRESA ================= */
 #boxEmpresa{
   display:none;
   background:white;
@@ -83,66 +104,92 @@ h1{
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   margin-bottom:25px;
+  line-height:1.7;
 }
 
-/* Itens */
+/* ================= TABELA ================= */
+#boxItens{ display:none; }
+
 table{
   width:100%;
   border-collapse:collapse;
+  background:white;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
 }
 th,td{
-  border-bottom:1px solid #ddd;
-  padding:8px;
+  padding:10px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
 }
 th{
   background:var(--azul);
   color:white;
+  text-align:left;
+}
+td input{
+  width:70px;
+  padding:6px;
+  border:1px solid #bbb;
+  border-radius:8px;
 }
 
-/* Botões */
+/* ================= BOTÕES ================= */
 .btn{
   background:var(--dourado);
   color:black;
   border:none;
-  padding:14px 20px;
-  border-radius:12px;
+  padding:14px 22px;
+  border-radius:14px;
   cursor:pointer;
-  font-size:15px;
-  font-weight:600;
+  font-size:16px;
+  font-weight:700;
+  transition:.25s;
 }
-.btn:hover{ background:#b89554; }
+.btn:hover{ background:#b4904f; }
 
-/* Popup */
-.overlay{
-  position:fixed; inset:0;
+/* ================= POPUP ================= */
+#popup{
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.55);
   display:none;
   justify-content:center;
   align-items:center;
+  z-index:9999;
 }
 .popup{
   background:white;
-  width:100%;
-  max-width:460px;
+  width:95%;
+  max-width:500px;
   padding:25px;
   border-radius:20px;
   box-shadow:var(--shadow);
+  animation:fade .25s ease;
+}
+@keyframes fade{
+  from{opacity:0; transform:scale(0.85);}
+  to{opacity:1; transform:scale(1);}
 }
 </style>
 </head>
 
 <body>
 
+<div id="overlay">Carregando...</div>
+
 <h1>Gerar Romaneio</h1>
 
-<input id="busca" placeholder="Pesquisar..." onkeyup="filtrar()">
+<input id="busca" placeholder="Pesquisar licitação..." onkeyup="filtrar()">
 
 <div id="listaCards" class="grid"></div>
 
 <div id="boxEmpresa"></div>
 
-<div id="boxItens" style="display:none;">
+<div id="boxItens">
   <h2 style="color:var(--azul);">Itens Disponíveis</h2>
+
   <table>
     <thead>
       <tr>
@@ -166,62 +213,52 @@ th{
 </div>
 
 <!-- POPUP -->
-<div id="popup" class="overlay">
+<div id="popup">
   <div class="popup">
     <h3 style="color:var(--azul); margin-top:0;">Resumo do Romaneio</h3>
     <div id="resumo"></div>
     <br>
     <button class="btn" onclick="confirmarRomaneio()">Confirmar</button>
-    <button class="btn" style="background:#555;color:white;margin-top:10px;" onclick="fechar()">Cancelar</button>
+    <button class="btn" style="background:#666;color:white;margin-top:10px;" onclick="fechar()">Cancelar</button>
   </div>
 </div>
-
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
-/************************************************************
- * 1 — CARREGAR LISTA DE LICITAÇÕES
- ************************************************************/
-async function carregar(){
-
-  const itens = await fetch(`${API}?action=getItens&codigo=ALL`)
-    .then(r=>r.json()).catch(()=>[]);
-
-  const licitacoes = {};
-  itens.forEach(i=> licitacoes[i.codigoLicitacao] = true);
-
-  const lista = Object.keys(licitacoes).map(c=>({codigo:c}));
-
-  montarCards(lista);
+/* ===== FORMATADOR DE VALOR ===== */
+function money(v){
+  return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2});
 }
 
-/************************************************************
- * 2 — MONTAR CARDS
- ************************************************************/
+/* ====================== CARREGAR INICIAL ====================== */
+async function carregar(){
+  const itens = await fetch(`${API}?action=getItens&codigo=ALL`).then(r=>r.json());
+  const lic = {};
+  itens.forEach(i => lic[i.codigoLicitacao] = true);
+  montarCards(Object.keys(lic).map(c => ({codigo:c})));
+}
+
+/* ====================== MONTAR CARDS ====================== */
 async function montarCards(lista){
-
-  const dadosLic = await fetch(`${API}?action=getEmpresas`)
-    .then(r=>r.json()).catch([]);
-
-  let html="";
+  const empresas = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+  let html = "";
 
   lista.forEach(l=>{
-    const info = dadosLic.find(x=>x.codigo === l.codigo.replace("LIC","EMP")) || {};
+    const info = empresas.find(e => e.codigo === l.codigo.replace("LIC","EMP")) || {};
 
     html += `
       <div class="card" onclick="selecionar('${l.codigo}', this)">
         <h2>${l.codigo}</h2>
-        <small>${info?.nome || ""}</small>
+        <small>${info.nome || ''}</small>
       </div>`;
   });
 
   document.getElementById("listaCards").innerHTML = html;
+  overlay.style.display="none";
 }
 
-/************************************************************
- * 3 — FILTRAR
- ************************************************************/
+/* ====================== BUSCA ====================== */
 function filtrar(){
   const termo = busca.value.toLowerCase();
   document.querySelectorAll(".card").forEach(c=>{
@@ -229,54 +266,42 @@ function filtrar(){
   });
 }
 
-/************************************************************
- * 4 — SELECIONAR LICITAÇÃO
- ************************************************************/
+/* ====================== SELECIONAR ====================== */
 async function selecionar(cod, el){
-
   document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel"));
   el.classList.add("sel");
 
-  const emp = await fetch(`${API}?action=getEmpresa&codigo=${cod}`)
-    .then(r=>r.json()).catch(()=>({}));
+  const emp = await fetch(`${API}?action=getEmpresa&codigo=${cod}`).then(r=>r.json());
 
   boxEmpresa.style.display="block";
   boxEmpresa.innerHTML = `
-    <h2>${emp.nome}</h2>
+    <h2 style="margin-top:0;color:var(--azul)">${emp.nome}</h2>
     <b>Instituição:</b> ${emp.instituicao}<br>
     <b>CNPJ:</b> ${emp.cnpj}<br>
     <b>UF:</b> ${emp.uf}<br>
   `;
 
-  carregarItens(cod, emp);
+  carregarItens(cod);
 }
 
-/************************************************************
- * 5 — CARREGAR ITENS DA LICITAÇÃO
- ************************************************************/
-let lista = [];
+/* ====================== ITENS ====================== */
+let itensList = [];
 let fornecedores=[];
 let remessas=[];
 
-async function carregarItens(cod, emp){
+async function carregarItens(cod){
 
-  fornecedores = await fetch(`${API}?action=getFornecedores`)
-    .then(r=>r.json()).catch(()=>[]);
+  fornecedores = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+  remessas = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
 
-  remessas = await fetch(`${API}?action=listarRemessas`)
-    .then(r=>r.json()).catch(()=>[]);
+  const itens = await fetch(`${API}?action=getItens&codigo=${cod}`).then(r=>r.json());
 
-  const itens = await fetch(`${API}?action=getItens&codigo=${cod}`)
-    .then(r=>r.json()).catch(()=>[]);
-
-  lista = itens.map(it=>{
+  itensList = itens.map(it=>{
     const enviados = getEnviados(cod, it.itemTR);
-    const disp = Number(it.quantMin) - enviados;
-
     return {
       ...it,
       enviados,
-      disponivel: disp,
+      disponivel: it.quantMin - enviados,
       fornecedor:"",
       qtd:0,
       subtotal:0
@@ -287,17 +312,15 @@ async function carregarItens(cod, emp){
   boxItens.style.display="block";
 }
 
-/************************************************************
- * 6 — CALCULAR ENVIADOS
- ************************************************************/
+/* ====================== CÁLCULO ENVIADOS ====================== */
 function getEnviados(cod, tr){
   let tot=0;
   remessas.forEach(r=>{
     try{
       const js = JSON.parse(r.json);
-      if(js.codigoLicitacao == cod){
-        js.itens.forEach(i=>{
-          if(i.itemTR == tr){ tot += Number(i.quant); }
+      if(js.codigoLicitacao === cod){
+        js.itens.forEach(x=>{
+          if(x.itemTR === tr) tot += Number(x.quant);
         });
       }
     }catch(e){}
@@ -305,30 +328,28 @@ function getEnviados(cod, tr){
   return tot;
 }
 
-/************************************************************
- * 7 — TABELA
- ************************************************************/
+/* ====================== TABELA ====================== */
 function montarTabela(){
   let html="";
-  lista.forEach((it,i)=>{
 
-    let opts = `<select onchange="selForn(${i},this.value)">
-      <option value="">Selecione</option>`;
-    fornecedores.forEach(f=> opts+=`<option>${f.nome}</option>`);
-    opts+="</select>";
+  itensList.forEach((it,i)=>{
+
+    let selFornec = `<select onchange="selForn(${i},this.value)">
+      <option value="">Fornecedor</option>`;
+    fornecedores.forEach(f=> selFornec += `<option>${f.nome}</option>`);
+    selFornec += "</select>";
 
     html += `
       <tr>
         <td>${it.itemTR}</td>
         <td>${it.especificacao.substring(0,50)}...</td>
         <td>${it.marca}</td>
-        <td>R$ ${Number(it.valorUnit).toFixed(2)}</td>
+        <td>R$ ${money(it.valorUnit)}</td>
         <td>${it.quantMin}</td>
         <td>${it.enviados}</td>
         <td>${it.disponivel}</td>
-        <td>${opts}</td>
-        <td><input type="number" min="0" max="${it.disponivel}" 
-             style="width:70px;" onchange="selQtd(${i},this.value)"></td>
+        <td>${selFornec}</td>
+        <td><input type="number" min="0" max="${it.disponivel}" onchange="selQtd(${i},this.value)"></td>
         <td id="tot${i}">R$ 0,00</td>
       </tr>`;
   });
@@ -336,80 +357,71 @@ function montarTabela(){
   tbodyItens.innerHTML = html;
 }
 
-function selForn(i,v){ lista[i].fornecedor=v; }
+function selForn(i,v){ itensList[i].fornecedor = v; }
+
 function selQtd(i,v){
-  v=Number(v);
-  if(v>lista[i].disponivel) return alert("Maior que disponível!");
-  lista[i].qtd=v;
-  lista[i].subtotal=v*Number(lista[i].valorUnit);
-  document.getElementById("tot"+i).innerHTML="R$ "+lista[i].subtotal.toFixed(2);
+  v = Number(v);
+  if(v > itensList[i].disponivel) return alert("Quantidade maior que o disponível!");
+
+  itensList[i].qtd = v;
+  itensList[i].subtotal = v * itensList[i].valorUnit;
+
+  document.getElementById("tot"+i).innerHTML = "R$ " + money(itensList[i].subtotal);
 }
 
-/************************************************************
- * 8 — RESUMO
- ************************************************************/
+/* ====================== RESUMO ====================== */
 function mostrarResumo(){
-  const sel = lista.filter(i=>i.qtd>0 && i.fornecedor!="");
-  if(sel.length==0) return alert("Nenhum item selecionado!");
+
+  const sel = itensList.filter(i=>i.qtd>0 && i.fornecedor!="");
+  if(sel.length===0) return alert("Selecione itens e fornecedor!");
 
   let total = sel.reduce((s,i)=>s+i.subtotal,0);
-
   let html="";
-  sel.forEach(i=>{
-    html += `<p><b>${i.itemTR}</b> — ${i.qtd} x R$ ${i.valorUnit} = 
-             <b>R$ ${i.subtotal.toFixed(2)}</b><br>
-             Fornecedor: ${i.fornecedor}</p>`;
-  });
-  html += `<hr><h3>Total: R$ ${total.toFixed(2)}</h3>`;
 
-  document.getElementById("resumo").innerHTML = html;
+  sel.forEach(i=>{
+    html += `<p>
+      <b>${i.itemTR}</b> — ${i.qtd} x R$ ${money(i.valorUnit)}  
+      = <b>R$ ${money(i.subtotal)}</b><br>
+      Fornecedor: <b>${i.fornecedor}</b>
+    </p>`;
+  });
+
+  html += `<hr><h3>Total: R$ ${money(total)}</h3>`;
+
+  resumo.innerHTML = html;
   popup.style.display="flex";
 }
 
 function fechar(){ popup.style.display="none"; }
 
-/************************************************************
- * 9 — GERAR ROMANEIO (AJUSTADO PARA GET)
- ************************************************************/
+/* ====================== CONFIRMAR ====================== */
 async function confirmarRomaneio(){
-
-  const conta = await fetch(`${API}?action=getContas`)
-    .then(r=>r.json()).then(x=>x[0]).catch(()=>null);
 
   const cardSel = document.querySelector(".card.sel h2").innerText;
 
-  const itensEnviar = lista.filter(i=>i.qtd>0).map(i=>({
+  const itensEnviar = itensList.filter(i=>i.qtd>0).map(i=>({
     itemTR:i.itemTR,
+    fornecedor:i.fornecedor,
     especificacao:i.especificacao,
     marca:i.marca,
-    fornecedor:i.fornecedor,
     valorUnit:i.valorUnit,
     quant:i.qtd,
     total:i.subtotal
   }));
 
-  let payload = {
-    data: new Date().toISOString().slice(0,10),
-    codigoLicitacao: cardSel,
-    empresa: document.querySelector("#boxEmpresa h2").innerText,
-    cnpj:"",
-    itens: itensEnviar,
-    dataPrevista: new Date().toISOString().slice(0,10),
-    fornecedor: itensEnviar[0].fornecedor,
-    contaBancaria: conta ? `${conta.banco} – Ag ${conta.agencia} – Cc ${conta.conta}` : ""
+  const payload = {
+    data:new Date().toISOString().slice(0,10),
+    codigoLicitacao:cardSel,
+    itens:itensEnviar
   };
 
-  const resp = await fetch(
-    `${API}?action=registrarRomaneio&data=${encodeURIComponent(JSON.stringify(payload))}`
-  ).then(r=>r.json());
+  await fetch(`${API}?action=registrarRomaneio&data=${encodeURIComponent(JSON.stringify(payload))}`);
 
   alert("Romaneio gerado com sucesso!");
   location.reload();
 }
 
-/************************************************************
- * INICIAR
- ************************************************************/
+/* ====================== INICIAR ====================== */
 carregar();
 </script>
 
