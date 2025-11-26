@@ -9,7 +9,7 @@
 :root{
   --azul:#0b1e39;
   --azul-claro:#2d6cdf;
-  --azul-light:#8bb3ff;
+  --azul-light:#95b9ff;
   --bg:#eef2f7;
   --card:#ffffff;
   --shadow:0 10px 30px rgba(0,0,0,0.12);
@@ -27,18 +27,20 @@ body{
 #overlay{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
-  background:rgba(255,255,255,0.9);
+  background:white;
   display:flex;
   justify-content:center;
   align-items:center;
   z-index:9999;
-  font-size:25px;
+  font-size:26px;
   color:var(--azul);
-  font-weight:600;
+  font-weight:700;
 }
 
+/* CONTAINER */
 .container{ padding:25px; }
 
+/* TITULO */
 h1{
   text-align:center;
   color:var(--azul);
@@ -58,37 +60,37 @@ h1{
 .timeline{
   position:relative;
   width:100%;
-  margin:30px 0;
+  margin:30px 0 25px 0;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.timeline .line{
+.line{
   position:absolute;
   top:24px;
   left:0;
-  width:100%;
   height:6px;
+  width:100%;
   background:#dce4ff;
   border-radius:4px;
   z-index:1;
 }
 
-/* A BARRA AGORA COMEÇA EXATAMENTE EM EM ENTREGA (50%) */
+/* Inicia em 50% (bolinha 3) */
 .progress-line{
   position:absolute;
   top:24px;
   left:50%;
   height:6px;
   width:0%;
-  background:linear-gradient(90deg, var(--azul-light), var(--azul-claro));
+  background:linear-gradient(90deg,var(--azul-light),var(--azul-claro));
   border-radius:4px;
   z-index:2;
-  transition:width .4s;
+  transition:.4s;
 }
 
-/* "% ENTREGUE" no lugar correto */
+/* Percentual acompanhando a barra */
 .percent{
   position:absolute;
   top:-25px;
@@ -99,10 +101,9 @@ h1{
   font-size:13px;
   font-weight:700;
   transform:translateX(-50%);
-  white-space:nowrap;
 }
 
-/* CÍRCULOS */
+/* STEPS */
 .step{
   width:25%;
   text-align:center;
@@ -115,8 +116,8 @@ h1{
   background:#d7e1ff;
   border-radius:50%;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   font-size:22px;
   color:white;
   margin:auto;
@@ -127,22 +128,21 @@ h1{
 }
 
 .step span{
+  margin-top:6px;
   display:block;
-  margin-top:5px;
-  color:#444;
   font-size:13px;
+  color:#444;
 }
 
 .step.active span{
-  font-weight:600;
   color:var(--azul);
+  font-weight:600;
 }
 
-/* TABLE */
+/* TABELA */
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:15px;
 }
 th{
   background:var(--azul);
@@ -151,8 +151,8 @@ th{
 }
 td{
   padding:10px;
-  border-bottom:1px solid #ddd;
   background:white;
+  border-bottom:1px solid #ddd;
   cursor:pointer;
 }
 td:hover{ background:#f5f7ff; }
@@ -160,20 +160,21 @@ td:hover{ background:#f5f7ff; }
 /* POPUP */
 #popup{
   position:fixed;
-  top:0;left:0;width:100%;height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   background:rgba(0,0,0,0.55);
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:99999;
+  z-index:999999;
 }
 .popup-box{
   background:white;
   width:95%;
   max-width:650px;
+  padding:20px;
   max-height:90vh;
   overflow:auto;
-  padding:20px;
   border-radius:15px;
   animation:fade .25s ease;
 }
@@ -214,160 +215,156 @@ td:hover{ background:#f5f7ff; }
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
-/* POPUP */
+/* POPUP OPEN */
 function abrirPopup(html){
-  document.getElementById("popContent").innerHTML = html;
-  document.getElementById("popup").style.display = "flex";
+    document.getElementById("popContent").innerHTML = html;
+    document.getElementById("popup").style.display = "flex";
 }
 
-/* MAIN LOADER */
+/* MAIN */
 (async function(){
 
-  const empresas = await (await fetch(`${API}?action=getEmpresas`)).json();
-  const itens    = await (await fetch(`${API}?action=getItens&codigo=ALL`)).json();
-  const remessas = await (await fetch(`${API}?action=listarRemessas`)).json();
-  const faturado = await (await fetch(`${API}?action=listarFaturado`)).json();
+    const empresas = await (await fetch(`${API}?action=getEmpresas`)).json();
+    const itens    = await (await fetch(`${API}?action=getItens&codigo=ALL`)).json();
+    const remessas = await (await fetch(`${API}?action=listarRemessas`)).json();
+    const faturado = await (await fetch(`${API}?action=listarFaturado`)).json();
 
-  let html = "";
+    let html = "";
 
-  for (let emp of empresas){
+    for(let emp of empresas){
 
-    const itensEmpresa = itens.filter(i => i.codigoLicitacao === emp.codigo);
+        const itensEmpresa = itens.filter(i => i.codigoLicitacao == emp.codigo);
 
-    let totalItens = 0;
-    let totalQtd   = 0;
+        let totalQtd = itensEmpresa.reduce((s,i)=>s+Number(i.quantMin),0);
+        let totalValor = itensEmpresa.reduce((s,i)=>s+(i.quantMin*i.valorUnit),0);
 
-    itensEmpresa.forEach(i=>{
-      totalItens += Number(i.quantMin)*Number(i.valorUnit);
-      totalQtd   += Number(i.quantMin);
-    });
+        /* 🔵 CONTAR APENAS ENTREGAS COM STATUS RECEBIDO */
+        let entregues = 0;
 
-    const roms = remessas.filter(r => r.codigoLicitacao === emp.codigo);
-
-    let totalEntregue = 0;
-    roms.forEach(r=>{
-      try{
-        JSON.parse(r.json).itens.forEach(it=>{
-          totalEntregue += Number(it.quant);
+        remessas.forEach(r=>{
+            const fat = faturado.find(f=>f.romaneioID == r.romaneioID);
+            if(!fat || fat.status !== "RECEBIDO") return; // IGNORA PENDENTES
+            
+            try{
+                JSON.parse(r.json).itens.forEach(it=>{
+                    entregues += Number(it.quant);
+                });
+            }catch(e){}
         });
-      }catch(e){}
-    });
 
-    const percentual = totalQtd ? (totalEntregue/totalQtd)*100 : 0;
+        const percentual = totalQtd ? (entregues/totalQtd)*100 : 0;
 
-    const iniciou = itensEmpresa.length>0;
-    const s2 = totalItens>0;
-    const s3 = percentual>0;
-    const fat = faturado.find(f => f.romaneioID === (roms[0]?.romaneioID || ""));
-    const s4 = fat?.status === "RECEBIDO";
+        /* STATUS */
+        const iniciou = itensEmpresa.length > 0;
+        const s2 = iniciou;
+        const s3 = percentual > 0;
+        const s4 = percentual >= 100;
 
-    /* AQUI: CÁLCULO CORRETO DA BARRA */
-    const width = percentual * 0.25;    // 100% vira 25%
-    const left  = 50 + width;           // começa em 50%
+        /* BARRA ENTREGA → CONCLUÍDO (25% do total) */
+        const width = (percentual * 0.25);  
+        const left  = 50 + width;
 
-    html += `
-    <div class="card">
+        html += `
+        <div class="card">
 
-      <h2>${emp.nome}</h2>
-      <p><b>CNPJ:</b> ${emp.cnpj}</p>
-      <p><b>Valor total:</b> R$ ${totalItens.toLocaleString("pt-BR",{minimumFractionDigits:2})}</p>
+            <h2>${emp.nome}</h2>
+            <p><b>CNPJ:</b> ${emp.cnpj}</p>
+            <p><b>Valor total:</b> R$ ${totalValor.toLocaleString("pt-BR",{minimumFractionDigits:2})}</p>
 
-      <div class="timeline">
-        <div class="line"></div>
+            <div class="timeline">
+                <div class="line"></div>
 
-        <div class="progress-line" style="width:${width}%;"></div>
-        <div class="percent" style="left:${left}%;">${percentual.toFixed(2)}%</div>
+                <div class="progress-line" style="width:${width}%;"></div>
+                <div class="percent" style="left:${left}%;${percentual<=0?'display:none':''}">${percentual.toFixed(2)}%</div>
 
-        <div class="step ${iniciou?'active':''}">
-          <div class="circle">✔</div><span>Iniciado</span>
+                <div class="step ${iniciou?'active':''}">
+                    <div class="circle">✔</div><span>Iniciado</span>
+                </div>
+                <div class="step ${s2?'active':''}">
+                    <div class="circle">✔</div><span>Em análise</span>
+                </div>
+                <div class="step ${s3?'active':''}">
+                    <div class="circle">✔</div><span>Em entrega</span>
+                </div>
+                <div class="step ${s4?'active':''}">
+                    <div class="circle">✔</div><span>Concluído</span>
+                </div>
+            </div>
+
+            <h3>Itens cadastrados</h3>
+            <table>
+                <thead>
+                  <tr><th>TR</th><th>Descrição</th><th>Marca</th><th>Qtd</th><th>Unit</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+                ${itensEmpresa.map(i=>{
+                    const tot = i.quantMin * i.valorUnit;
+                    return `
+                        <tr onclick="mostrarRomaneios('${emp.codigo}','${i.itemTR}')">
+                            <td>${i.itemTR}</td>
+                            <td>${i.especificacao.substring(0,80)}...</td>
+                            <td>${i.marca}</td>
+                            <td>${i.quantMin}</td>
+                            <td>R$ ${i.valorUnit.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+                            <td>R$ ${tot.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+                        </tr>`;
+                }).join("")}
+                </tbody>
+            </table>
+
         </div>
-        <div class="step ${s2?'active':''}">
-          <div class="circle">✔</div><span>Em análise</span>
-        </div>
-        <div class="step ${s3?'active':''}">
-          <div class="circle">✔</div><span>Em entrega</span>
-        </div>
-        <div class="step ${s4?'active':''}">
-          <div class="circle">✔</div><span>Concluído</span>
-        </div>
+        `;
+    }
 
-      </div>
-
-      <h3>Itens cadastrados</h3>
-      <table>
-        <thead>
-          <tr><th>TR</th><th>Descrição</th><th>Marca</th><th>Qtd</th><th>Valor Unit</th><th>Total Item</th></tr>
-        </thead>
-        <tbody>
-        ${itensEmpresa.map(i=>{
-          const total = i.quantMin * i.valorUnit;
-          return `
-            <tr onclick="mostrarRomaneios('${emp.codigo}','${i.itemTR}')">
-              <td>${i.itemTR}</td>
-              <td>${i.especificacao.substring(0,80)}...</td>
-              <td>${i.marca}</td>
-              <td>${i.quantMin}</td>
-              <td>R$ ${Number(i.valorUnit).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-              <td>R$ ${total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-            </tr>`;
-        }).join("")}
-        </tbody>
-      </table>
-
-    </div>
-    `;
-  }
-
-  document.getElementById("cards").innerHTML = html;
-  document.getElementById("overlay").style.display="none";
+    document.getElementById("cards").innerHTML = html;
+    document.getElementById("overlay").style.display = "none";
 
 })();
 
-/* Romaneios por item */
+/* POPUP ROMANEIOS */
 async function mostrarRomaneios(cod,tr){
 
-  const remessas = await (await fetch(`${API}?action=listarRemessas`)).json();
+    const rem = await (await fetch(`${API}?action=listarRemessas`)).json();
 
-  let lista=[];
+    let lista = [];
 
-  remessas.forEach(r=>{
-    if(r.codigoLicitacao === cod){
-      try{
-        JSON.parse(r.json).itens.forEach(i=>{
-          if(i.itemTR == tr){
-            lista.push({
-              rom:r.romaneioID,
-              data:r.data,
-              qtd:i.quant,
-              total:i.quant * i.valorUnit
+    rem.forEach(r=>{
+        try{
+            JSON.parse(r.json).itens.forEach(it=>{
+                if(it.itemTR == tr){
+                    lista.push({
+                        id:r.romaneioID,
+                        data:r.data,
+                        qtd:it.quant,
+                        total:it.quant*it.valorUnit
+                    });
+                }
             });
-          }
-        });
-      }catch(e){}
+        }catch(e){}
+    });
+
+    let html="";
+
+    if(lista.length===0){
+        html="<p>Nenhum romaneio registrado para este item.</p>";
+    }else{
+        html=`<table>
+                <thead><tr><th>ID</th><th>Data</th><th>Qtd</th><th>Total</th></tr></thead>
+                <tbody>
+                ${lista.map(l=>`
+                    <tr>
+                      <td>${l.id}</td>
+                      <td>${l.data}</td>
+                      <td>${l.qtd}</td>
+                      <td>R$ ${l.total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+                    </tr>
+                `).join("")}
+                </tbody>
+              </table>`;
     }
-  });
 
-  let html="";
-
-  if(lista.length===0){
-    html="<p>Nenhuma entrega registrada para este item.</p>";
-  }else{
-    html=`<table>
-      <thead><tr><th>Romaneio</th><th>Data</th><th>Qtd</th><th>Total</th></tr></thead>
-      <tbody>
-      ${lista.map(l=>`
-        <tr>
-          <td>${l.rom}</td>
-          <td>${l.data}</td>
-          <td>${l.qtd}</td>
-          <td>R$ ${l.total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-        </tr>`).join("")}
-      </tbody></table>`;
-  }
-
-  abrirPopup(html);
+    abrirPopup(html);
 }
-
 </script>
 
 </body>
