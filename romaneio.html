@@ -185,11 +185,9 @@ const API = "https://script.google.com/macros/s/AKfycbzNi5EcrhsvfvkEcplTdMiYgUvc
  ************************************************************/
 async function carregar(){
 
-  // pegar TODOS os itens
   const itens = await fetch(`${API}?action=getItens&codigo=ALL`)
     .then(r=>r.json()).catch(()=>[]);
 
-  // agrupar códigos únicos
   const licitacoes = {};
   itens.forEach(i=> licitacoes[i.codigoLicitacao] = true);
 
@@ -203,13 +201,13 @@ async function carregar(){
  ************************************************************/
 async function montarCards(lista){
 
-  // puxar licitações da aba licitacoes
-  const dadosLic = await fetch(`${API}?action=getEmpresas`).then(r=>r.json()).catch([]);
+  const dadosLic = await fetch(`${API}?action=getEmpresas`)
+    .then(r=>r.json()).catch([]);
 
   let html="";
 
   lista.forEach(l=>{
-    const info = dadosLic.find(x => x.codigo === l.codigo.replace("LIC","EMP")) || {};
+    const info = dadosLic.find(x=>x.codigo === l.codigo.replace("LIC","EMP")) || {};
 
     html += `
       <div class="card" onclick="selecionar('${l.codigo}', this)">
@@ -371,11 +369,10 @@ function mostrarResumo(){
 function fechar(){ popup.style.display="none"; }
 
 /************************************************************
- * 9 — GERAR ROMANEIO
+ * 9 — GERAR ROMANEIO (AJUSTADO PARA GET)
  ************************************************************/
 async function confirmarRomaneio(){
 
-  // sempre usar a PRIMEIRA CONTA BANCÁRIA
   const conta = await fetch(`${API}?action=getContas`)
     .then(r=>r.json()).then(x=>x[0]).catch(()=>null);
 
@@ -402,10 +399,9 @@ async function confirmarRomaneio(){
     contaBancaria: conta ? `${conta.banco} – Ag ${conta.agencia} – Cc ${conta.conta}` : ""
   };
 
-  const resp = await fetch(`${API}?action=registrarRomaneio`,{
-    method:"POST",
-    body:new URLSearchParams({data:JSON.stringify(payload)})
-  }).then(r=>r.json());
+  const resp = await fetch(
+    `${API}?action=registrarRomaneio&data=${encodeURIComponent(JSON.stringify(payload))}`
+  ).then(r=>r.json());
 
   alert("Romaneio gerado com sucesso!");
   location.reload();
