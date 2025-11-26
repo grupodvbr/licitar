@@ -2,495 +2,345 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<title>Cadastros do Sistema • LICITAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configurações • LICITAR</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
+:root {
+  --azul:#0b1e39;
+  --azul-claro:#15345c;
+  --dourado:#c9a86c;
   --bg:#eef2f7;
   --card:#ffffff;
-  --azul:#0b1e39;
-  --muted:#6f7883;
   --radius:18px;
-  --shadow:0 8px 25px rgba(0,0,0,.10);
+  --shadow:0 10px 25px rgba(0,0,0,.12);
 }
 
-/* BASE */
-body{
+body {
   margin:0;
-  padding:40px;
+  padding:20px;
   background:var(--bg);
-  font-family:Inter, sans-serif;
+  font-family:'Inter',sans-serif;
+}
+
+h1 {
+  text-align:center;
   color:var(--azul);
+  margin-bottom:25px;
 }
 
-h1{
-  font-size:34px;
-  font-weight:800;
-  margin-bottom:28px;
-}
-
-/* GRID DE CARDS */
-.grid{
+/* GRID PRINCIPAL */
+.grid {
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
   gap:20px;
-  max-width:1100px;
 }
 
-/* CARD */
-.card{
-  background:white;
-  padding:18px;
+/* CARDS */
+.card {
+  background:var(--card);
   border-radius:var(--radius);
-  border:1px solid #e3e6ea;
+  padding:20px;
   box-shadow:var(--shadow);
-  cursor:pointer;
-  transition:.25s;
-}
-.card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 10px 25px rgba(0,0,0,.12);
-}
-.card-title{
-  font-size:17px;
-  font-weight:700;
 }
 
-/* MODAL */
-.modal{
+.card h2 {
+  margin-top:0;
+  color:var(--azul);
+  font-size:20px;
+}
+
+.card button {
+  width:100%;
+  padding:12px;
+  background:var(--dourado);
+  color:#000;
+  font-size:15px;
+  font-weight:600;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+}
+.card button:hover {
+  background:#b89554;
+}
+
+/* TABELAS */
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+th, td {
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  font-size:14px;
+}
+th {
+  background:var(--azul);
+  color:white;
+}
+
+/* POPUP */
+.overlay {
   position:fixed;
-  inset:0;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,.55);
   display:none;
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.55);
-  z-index:999;
   padding:20px;
 }
 
-.modal-box{
+.popup {
   background:white;
+  padding:22px;
   width:100%;
-  max-width:700px;
-  max-height:85vh;
-  overflow-y:auto;
+  max-width:420px;
   border-radius:18px;
-  padding:25px;
   box-shadow:var(--shadow);
+  animation:fade .2s ease;
 }
 
-/* FORM */
-label{
-  font-weight:600;
-  font-size:14px;
-  display:block;
-  margin-bottom:4px;
+@keyframes fade {
+  from {opacity:0; transform:scale(.85);}
+  to {opacity:1; transform:scale(1);}
 }
 
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
+.popup h3 {
+  margin-top:0;
+  color:var(--azul);
+  margin-bottom:15px;
 }
 
-.full{
-  grid-column:1 / 3;
-}
-
-input, select{
+input,select {
   width:100%;
   padding:12px;
-  border:1px solid #d0d5dd;
-  border-radius:12px;
-  margin-bottom:14px;
-  font-size:14px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  margin-bottom:12px;
 }
 
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:12px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-}
-.btnSalvar{
+.btnSalvar {
+  width:100%;
   background:var(--azul);
   color:white;
-  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
 }
-.btnFechar{
-  background:#ccc;
-  width:100%;
-  margin-top:8px;
+.btnSalvar:hover {
+  background:var(--azul-claro);
 }
 
-/* LISTA DE EMPRESAS */
-.emp-card{
-  background:#fff;
-  padding:12px 16px;
-  border:1px solid #e3e6ea;
+.btnClose {
+  margin-top:10px;
+  width:100%;
+  background:#666;
+  color:white;
+  padding:12px;
+  border:none;
   border-radius:12px;
-  margin-bottom:10px;
-  cursor:pointer;
-  transition:.2s;
 }
-.emp-card:hover{
-  background:#f3f6fa;
-  transform:translateY(-2px);
-}
-.emp-nome{
-  font-size:15px;
-  font-weight:600;
-}
-.emp-codigo{
-  font-size:13px;
-  color:#6f7883;
-}
+
 </style>
 </head>
-
 <body>
 
-<h1>Configurações</h1>
+<h1>Painel de Cadastros</h1>
 
 <div class="grid">
-  <div class="card" onclick="abrirCadastroEmpresas()">
-    <div class="card-title">Cadastrar Empresa</div>
+
+  <!-- CONTAS BANCÁRIAS -->
+  <div class="card">
+    <h2>Contas Bancárias</h2>
+    <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
+    <table id="tabelaContas">
+      <thead>
+        <tr>
+          <th>Banco</th>
+          <th>Agência</th>
+          <th>Conta</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <div class="card" onclick="listarEmpresasDireto()">
-    <div class="card-title">Editar Empresa</div>
+  <!-- FORNECEDORES -->
+  <div class="card">
+    <h2>Fornecedores</h2>
+    <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
+    <table id="tabelaFornec">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CNPJ</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <div class="card" onclick="abrirModal('cadLicitacao')">
-    <div class="card-title">Cadastrar Licitação</div>
+  <!-- EMPRESAS -->
+  <div class="card">
+    <h2>Empresas</h2>
+    <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
+    <table id="tabelaEmpresas">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CNPJ</th>
+          <th>UF</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <div class="card" onclick="abrirModal('importExcel')">
-    <div class="card-title">Importar Itens Excel</div>
-  </div>
-
-  <div class="card" onclick="window.location.href='licitacoes.html'">
-    <div class="card-title">Gerenciar Licitações</div>
-  </div>
 </div>
 
-
-<!-- ==========================
-     MODAL CADASTRAR EMPRESA 
-===========================-->
-<div class="modal" id="modal_cadEmpresa">
-  <div class="modal-box">
-
-    <h2>Nova Empresa</h2>
-
-    <div class="form-grid">
-
-      <div>
-        <label>Código</label>
-        <input id="empCodigo">
-      </div>
-
-      <div>
-        <label>UF</label>
-        <select id="empUf">
-          <option value="">Selecione</option>
-          <option>BA</option><option>SP</option><option>RJ</option>
-          <option>MG</option><option>GO</option><option>PR</option>
-        </select>
-      </div>
-
-      <div class="full">
-        <label>Nome</label>
-        <input id="empNome">
-      </div>
-
-      <div class="full">
-        <label>CNPJ</label>
-        <input id="empCnpj">
-      </div>
-
-    </div>
-
-    <button class="btnSalvar" onclick="salvarEmpresa()">Salvar</button>
-    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
-
-    <hr style="margin:25px 0; border:0; border-top:1px solid #ddd;">
-
-    <h3 style="margin:0 0 10px 0;">Empresas cadastradas</h3>
-
-    <input 
-      type="text" 
-      id="buscaEmpresa"
-      placeholder="Buscar empresa..."
-      style="width:100%;padding:12px;border-radius:12px;border:1px solid #ccc;margin-bottom:15px;"
-      oninput="filtrarEmpresas()"
-    >
-
-    <div id="listaEmpresas" style="max-height:260px; overflow:auto;"></div>
-
-  </div>
+<!-- POPUP GERAL -->
+<div id="popup" class="overlay">
+  <div class="popup" id="popupContent"></div>
 </div>
-
-
-<!-- ==========================
-     MODAL EDITAR EMPRESA 
-===========================-->
-<div class="modal" id="modal_editEmpresa">
-  <div class="modal-box">
-
-    <h2>Editar Empresa</h2>
-
-    <div class="form-grid">
-
-      <div>
-        <label>Código</label>
-        <input id="editCodigo" readonly>
-      </div>
-
-      <div>
-        <label>UF</label>
-        <select id="editUf">
-          <option>BA</option><option>SP</option><option>RJ</option>
-          <option>MG</option><option>GO</option><option>PR</option>
-        </select>
-      </div>
-
-      <div class="full">
-        <label>Nome</label>
-        <input id="editNome">
-      </div>
-
-      <div class="full">
-        <label>CNPJ</label>
-        <input id="editCnpj">
-      </div>
-
-    </div>
-
-    <button class="btnSalvar" onclick="salvarEdicao()">Salvar Alterações</button>
-    <button class="btnFechar" style="background:#d9534f;color:white" onclick="excluirEmpresa()">Excluir Empresa</button>
-    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
-
-  </div>
-</div>
-
-
-<!-- ==========================
-     MODAL CADASTRAR LICITAÇÃO 
-===========================-->
-<div class="modal" id="modal_cadLicitacao">
-  <div class="modal-box">
-    <h2>Nova Licitação</h2>
-
-    <div class="form-grid">
-
-      <div>
-        <label>Código</label>
-        <input id="licCodigo">
-      </div>
-
-      <div>
-        <label>Valor (R$)</label>
-        <input id="licValor">
-      </div>
-
-      <div class="full">
-        <label>Instituição</label>
-        <input id="licInst">
-      </div>
-
-      <div>
-        <label>Data Sessão</label>
-        <input type="datetime-local" id="licData">
-      </div>
-
-      <div>
-        <label>Modo</label>
-        <input id="licModo">
-      </div>
-
-      <div class="full">
-        <label>Critério</label>
-        <input id="licCriterio">
-      </div>
-
-    </div>
-
-    <button class="btnSalvar" onclick="salvarLicitacao()">Salvar</button>
-    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
-  </div>
-</div>
-
-
-<!-- ==========================
-     MODAL IMPORTAR EXCEL
-===========================-->
-<div class="modal" id="modal_importExcel">
-  <div class="modal-box">
-    <h2>Importar Itens Excel</h2>
-
-    <input type="file" id="fileExcel" accept=".xlsx,.xls">
-
-    <button class="btnSalvar" onclick="enviarExcel()">Enviar Excel</button>
-    <button class="btnFechar" onclick="fecharModal()">Cancelar</button>
-  </div>
-</div>
-
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwq2C8gFpDRx_gmDrA0rKs0H_ljYp5b5mCt-f2BJR0jkybvGjfz9gQ_BaX-apRwblFo/exec";
+const API = "https://script.google.com/macros/s/AKfycbwrYwsj3w2Ik53-aQaLLpcvPtjzGEXqz6pOeAAOXBWDfGHIAhCTSOl0H8WE79_winOQ/exec"; // Coloque o link do GAS aqui
 
-function abrirModal(id){
-  document.getElementById("modal_" + id).style.display="flex";
+/* ============================
+   ABRIR POPUP
+============================ */
+function abrirPopup(tipo){
+  let html = "";
+
+  if(tipo === "contas"){
+    html = `
+      <h3>Cadastrar Conta Bancária</h3>
+      <input id="banco" placeholder="Banco">
+      <input id="agencia" placeholder="Agência">
+      <input id="conta" placeholder="Conta">
+      <input id="tipo" placeholder="Tipo (CC, CP)">
+      <input id="pix" placeholder="Chave PIX">
+      <button class="btnSalvar" onclick="salvarConta()">Salvar</button>
+      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
+    `;
+  }
+
+  if(tipo === "fornecedores"){
+    html = `
+      <h3>Cadastrar Fornecedor</h3>
+      <input id="nome" placeholder="Nome">
+      <input id="cnpj" placeholder="CNPJ">
+      <input id="telefone" placeholder="Telefone">
+      <button class="btnSalvar" onclick="salvarFornecedor()">Salvar</button>
+      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
+    `;
+  }
+
+  if(tipo === "empresas"){
+    html = `
+      <h3>Cadastrar Empresa</h3>
+      <input id="nome" placeholder="Nome da Instituição">
+      <input id="cnpj" placeholder="CNPJ">
+      <input id="uf" placeholder="UF">
+      <button class="btnSalvar" onclick="salvarEmpresa()">Salvar</button>
+      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
+    `;
+  }
+
+  document.getElementById("popupContent").innerHTML = html;
+  document.getElementById("popup").style.display = "flex";
 }
-function fecharModal(){
-  document.querySelectorAll(".modal").forEach(m=>m.style.display="none");
+
+function fecharPopup(){
+  document.getElementById("popup").style.display = "none";
 }
 
-/* ======================================================
-      EMPRESAS
-====================================================== */
+/* ============================
+   SALVAR CONTAS
+============================ */
+function salvarConta(){
+  alert("Envio para GAS será feito quando você mandar o backend.");
+  fecharPopup();
+}
 
-let empresas = [];
+/* ============================
+   SALVAR FORNECEDORES
+============================ */
+function salvarFornecedor(){
+  alert("Envio para GAS será feito quando você mandar o backend.");
+  fecharPopup();
+}
 
-async function abrirCadastroEmpresas(){
-  abrirModal("cadEmpresa");
-  await carregarEmpresas();
+/* ============================
+   SALVAR EMPRESAS
+============================ */
+function salvarEmpresa(){
+  alert("Envio para GAS será feito quando você mandar o backend.");
+  fecharPopup();
+}
+
+/* ============================
+   CARREGAR LISTAS (mock até ligar com GAS)
+============================ */
+window.onload = ()=>{
+  carregarContas();
+  carregarFornecedores();
+  carregarEmpresas();
+};
+
+async function carregarContas(){
+  let dados = await fetch(`${API}?action=getContas`).then(r=>r.json());
+  let html = "";
+  dados.forEach(c=>{
+    html += `
+      <tr>
+        <td>${c.banco}</td>
+        <td>${c.agencia}</td>
+        <td>${c.conta}</td>
+        <td><button>Editar</button></td>
+      </tr>
+    `;
+  });
+  document.querySelector("#tabelaContas tbody").innerHTML = html;
+}
+
+async function carregarFornecedores(){
+  let dados = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+  let html = "";
+  dados.forEach(f=>{
+    html += `
+      <tr>
+        <td>${f.nome}</td>
+        <td>${f.cnpj}</td>
+        <td><button>Editar</button></td>
+      </tr>
+    `;
+  });
+  document.querySelector("#tabelaFornec tbody").innerHTML = html;
 }
 
 async function carregarEmpresas(){
-  const r = await fetch(API + "?action=listEmpresas");
-  empresas = await r.json();
-  renderEmpresas(empresas);
-}
-
-function renderEmpresas(lista){
-  const box = document.getElementById("listaEmpresas");
-  box.innerHTML = lista.map(e => `
-    <div class="emp-card" onclick="editarRapido('${e.codigo}')">
-      <div class="emp-nome">${e.nome}</div>
-      <div class="emp-codigo">${e.codigo} • ${e.uf}</div>
-    </div>
-  `).join('');
-}
-
-function filtrarEmpresas(){
-  const termo = document.getElementById("buscaEmpresa").value.toLowerCase();
-  const filtradas = empresas.filter(e =>
-       e.nome.toLowerCase().includes(termo)
-    || e.codigo.toLowerCase().includes(termo)
-    || e.cnpj.toLowerCase().includes(termo)
-  );
-  renderEmpresas(filtradas);
-}
-
-function editarRapido(codigo){
-  const emp = empresas.find(e => e.codigo === codigo);
-
-  editCodigo.value = emp.codigo;
-  editNome.value = emp.nome;
-  editCnpj.value = emp.cnpj;
-  editUf.value = emp.uf;
-
-  fecharModal();
-  abrirModal("editEmpresa");
-}
-
-async function salvarEmpresa(){
-  const payload = {
-    action:"addEmpresa",
-    codigo:empCodigo.value,
-    nome:empNome.value,
-    cnpj:empCnpj.value,
-    uf:empUf.value
-  };
-
-  await fetch(API,{ method:"POST", body:JSON.stringify(payload) });
-
-  empCodigo.value = "";
-  empNome.value = "";
-  empCnpj.value = "";
-  empUf.value = "";
-
-  await carregarEmpresas();
-  filtrarEmpresas();
-
-  alert("Empresa cadastrada!");
-}
-
-async function listarEmpresasDireto(){
-  abrirCadastroEmpresas();
-}
-
-async function salvarEdicao(){
-  const payload = {
-    action:"updateEmpresa",
-    codigo:editCodigo.value,
-    nome:editNome.value,
-    cnpj:editCnpj.value,
-    uf:editUf.value
-  };
-
-  await fetch(API, {
-    method:"POST",
-    body:JSON.stringify(payload)
+  let dados = await fetch(`${API}?action=getEmpresas`).then(r=>r.json()).catch(e=>[]);
+  let html = "";
+  dados.forEach(emp=>{
+    html += `
+      <tr>
+        <td>${emp.nome}</td>
+        <td>${emp.cnpj}</td>
+        <td>${emp.uf}</td>
+        <td><button>Editar</button></td>
+      </tr>
+    `;
   });
-
-  alert("Empresa atualizada!");
-  fecharModal();
-}
-
-async function excluirEmpresa(){
-  if(!confirm("Tem certeza?")) return;
-
-  await fetch(API, {
-    method:"POST",
-    body: JSON.stringify({
-      action:"deleteEmpresa",
-      codigo:editCodigo.value
-    })
-  });
-
-  alert("Empresa excluída!");
-  fecharModal();
-}
-
-
-/* ======================================================
-      LICITAÇÕES
-====================================================== */
-
-async function salvarLicitacao(){
-  const dados = {
-    action: "addLicitacao",
-    codigo: licCodigo.value,
-    instituicao: licInst.value,
-    dataSessaoISO: licData.value,
-    valorBR: licValor.value,
-    criterio: licCriterio.value,
-    modo: licModo.value
-  };
-
-  await fetch(API, {
-    method:"POST",
-    body: JSON.stringify(dados)
-  });
-
-  alert("Licitação cadastrada!");
-  fecharModal();
-}
-
-
-/* ======================================================
-      IMPORTAÇÃO EXCEL (placeholder)
-====================================================== */
-async function enviarExcel(){
-  alert("Importação Excel será implementada junto ao backend.");
+  document.querySelector("#tabelaEmpresas tbody").innerHTML = html;
 }
 
 </script>
