@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Acompanhamento de Processos • LICITAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --azul:#0b1e39;
+  --azul-claro:#2d6cdf;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --shadow:0 8px 25px rgba(0,0,0,0.12);
+  --radius:20px;
+}
+
+body{
+  margin:0;
+  padding:20px;
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+}
+
+h1{
+  text-align:center;
+  color:var(--azul);
+  margin-bottom:30px;
+}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:25px;
+}
+
+/* ===== TIMELINE ===== */
+.timeline{
+  display:flex;
+  align-items:center;
+  gap:35px;
+  margin:20px 0;
+}
+
+.step{
+  text-align:center;
+  color:#555;
+  font-size:13px;
+}
+
+.circle{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:#d2defc;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:20px;
+  color:var(--azul-claro);
+  margin:0 auto 5px auto;
+}
+
+.line{
+  flex:1;
+  height:3px;
+  background:#d2defc;
+}
+
+.active .circle{
+  background:var(--azul-claro);
+  color:white;
+}
+
+.active .text{
+  color:var(--azul);
+  font-weight:600;
+}
+
+/* LISTA ITENS */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th,td{
+  padding:8px;
+  border-bottom:1px solid #ddd;
+}
+
+th{
+  background:var(--azul);
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Acompanhamento dos Processos</h1>
+
+<div id="cards"></div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec"; // troque pelo seu
+
+(async function(){
+    const empresas = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+    const itens     = await fetch(`${API}?action=getItens&codigo=ALL`).then(r=>r.json());
+    const remessas  = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
+    const faturado  = await fetch(`${API}?action=listarFaturado`).then(r=>r.json());
+
+    let html = "";
+
+    empresas.forEach(emp=>{
+        // ITENS DA EMPRESA
+        const itensEmpresa = itens.filter(i => i.codigoLicitacao === emp.codigo);
+
+        const iniciou = itensEmpresa.length > 0;
+
+        // total itens
+        let totalItens = 0;
+        itensEmpresa.forEach(i=>{
+            totalItens += Number(i.quantMin) * Number(i.valorUnit);
+        });
+
+        // ROMANEIO
+        const rom = remessas.find(r => r.codigoLicitacao === emp.codigo);
+
+        const emEntrega = !!rom;
+
+        // FATURAMENTO
+        const fat = faturado.find(f => f.romaneioID === (rom?.romaneioID || ""));
+        let concluido = fat?.status === "RECEBIDO";
+
+        // TIMELINE STATUS
+        const s1 = iniciou ? "active" : "";
+        const s2 = totalItens > 0 ? "active" : "";
+        const s3 = emEntrega ? "active" : "";
+        const s4 = concluido ? "active" : "";
+
+        html += `
+        <div class="card">
+            <h2>${emp.nome}</h2>
+            <p><b>CNPJ:</b> ${emp.cnpj}</p>
+            <p><b>Valor total:</b> R$ ${totalItens.toFixed(2)}</p>
+
+            <div class="timeline">
+
+                <div class="step ${s1}">
+                    <div class="circle">✔</div>
+                    <div class="text">Iniciado</div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="step ${s2}">
+                    <div class="circle">✔</div>
+                    <div class="text">Em análise</div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="step ${s3}">
+                    <div class="circle">✔</div>
+                    <div class="text">Em entrega</div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="step ${s4}">
+                    <div class="circle">✔</div>
+                    <div class="text">Concluído</div>
+                </div>
+            </div>
+
+            ${itensEmpresa.length > 0 ?
+            `<h3>Itens cadastrados</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>TR</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Valor Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                ${
+                    itensEmpresa.map(i=>`
+                        <tr>
+                            <td>${i.itemTR}</td>
+                            <td>${i.especificacao.substring(0,50)}...</td>
+                            <td>${i.quantMin}</td>
+                            <td>R$ ${Number(i.valorUnit).toFixed(2)}</td>
+                        </tr>
+                    `).join("")
+                }
+                </tbody>
+            </table>`
+            : "<i>Nenhum item cadastrado ainda.</i>"}
+
+        </div>
+        `;
+    });
+
+    document.getElementById("cards").innerHTML = html;
+})();
+</script>
+
+</body>
+</html>
