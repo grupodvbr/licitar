@@ -11,31 +11,31 @@
   --azul-escuro:#091627;
   --dourado:#c9a86c;
   --bg:#eef2f7;
-  --card:#fff;
-  --radius:18px;
-  --shadow:0 10px 28px rgba(0,0,0,.15);
+  --card:#ffffff;
+  --radius:20px;
+  --shadow:0 10px 28px rgba(0,0,0,0.15);
 }
 
 body{
   margin:0;
   padding:20px;
-  font-family:'Inter', sans-serif;
   background:var(--bg);
+  font-family:'Inter',sans-serif;
+  color:#222;
 }
 
-/* TÍTULO */
 h1{
   text-align:center;
   color:var(--azul);
   margin-bottom:25px;
+  font-size:28px;
 }
 
-/* DASHBOARD */
-.dashboard{
+/* GRID CARDS */
+.cards{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:18px;
-  margin-bottom:25px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
 }
 
 .card{
@@ -43,63 +43,74 @@ h1{
   padding:20px;
   border-radius:var(--radius);
   box-shadow:var(--shadow);
+  text-align:center;
 }
 
 .card h3{
   margin:0;
-  color:var(--azul-escuro);
-  font-size:17px;
+  font-size:18px;
+  color:var(--azul);
 }
-
-.card .valor{
+.valor{
+  margin-top:10px;
   font-size:26px;
   font-weight:700;
-  margin-top:10px;
-  color:var(--dourado);
+  color:var(--azul-escuro);
 }
 
-/* LISTAS */
-h2{
-  margin-top:30px;
+/* SEÇÕES */
+.section{
+  background:white;
+  padding:20px;
+  border-radius:var(--radius);
+  margin-top:25px;
+  box-shadow:var(--shadow);
+}
+
+.section h2{
+  margin:0 0 15px 0;
   color:var(--azul);
 }
 
+/* TABELAS */
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:10px;
 }
-th,td{
-  padding:10px;
+
+th, td{
+  padding:12px;
   border-bottom:1px solid #ddd;
   font-size:14px;
 }
+
 th{
   background:var(--azul);
   color:white;
 }
 
-/* BOTÕES */
 button{
-  padding:8px 12px;
-  background:var(--azul);
+  padding:6px 12px;
   border:none;
   border-radius:8px;
-  color:white;
   cursor:pointer;
-  font-size:14px;
-}
-button:hover{
-  background:var(--azul-escuro);
 }
 
-.btn-recebido{
+.btnStatus{
   background:var(--dourado);
-  color:#000;
+  color:black;
   font-weight:600;
 }
-.btn-recebido:hover{
+.btnStatus:hover{
   background:#b89554;
+}
+
+.btnJson{
+  background:var(--azul);
+  color:white;
+}
+.btnJson:hover{
+  background:var(--azul-escuro);
 }
 
 /* POPUP JSON */
@@ -107,194 +118,210 @@ button:hover{
   position:fixed;
   top:0; left:0;
   width:100%; height:100%;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,0.55);
   display:none;
   justify-content:center;
   align-items:center;
   padding:20px;
 }
+
 .popup{
   background:white;
-  max-width:500px;
+  max-width:600px;
   width:100%;
   padding:20px;
-  border-radius:16px;
+  border-radius:15px;
   box-shadow:var(--shadow);
-}
-.popup h3{
-  margin-top:0;
-  color:var(--azul);
-}
-pre{
-  white-space:pre-wrap;
-  background:#f2f2f2;
-  padding:12px;
-  border-radius:8px;
-  font-size:13px;
+  animation:fade .2s ease;
+  max-height:85vh;
+  overflow:auto;
 }
 
+@keyframes fade{
+  from{opacity:0; transform:scale(.85);}
+  to{opacity:1; transform:scale(1);}
+}
+
+.btnFechar{
+  background:#555;
+  color:white;
+  margin-top:10px;
+}
 </style>
 </head>
+
 <body>
 
 <h1>Painel Financeiro</h1>
 
-<!-- DASHBOARD -->
-<div class="dashboard">
+<!-- ========================= CARDS ============================ -->
+<div class="cards">
   <div class="card">
     <h3>Total a Receber</h3>
-    <div class="valor" id="totalReceber">R$ 0,00</div>
+    <div class="valor" id="vReceber">R$ 0,00</div>
   </div>
 
   <div class="card">
-    <h3>Total Recebido</h3>
-    <div class="valor" id="totalRecebido">R$ 0,00</div>
+    <h3>Recebido</h3>
+    <div class="valor" id="vRecebido">R$ 0,00</div>
   </div>
 
   <div class="card">
-    <h3>Total Pendente</h3>
-    <div class="valor" id="totalPendente">R$ 0,00</div>
+    <h3>Pendente</h3>
+    <div class="valor" id="vPendente">R$ 0,00</div>
   </div>
 
   <div class="card">
     <h3>Romaneios Gerados</h3>
-    <div class="valor" id="totalRomaneios">0</div>
+    <div class="valor" id="vRomaneios">0</div>
   </div>
 </div>
 
-<!-- LISTA FATURADO -->
-<h2>Contas a Receber</h2>
-<table id="tabelaFaturado">
-  <thead>
-    <tr>
-      <th>Empresa</th>
-      <th>Valor</th>
-      <th>Data Prevista</th>
-      <th>Status</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<!-- ========================= CONTAS A RECEBER ============================ -->
+<div class="section">
+  <h2>Contas a Receber</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Empresa</th>
+        <th>Valor</th>
+        <th>Data</th>
+        <th>Recebimento</th>
+        <th>Fornecedor</th>
+        <th>Status</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody id="tbFat"></tbody>
+  </table>
+</div>
 
-<!-- LISTA REMESSAS -->
-<h2>Romaneios (JSON)</h2>
-<table id="tabelaRemessas">
-  <thead>
-    <tr>
-      <th>Romaneio</th>
-      <th>Empresa</th>
-      <th>Total</th>
-      <th>Visualizar JSON</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<!-- ========================= REMESSAS ============================ -->
+<div class="section">
+  <h2>Romaneios (JSON)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Data</th>
+        <th>Total</th>
+        <th>JSON</th>
+      </tr>
+    </thead>
+    <tbody id="tbRem"></tbody>
+  </table>
+</div>
 
-<!-- POPUP -->
-<div id="popJSON" class="overlay">
+<!-- POPUP JSON -->
+<div id="popup" class="overlay">
   <div class="popup">
-    <h3>JSON do Romaneio</h3>
-    <pre id="jsonConteudo"></pre>
-    <button onclick="fecharJSON()">Fechar</button>
+    <pre id="jsonView" style="white-space:pre-wrap;"></pre>
+    <button class="btnFechar" onclick="fecharPopup()">Fechar</button>
   </div>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwq4Tl0h_2BjnawrERxl546y1GKf0H0yt9HnwDHROcmANHeV393V3WeR95zUeC6MrXg/exec"; // Altere para o URL do GAS publicado
+const API = "https://script.google.com/macros/s/AKfycbzBH4008kB4AoA6_WAyuiPrB-FTZJXa8KGywkBkbHEqXriX9BPRDFoAMiN4UObYdeC3/exec"; // TROCAR
 
-/* ================================
-   CARREGAMENTO INICIAL
-================================ */
+/* ===========================
+   CARREGAR DADOS
+=========================== */
 window.onload = ()=>{
   carregarFaturado();
   carregarRemessas();
 };
 
-/* ================================
-   CARREGAR FATURADO
-================================ */
+/* ===========================
+   FATURADO
+=========================== */
 async function carregarFaturado(){
-  const dados = await fetch(`${API}?action=listarFaturado`).then(r=>r.json());
+  let dados = await fetch(`${API}?action=listarFaturado`).then(r=>r.json());
 
   let html = "";
-  let totalReceber=0, totalRecebido=0;
+  let totalReceber = 0;
+  let totalRecebido = 0;
+  let totalPendente = 0;
 
   dados.forEach(f=>{
-    if(f.status === "PENDENTE") totalReceber += Number(f.valor);
-    if(f.status === "RECEBIDO") totalRecebido += Number(f.valor);
+    let valor = Number(f.valor || 0);
+
+    if(f.status === "RECEBIDO") totalRecebido += valor;
+    else totalPendente += valor;
+
+    totalReceber += valor;
 
     html += `
       <tr>
         <td>${f.empresa}</td>
-        <td>R$ ${Number(f.valor).toFixed(2)}</td>
+        <td>R$ ${valor.toFixed(2)}</td>
+        <td>${f.dataRomaneio}</td>
         <td>${f.dataRecebimentoPrevista}</td>
+        <td>${f.fornecedor}</td>
         <td>${f.status}</td>
         <td>
-          <button onclick="verJSON('${f.jsonResumo.replace(/"/g,'&quot;')}')">JSON</button>
-          ${
-            f.status==="PENDENTE"
-            ? `<button class="btn-recebido" onclick="marcarRecebido('${f.faturadoID}')">Recebido</button>`
-            : ""
-          }
+          <button class="btnStatus" onclick="alterarStatus('${f.faturadoID}','${f.status}')">
+            ${f.status === "RECEBIDO" ? "Marcar Pendente" : "Marcar Recebido"}
+          </button>
         </td>
       </tr>
     `;
   });
 
-  document.querySelector("#tabelaFaturado tbody").innerHTML = html;
+  document.getElementById("tbFat").innerHTML = html;
 
-  // Totais
-  document.getElementById("totalReceber").innerText = "R$ " + totalReceber.toFixed(2);
-  document.getElementById("totalRecebido").innerText = "R$ " + totalRecebido.toFixed(2);
-  document.getElementById("totalPendente").innerText = "R$ " + (totalReceber).toFixed(2);
+  // Atualiza cards
+  document.getElementById("vReceber").innerHTML = "R$ " + totalReceber.toFixed(2);
+  document.getElementById("vRecebido").innerHTML = "R$ " + totalRecebido.toFixed(2);
+  document.getElementById("vPendente").innerHTML = "R$ " + totalPendente.toFixed(2);
 }
 
-/* ================================
-   CARREGAR REMESSAS
-================================ */
+/* ===========================
+   REMESSAS (JSON)
+=========================== */
 async function carregarRemessas(){
-  const dados = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
-  let html = "";
+  let dados = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
 
-  dados.forEach(r=>{
+  let html = "";
+  document.getElementById("vRomaneios").innerHTML = dados.length;
+
+  dados.forEach(rm=>{
     html += `
       <tr>
-        <td>${r.romaneioID}</td>
-        <td>${r.empresa}</td>
-        <td>R$ ${Number(r.total).toFixed(2)}</td>
-        <td><button onclick="verJSON('${r.json.replace(/"/g,'&quot;')}')">Visualizar</button></td>
+        <td>${rm.romaneioID}</td>
+        <td>${rm.data}</td>
+        <td>R$ ${Number(rm.total).toFixed(2)}</td>
+        <td><button class="btnJson" onclick='abrirJson(${JSON.stringify(rm.json)})'>Ver</button></td>
       </tr>
     `;
   });
 
-  document.querySelector("#tabelaRemessas tbody").innerHTML = html;
-  document.getElementById("totalRomaneios").innerText = dados.length;
+  document.getElementById("tbRem").innerHTML = html;
 }
 
-/* ================================
-   VER JSON
-================================ */
-function verJSON(jsonRaw){
-  const obj = JSON.parse(jsonRaw.replace(/&quot;/g,'"'));
-  document.getElementById("jsonConteudo").textContent = JSON.stringify(obj, null, 2);
-  document.getElementById("popJSON").style.display = "flex";
-}
-function fecharJSON(){
-  document.getElementById("popJSON").style.display = "none";
+/* ===========================
+   ALTERAR STATUS
+=========================== */
+async function alterarStatus(id, statusAtual){
+  let novo = statusAtual === "RECEBIDO" ? "PENDENTE" : "RECEBIDO";
+
+  await fetch(`${API}?action=updateStatus&id=${id}&status=${novo}`)
+    .then(r=>r.json());
+
+  carregarFaturado();
 }
 
-/* ================================
-   MARCAR RECEBIDO
-================================ */
-async function marcarRecebido(id){
-  const r = await fetch(`${API}?action=updateStatus&id=${id}&status=RECEBIDO`).then(r=>r.json());
-  if(r.ok){
-    alert("Pagamento confirmado!");
-    carregarFaturado();
-  }
+/* ===========================
+   POPUP JSON
+=========================== */
+function abrirJson(obj){
+  let jsonCorrigido = typeof obj === "string" ? JSON.parse(obj) : obj;
+  document.getElementById("jsonView").innerText = JSON.stringify(jsonCorrigido,null,2);
+  document.getElementById("popup").style.display = "flex";
 }
 
+function fecharPopup(){
+  document.getElementById("popup").style.display = "none";
+}
 </script>
 
 </body>
