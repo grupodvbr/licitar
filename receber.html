@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel Financeiro • LICITAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --azul:#0b1e39;
+  --azul-escuro:#091627;
+  --dourado:#c9a86c;
+  --bg:#eef2f7;
+  --card:#fff;
+  --radius:18px;
+  --shadow:0 10px 28px rgba(0,0,0,.15);
+}
+
+body{
+  margin:0;
+  padding:20px;
+  font-family:'Inter', sans-serif;
+  background:var(--bg);
+}
+
+/* TÍTULO */
+h1{
+  text-align:center;
+  color:var(--azul);
+  margin-bottom:25px;
+}
+
+/* DASHBOARD */
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:18px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.card h3{
+  margin:0;
+  color:var(--azul-escuro);
+  font-size:17px;
+}
+
+.card .valor{
+  font-size:26px;
+  font-weight:700;
+  margin-top:10px;
+  color:var(--dourado);
+}
+
+/* LISTAS */
+h2{
+  margin-top:30px;
+  color:var(--azul);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  font-size:14px;
+}
+th{
+  background:var(--azul);
+  color:white;
+}
+
+/* BOTÕES */
+button{
+  padding:8px 12px;
+  background:var(--azul);
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+  font-size:14px;
+}
+button:hover{
+  background:var(--azul-escuro);
+}
+
+.btn-recebido{
+  background:var(--dourado);
+  color:#000;
+  font-weight:600;
+}
+.btn-recebido:hover{
+  background:#b89554;
+}
+
+/* POPUP JSON */
+.overlay{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+.popup{
+  background:white;
+  max-width:500px;
+  width:100%;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.popup h3{
+  margin-top:0;
+  color:var(--azul);
+}
+pre{
+  white-space:pre-wrap;
+  background:#f2f2f2;
+  padding:12px;
+  border-radius:8px;
+  font-size:13px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Painel Financeiro</h1>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+  <div class="card">
+    <h3>Total a Receber</h3>
+    <div class="valor" id="totalReceber">R$ 0,00</div>
+  </div>
+
+  <div class="card">
+    <h3>Total Recebido</h3>
+    <div class="valor" id="totalRecebido">R$ 0,00</div>
+  </div>
+
+  <div class="card">
+    <h3>Total Pendente</h3>
+    <div class="valor" id="totalPendente">R$ 0,00</div>
+  </div>
+
+  <div class="card">
+    <h3>Romaneios Gerados</h3>
+    <div class="valor" id="totalRomaneios">0</div>
+  </div>
+</div>
+
+<!-- LISTA FATURADO -->
+<h2>Contas a Receber</h2>
+<table id="tabelaFaturado">
+  <thead>
+    <tr>
+      <th>Empresa</th>
+      <th>Valor</th>
+      <th>Data Prevista</th>
+      <th>Status</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- LISTA REMESSAS -->
+<h2>Romaneios (JSON)</h2>
+<table id="tabelaRemessas">
+  <thead>
+    <tr>
+      <th>Romaneio</th>
+      <th>Empresa</th>
+      <th>Total</th>
+      <th>Visualizar JSON</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- POPUP -->
+<div id="popJSON" class="overlay">
+  <div class="popup">
+    <h3>JSON do Romaneio</h3>
+    <pre id="jsonConteudo"></pre>
+    <button onclick="fecharJSON()">Fechar</button>
+  </div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbwq4Tl0h_2BjnawrERxl546y1GKf0H0yt9HnwDHROcmANHeV393V3WeR95zUeC6MrXg/exec"; // Altere para o URL do GAS publicado
+
+/* ================================
+   CARREGAMENTO INICIAL
+================================ */
+window.onload = ()=>{
+  carregarFaturado();
+  carregarRemessas();
+};
+
+/* ================================
+   CARREGAR FATURADO
+================================ */
+async function carregarFaturado(){
+  const dados = await fetch(`${API}?action=listarFaturado`).then(r=>r.json());
+
+  let html = "";
+  let totalReceber=0, totalRecebido=0;
+
+  dados.forEach(f=>{
+    if(f.status === "PENDENTE") totalReceber += Number(f.valor);
+    if(f.status === "RECEBIDO") totalRecebido += Number(f.valor);
+
+    html += `
+      <tr>
+        <td>${f.empresa}</td>
+        <td>R$ ${Number(f.valor).toFixed(2)}</td>
+        <td>${f.dataRecebimentoPrevista}</td>
+        <td>${f.status}</td>
+        <td>
+          <button onclick="verJSON('${f.jsonResumo.replace(/"/g,'&quot;')}')">JSON</button>
+          ${
+            f.status==="PENDENTE"
+            ? `<button class="btn-recebido" onclick="marcarRecebido('${f.faturadoID}')">Recebido</button>`
+            : ""
+          }
+        </td>
+      </tr>
+    `;
+  });
+
+  document.querySelector("#tabelaFaturado tbody").innerHTML = html;
+
+  // Totais
+  document.getElementById("totalReceber").innerText = "R$ " + totalReceber.toFixed(2);
+  document.getElementById("totalRecebido").innerText = "R$ " + totalRecebido.toFixed(2);
+  document.getElementById("totalPendente").innerText = "R$ " + (totalReceber).toFixed(2);
+}
+
+/* ================================
+   CARREGAR REMESSAS
+================================ */
+async function carregarRemessas(){
+  const dados = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
+  let html = "";
+
+  dados.forEach(r=>{
+    html += `
+      <tr>
+        <td>${r.romaneioID}</td>
+        <td>${r.empresa}</td>
+        <td>R$ ${Number(r.total).toFixed(2)}</td>
+        <td><button onclick="verJSON('${r.json.replace(/"/g,'&quot;')}')">Visualizar</button></td>
+      </tr>
+    `;
+  });
+
+  document.querySelector("#tabelaRemessas tbody").innerHTML = html;
+  document.getElementById("totalRomaneios").innerText = dados.length;
+}
+
+/* ================================
+   VER JSON
+================================ */
+function verJSON(jsonRaw){
+  const obj = JSON.parse(jsonRaw.replace(/&quot;/g,'"'));
+  document.getElementById("jsonConteudo").textContent = JSON.stringify(obj, null, 2);
+  document.getElementById("popJSON").style.display = "flex";
+}
+function fecharJSON(){
+  document.getElementById("popJSON").style.display = "none";
+}
+
+/* ================================
+   MARCAR RECEBIDO
+================================ */
+async function marcarRecebido(id){
+  const r = await fetch(`${API}?action=updateStatus&id=${id}&status=RECEBIDO`).then(r=>r.json());
+  if(r.ok){
+    alert("Pagamento confirmado!");
+    carregarFaturado();
+  }
+}
+
+</script>
+
+</body>
+</html>
