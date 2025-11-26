@@ -37,10 +37,8 @@ body{
   font-weight:600;
 }
 
-/* CONTAINER */
 .container{ padding:25px; }
 
-/* TITULO */
 h1{
   text-align:center;
   color:var(--azul);
@@ -58,51 +56,53 @@ h1{
 
 /* ======================== TIMELINE ======================= */
 .timeline{
-  width:100%;
-  margin:25px 0;
   position:relative;
+  width:100%;
+  margin:30px 0;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.line{
+.timeline .line{
   position:absolute;
-  top:22px;
+  top:24px;
   left:0;
-  height:6px;
   width:100%;
+  height:6px;
   background:#dce4ff;
   border-radius:4px;
   z-index:1;
 }
 
-/* NOVA LÓGICA: trecho final = 25% da barra */
+/* A BARRA AGORA COMEÇA EXATAMENTE EM EM ENTREGA (50%) */
 .progress-line{
   position:absolute;
-  top:22px;
-  left:50%; /* inicia APENAS na 3ª bolinha */
+  top:24px;
+  left:50%;
   height:6px;
   width:0%;
-  background:linear-gradient(90deg,var(--azul-light),var(--azul-claro));
+  background:linear-gradient(90deg, var(--azul-light), var(--azul-claro));
   border-radius:4px;
-  transition:.4s;
   z-index:2;
+  transition:width .4s;
 }
 
+/* "% ENTREGUE" no lugar correto */
 .percent{
   position:absolute;
-  font-size:12px;
+  top:-25px;
   background:var(--azul);
   color:white;
   padding:4px 8px;
   border-radius:8px;
+  font-size:13px;
   font-weight:700;
-  top:-25px;
   transform:translateX(-50%);
+  white-space:nowrap;
 }
 
-/* CIRCULOS */
+/* CÍRCULOS */
 .step{
   width:25%;
   text-align:center;
@@ -115,11 +115,11 @@ h1{
   background:#d7e1ff;
   border-radius:50%;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   font-size:22px;
   color:white;
-  margin:0 auto;
+  margin:auto;
 }
 
 .step.active .circle{
@@ -127,34 +127,34 @@ h1{
 }
 
 .step span{
-  font-size:13px;
-  margin-top:5px;
   display:block;
+  margin-top:5px;
   color:#444;
+  font-size:13px;
 }
 
-.step.active span{ color:var(--azul); font-weight:600; }
+.step.active span{
+  font-weight:600;
+  color:var(--azul);
+}
 
-/* TABELA */
+/* TABLE */
 table{
   width:100%;
   border-collapse:collapse;
+  margin-top:15px;
 }
-
 th{
   background:var(--azul);
   color:white;
   padding:10px;
-  font-size:14px;
 }
-
 td{
   padding:10px;
   border-bottom:1px solid #ddd;
   background:white;
   cursor:pointer;
 }
-
 td:hover{ background:#f5f7ff; }
 
 /* POPUP */
@@ -165,26 +165,22 @@ td:hover{ background:#f5f7ff; }
   display:none;
   justify-content:center;
   align-items:center;
-  padding:20px;
   z-index:99999;
 }
-
 .popup-box{
   background:white;
-  width:100%;
-  max-width:700px;
-  max-height:85vh;
+  width:95%;
+  max-width:650px;
+  max-height:90vh;
   overflow:auto;
   padding:20px;
   border-radius:15px;
   animation:fade .25s ease;
 }
-
 @keyframes fade{
   from{opacity:0;transform:scale(.85);}
   to{opacity:1;transform:scale(1);}
 }
-
 .btnFechar{
   margin-top:15px;
   padding:10px 15px;
@@ -194,8 +190,6 @@ td:hover{ background:#f5f7ff; }
   border-radius:8px;
   cursor:pointer;
 }
-
-.btnFechar:hover{ background:#072035; }
 </style>
 </head>
 
@@ -213,19 +207,20 @@ td:hover{ background:#f5f7ff; }
   <div class="popup-box">
     <h2>Romaneios do Item</h2>
     <div id="popContent"></div>
-    <button class="btnFechar" onclick="fecharPopup()">Fechar</button>
+    <button class="btnFechar" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
   </div>
 </div>
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
-/* FECHAR POPUP */
-function fecharPopup(){
-  document.getElementById("popup").style.display = "none";
+/* POPUP */
+function abrirPopup(html){
+  document.getElementById("popContent").innerHTML = html;
+  document.getElementById("popup").style.display = "flex";
 }
 
-/* LOAD PRINCIPAL */
+/* MAIN LOADER */
 (async function(){
 
   const empresas = await (await fetch(`${API}?action=getEmpresas`)).json();
@@ -235,43 +230,40 @@ function fecharPopup(){
 
   let html = "";
 
-  for(let emp of empresas){
+  for (let emp of empresas){
 
     const itensEmpresa = itens.filter(i => i.codigoLicitacao === emp.codigo);
 
     let totalItens = 0;
-    let totalQtd = 0;
+    let totalQtd   = 0;
 
     itensEmpresa.forEach(i=>{
       totalItens += Number(i.quantMin)*Number(i.valorUnit);
-      totalQtd += Number(i.quantMin);
+      totalQtd   += Number(i.quantMin);
     });
 
-    /* ENTREGAS */
     const roms = remessas.filter(r => r.codigoLicitacao === emp.codigo);
 
     let totalEntregue = 0;
-
     roms.forEach(r=>{
       try{
-        const j = JSON.parse(r.json);
-        j.itens.forEach(i=> totalEntregue += Number(i.quant));
+        JSON.parse(r.json).itens.forEach(it=>{
+          totalEntregue += Number(it.quant);
+        });
       }catch(e){}
     });
 
-    const percentual = totalQtd > 0 ? (totalEntregue / totalQtd)*100 : 0;
+    const percentual = totalQtd ? (totalEntregue/totalQtd)*100 : 0;
 
-    /* STATUS */
-    const iniciou = itensEmpresa.length > 0;
-    const s2 = totalItens > 0;
-    const s3 = percentual > 0;
+    const iniciou = itensEmpresa.length>0;
+    const s2 = totalItens>0;
+    const s3 = percentual>0;
     const fat = faturado.find(f => f.romaneioID === (roms[0]?.romaneioID || ""));
     const s4 = fat?.status === "RECEBIDO";
 
-    /* 🟦 BARRA AJUSTADA */
-    const barraFinal = Math.min(percentual,100);
-    const width = barraFinal/100 * 25; /* trecho final = 25% */
-    const px = `calc(${width}% )`;
+    /* AQUI: CÁLCULO CORRETO DA BARRA */
+    const width = percentual * 0.25;    // 100% vira 25%
+    const left  = 50 + width;           // começa em 50%
 
     html += `
     <div class="card">
@@ -283,58 +275,42 @@ function fecharPopup(){
       <div class="timeline">
         <div class="line"></div>
 
-        <div class="progress-line" style="width:${px};">
-          <span class="percent" style="left:100%;">${percentual.toFixed(2)}%</span>
-        </div>
+        <div class="progress-line" style="width:${width}%;"></div>
+        <div class="percent" style="left:${left}%;">${percentual.toFixed(2)}%</div>
 
         <div class="step ${iniciou?'active':''}">
-          <div class="circle">✔</div>
-          <span>Iniciado</span>
+          <div class="circle">✔</div><span>Iniciado</span>
         </div>
-
         <div class="step ${s2?'active':''}">
-          <div class="circle">✔</div>
-          <span>Em análise</span>
+          <div class="circle">✔</div><span>Em análise</span>
         </div>
-
         <div class="step ${s3?'active':''}">
-          <div class="circle">✔</div>
-          <span>Em entrega</span>
+          <div class="circle">✔</div><span>Em entrega</span>
         </div>
-
         <div class="step ${s4?'active':''}">
-          <div class="circle">✔</div>
-          <span>Concluído</span>
+          <div class="circle">✔</div><span>Concluído</span>
         </div>
 
       </div>
 
       <h3>Itens cadastrados</h3>
-
       <table>
         <thead>
-        <tr>
-          <th>TR</th>
-          <th>Descrição</th>
-          <th>Marca</th>
-          <th>Qtd</th>
-          <th>Valor Unit</th>
-          <th>Total Item</th>
-        </tr>
+          <tr><th>TR</th><th>Descrição</th><th>Marca</th><th>Qtd</th><th>Valor Unit</th><th>Total Item</th></tr>
         </thead>
         <tbody>
-          ${itensEmpresa.map(i=>{
-            const tot = Number(i.quantMin)*Number(i.valorUnit);
-            return `
-            <tr onclick="abrirItem('${emp.codigo}','${i.itemTR}')">
+        ${itensEmpresa.map(i=>{
+          const total = i.quantMin * i.valorUnit;
+          return `
+            <tr onclick="mostrarRomaneios('${emp.codigo}','${i.itemTR}')">
               <td>${i.itemTR}</td>
-              <td>${i.especificacao.substring(0,70)}...</td>
+              <td>${i.especificacao.substring(0,80)}...</td>
               <td>${i.marca}</td>
               <td>${i.quantMin}</td>
               <td>R$ ${Number(i.valorUnit).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-              <td>R$ ${tot.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+              <td>R$ ${total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
             </tr>`;
-          }).join("")}
+        }).join("")}
         </tbody>
       </table>
 
@@ -343,27 +319,26 @@ function fecharPopup(){
   }
 
   document.getElementById("cards").innerHTML = html;
-  document.getElementById("overlay").style.display = "none";
+  document.getElementById("overlay").style.display="none";
 
 })();
 
-/* POP-UP ROMANEIOS */
-async function abrirItem(cod, tr){
+/* Romaneios por item */
+async function mostrarRomaneios(cod,tr){
 
   const remessas = await (await fetch(`${API}?action=listarRemessas`)).json();
 
-  let lista = [];
+  let lista=[];
 
   remessas.forEach(r=>{
     if(r.codigoLicitacao === cod){
       try{
-        const j = JSON.parse(r.json);
-        j.itens.forEach(i=>{
-          if(String(i.itemTR) === String(tr)){
+        JSON.parse(r.json).itens.forEach(i=>{
+          if(i.itemTR == tr){
             lista.push({
               rom:r.romaneioID,
               data:r.data,
-              quant:i.quant,
+              qtd:i.quant,
               total:i.quant * i.valorUnit
             });
           }
@@ -377,26 +352,22 @@ async function abrirItem(cod, tr){
   if(lista.length===0){
     html="<p>Nenhuma entrega registrada para este item.</p>";
   }else{
-    html = `
-    <table>
-    <thead>
-      <tr><th>Romaneio</th><th>Data</th><th>Qtd</th><th>Total</th></tr>
-    </thead>
-    <tbody>
-    ${lista.map(l=>`
-      <tr>
-        <td>${l.rom}</td>
-        <td>${l.data}</td>
-        <td>${l.quant}</td>
-        <td>R$ ${l.total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-      </tr>`).join("")}
-    </tbody>
-    </table>`;
+    html=`<table>
+      <thead><tr><th>Romaneio</th><th>Data</th><th>Qtd</th><th>Total</th></tr></thead>
+      <tbody>
+      ${lista.map(l=>`
+        <tr>
+          <td>${l.rom}</td>
+          <td>${l.data}</td>
+          <td>${l.qtd}</td>
+          <td>R$ ${l.total.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+        </tr>`).join("")}
+      </tbody></table>`;
   }
 
-  document.getElementById("popContent").innerHTML = html;
-  document.getElementById("popup").style.display="flex";
+  abrirPopup(html);
 }
+
 </script>
 
 </body>
