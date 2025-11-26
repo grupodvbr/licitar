@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* =====================================================
+   PALETA OFICIAL LICITAR
+===================================================== */
 :root {
   --azul:#0b1e39;
   --azul-claro:#15345c;
@@ -13,75 +16,144 @@
   --bg:#eef2f7;
   --card:#ffffff;
   --radius:18px;
-  --shadow:0 10px 25px rgba(0,0,0,.12);
+  --shadow:0 10px 28px rgba(0,0,0,.15);
+
+  --glass:rgba(255,255,255,.75);
+  --blur:blur(14px);
 }
 
+/* =====================================================
+   BASE
+===================================================== */
 body {
   margin:0;
-  padding:20px;
+  padding:25px;
   background:var(--bg);
   font-family:'Inter',sans-serif;
+  color:#111;
 }
 
 h1 {
   text-align:center;
   color:var(--azul);
-  margin-bottom:25px;
+  margin-bottom:35px;
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:-0.5px;
 }
 
-/* GRID PRINCIPAL */
+/* =====================================================
+   GRID E CARDS
+===================================================== */
 .grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:25px;
 }
 
-/* CARDS */
 .card {
-  background:var(--card);
+  background:var(--glass);
+  backdrop-filter:var(--blur);
   border-radius:var(--radius);
-  padding:20px;
+  padding:22px;
   box-shadow:var(--shadow);
+  border:1px solid rgba(255,255,255,.4);
+  animation:fadeCard .4s ease;
+}
+
+@keyframes fadeCard{
+  from{opacity:0; transform:translateY(15px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
 .card h2 {
   margin-top:0;
   color:var(--azul);
-  font-size:20px;
+  font-size:22px;
+  font-weight:700;
+  border-left:4px solid var(--dourado);
+  padding-left:10px;
 }
 
+/* BOTÃO AÇÃO */
 .card button {
   width:100%;
-  padding:12px;
+  padding:13px;
   background:var(--dourado);
   color:#000;
   font-size:15px;
-  font-weight:600;
+  font-weight:700;
   border:none;
   border-radius:12px;
   cursor:pointer;
+  transition:.2s;
 }
 .card button:hover {
   background:#b89554;
+  transform:translateY(-1px);
 }
 
-/* TABELAS */
+/* =====================================================
+   TABELAS
+===================================================== */
 table {
   width:100%;
   border-collapse:collapse;
   margin-top:15px;
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
 }
-th, td {
-  padding:10px;
-  border-bottom:1px solid #ddd;
-  font-size:14px;
-}
+
 th {
   background:var(--azul);
   color:white;
+  padding:12px;
+  font-size:14px;
+  letter-spacing:.5px;
 }
 
-/* POPUP */
+td {
+  padding:12px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+
+tr:hover td {
+  background:#f8f9fb;
+}
+
+/* BOTÕES AÇÕES */
+.btnEditar {
+  background:var(--azul);
+  color:#fff;
+  padding:7px 12px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  margin-right:5px;
+  transition:.2s;
+}
+.btnEditar:hover {
+  background:var(--azul-claro);
+}
+
+.btnExcluir {
+  background:#bb2b2b;
+  color:#fff;
+  padding:7px 12px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  transition:.2s;
+}
+.btnExcluir:hover {
+  background:#a12222;
+}
+
+/* =====================================================
+   POPUP
+===================================================== */
 .overlay {
   position:fixed;
   top:0; left:0;
@@ -91,37 +163,46 @@ th {
   justify-content:center;
   align-items:center;
   padding:20px;
-}
-
-.popup {
-  background:white;
-  padding:22px;
-  width:100%;
-  max-width:420px;
-  border-radius:18px;
-  box-shadow:var(--shadow);
   animation:fade .2s ease;
 }
 
 @keyframes fade {
-  from {opacity:0; transform:scale(.85);}
-  to {opacity:1; transform:scale(1);}
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+.popup {
+  background:white;
+  padding:25px;
+  width:100%;
+  max-width:420px;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  animation:scale .25s ease;
+}
+
+@keyframes scale {
+  from{opacity:0; transform:scale(.85);}
+  to{opacity:1; transform:scale(1);}
 }
 
 .popup h3 {
   margin-top:0;
   color:var(--azul);
-  margin-bottom:15px;
+  font-size:22px;
+  margin-bottom:18px;
 }
 
 input,select {
   width:100%;
   padding:12px;
   border:1px solid #ccc;
-  border-radius:10px;
-  margin-bottom:12px;
+  border-radius:12px;
+  margin-bottom:15px;
+  font-size:15px;
 }
 
+/* Botões popup */
 .btnSalvar {
   width:100%;
   background:var(--azul);
@@ -131,38 +212,25 @@ input,select {
   border-radius:12px;
   font-size:16px;
   cursor:pointer;
+  transition:.2s;
+  margin-bottom:8px;
 }
 .btnSalvar:hover {
   background:var(--azul-claro);
 }
 
 .btnClose {
-  margin-top:10px;
   width:100%;
   background:#666;
   color:white;
   padding:12px;
   border:none;
   border-radius:12px;
+  transition:.2s;
 }
-
-.btnEditar {
-  background:#0b1e39;
-  color:#fff;
-  padding:6px 10px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
+.btnClose:hover {
+  background:#555;
 }
-.btnExcluir {
-  background:#b13535;
-  color:#fff;
-  padding:6px 10px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-}
-
 </style>
 </head>
 <body>
@@ -171,10 +239,11 @@ input,select {
 
 <div class="grid">
 
-  <!-- CONTAS BANCÁRIAS -->
+  <!-- CONTAS -->
   <div class="card">
     <h2>Contas Bancárias</h2>
     <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
+
     <table id="tabelaContas">
       <thead>
         <tr>
@@ -192,6 +261,7 @@ input,select {
   <div class="card">
     <h2>Fornecedores</h2>
     <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
+
     <table id="tabelaFornec">
       <thead>
         <tr>
@@ -208,6 +278,7 @@ input,select {
   <div class="card">
     <h2>Empresas</h2>
     <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
+
     <table id="tabelaEmpresas">
       <thead>
         <tr>
@@ -229,16 +300,18 @@ input,select {
 </div>
 
 <script>
+/* =====================================================
+   API 
+===================================================== */
 const API = "https://script.google.com/macros/s/AKfycbwrYwsj3w2Ik53-aQaLLpcvPtjzGEXqz6pOeAAOXBWDfGHIAhCTSOl0H8WE79_winOQ/exec";
 
-let editando = null;       // tipo sendo editado
-let editCodigo = null;     // id do item sendo editado
+let editando = null;
+let editCodigo = null;
 
-/* ======================================
-   ABRIR POPUP (NOVO OU EDITAR)
-====================================== */
+/* =====================================================
+   ABRIR POPUP
+===================================================== */
 function abrirPopup(tipo, dados=null){
-
   editando = tipo;
   editCodigo = dados ? dados.codigo : null;
 
@@ -252,7 +325,7 @@ function abrirPopup(tipo, dados=null){
       <input id="conta" placeholder="Conta" value="${dados?.conta || ""}">
       <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo || ""}">
       <input id="pix" placeholder="Chave PIX" value="${dados?.pix || ""}">
-      <button class="btnSalvar" onclick="salvar()">Salvar</button>
+      <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
   }
@@ -263,7 +336,7 @@ function abrirPopup(tipo, dados=null){
       <input id="nome" placeholder="Nome" value="${dados?.nome || ""}">
       <input id="cnpj" placeholder="CNPJ" value="${dados?.cnpj || ""}">
       <input id="telefone" placeholder="Telefone" value="${dados?.telefone || ""}">
-      <button class="btnSalvar" onclick="salvar()">Salvar</button>
+      <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
   }
@@ -274,7 +347,7 @@ function abrirPopup(tipo, dados=null){
       <input id="nome" placeholder="Nome da Instituição" value="${dados?.nome || ""}">
       <input id="cnpj" placeholder="CNPJ" value="${dados?.cnpj || ""}">
       <input id="uf" placeholder="UF" value="${dados?.uf || ""}">
-      <button class="btnSalvar" onclick="salvar()">Salvar</button>
+      <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
   }
@@ -287,48 +360,47 @@ function fecharPopup(){
   document.getElementById("popup").style.display = "none";
 }
 
-/* ======================================
-   SALVAR (INSERT OU UPDATE)
-====================================== */
+/* =====================================================
+   SALVAR REGISTRO
+===================================================== */
 async function salvar(){
   let body = {};
   let rota = "";
 
   if(editando === "contas"){
     body = {
-      banco: document.getElementById("banco").value,
-      agencia: document.getElementById("agencia").value,
-      conta: document.getElementById("conta").value,
-      tipo: document.getElementById("tipo").value,
-      pix: document.getElementById("pix").value
+      banco: banco.value,
+      agencia: agencia.value,
+      conta: conta.value,
+      tipo: tipo.value,
+      pix: pix.value
     };
     rota = editCodigo ? "updateConta" : "addConta";
   }
 
   if(editando === "fornecedores"){
     body = {
-      nome: document.getElementById("nome").value,
-      cnpj: document.getElementById("cnpj").value,
-      telefone: document.getElementById("telefone").value
+      nome: nome.value,
+      cnpj: cnpj.value,
+      telefone: telefone.value
     };
     rota = editCodigo ? "updateFornecedor" : "addFornecedor";
   }
 
   if(editando === "empresas"){
     body = {
-      nome: document.getElementById("nome").value,
-      cnpj: document.getElementById("cnpj").value,
-      uf: document.getElementById("uf").value
+      nome: nome.value,
+      cnpj: cnpj.value,
+      uf: uf.value
     };
     rota = editCodigo ? "updateEmpresa" : "addEmpresa";
   }
 
   if(editCodigo) body.codigo = editCodigo;
 
-  const params = new URLSearchParams(body).toString();
-  const url = `${API}?action=${rota}&${params}`;
+  const url = `${API}?action=${rota}&${new URLSearchParams(body)}`;
 
-  const res = await fetch(url).then(r => r.json());
+  const res = await fetch(url).then(r=>r.json());
 
   if(res.ok){
     fecharPopup();
@@ -338,13 +410,12 @@ async function salvar(){
   }
 }
 
-/* ======================================
+/* =====================================================
    EXCLUIR
-====================================== */
+===================================================== */
 async function excluir(tipo, codigo){
-
   if(!confirm("Tem certeza que deseja excluir?")) return;
-
+  
   const url = `${API}?action=delete${tipo}&codigo=${codigo}`;
   const res = await fetch(url).then(r=>r.json());
 
@@ -355,12 +426,13 @@ async function excluir(tipo, codigo){
   }
 }
 
-/* ======================================
-   CARREGAR TUDO
-====================================== */
+/* =====================================================
+   CARREGAR TABELAS
+===================================================== */
 async function carregarContas(){
   let dados = await fetch(`${API}?action=getContas`).then(r=>r.json());
   let html = "";
+
   dados.forEach(c=>{
     html += `
       <tr>
@@ -371,15 +443,16 @@ async function carregarContas(){
           <button class="btnEditar" onclick='abrirPopup("contas", ${JSON.stringify(c)})'>Editar</button>
           <button class="btnExcluir" onclick='excluir("Conta","${c.codigo}")'>Excluir</button>
         </td>
-      </tr>
-    `;
+      </tr>`;
   });
-  document.querySelector("#tabelaContas tbody").innerHTML = html;
+
+  tabelaContas.querySelector("tbody").innerHTML = html;
 }
 
 async function carregarFornecedores(){
   let dados = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
   let html = "";
+
   dados.forEach(f=>{
     html += `
       <tr>
@@ -389,15 +462,16 @@ async function carregarFornecedores(){
           <button class="btnEditar" onclick='abrirPopup("fornecedores", ${JSON.stringify(f)})'>Editar</button>
           <button class="btnExcluir" onclick='excluir("Fornecedor","${f.codigo}")'>Excluir</button>
         </td>
-      </tr>
-    `;
+      </tr>`;
   });
-  document.querySelector("#tabelaFornec tbody").innerHTML = html;
+
+  tabelaFornec.querySelector("tbody").innerHTML = html;
 }
 
 async function carregarEmpresas(){
   let dados = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
   let html = "";
+
   dados.forEach(emp=>{
     html += `
       <tr>
@@ -408,12 +482,15 @@ async function carregarEmpresas(){
           <button class="btnEditar" onclick='abrirPopup("empresas", ${JSON.stringify(emp)})'>Editar</button>
           <button class="btnExcluir" onclick='excluir("Empresa","${emp.codigo}")'>Excluir</button>
         </td>
-      </tr>
-    `;
+      </tr>`;
   });
-  document.querySelector("#tabelaEmpresas tbody").innerHTML = html;
+
+  tabelaEmpresas.querySelector("tbody").innerHTML = html;
 }
 
+/* =====================================================
+   INICIAR
+===================================================== */
 function carregarTudo(){
   carregarContas();
   carregarFornecedores();
