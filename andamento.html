@@ -9,9 +9,10 @@
 :root{
   --azul:#0b1e39;
   --azul-claro:#2d6cdf;
-  --bg:#f5f7fb;
+  --azul-light:#7aa8ff;
+  --bg:#eef2f7;
   --card:#ffffff;
-  --shadow:0 8px 25px rgba(0,0,0,0.12);
+  --shadow:0 10px 30px rgba(0,0,0,0.12);
   --radius:20px;
 }
 
@@ -25,76 +26,115 @@ body{
 h1{
   text-align:center;
   color:var(--azul);
+  margin-bottom:35px;
+}
+
+/* ========================= CARD ========================= */
+.card{
+  background:white;
+  border-radius:var(--radius);
+  padding:25px;
+  box-shadow:var(--shadow);
   margin-bottom:30px;
 }
 
-/* ===== CARDS ===== */
-.card{
-  background:var(--card);
-  padding:20px;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  margin-bottom:25px;
-}
-
-/* ===== TIMELINE ===== */
+/* ======================== TIMELINE ======================= */
 .timeline{
+  width:100%;
+  margin:25px 0 15px 0;
+  position:relative;
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:35px;
-  margin:20px 0;
-}
-
-.step{
-  text-align:center;
-  color:#555;
-  font-size:13px;
-}
-
-.circle{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#d2defc;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:20px;
-  color:var(--azul-claro);
-  margin:0 auto 5px auto;
 }
 
 .line{
-  flex:1;
-  height:3px;
-  background:#d2defc;
+  position:absolute;
+  top:22px;
+  left:0;
+  height:6px;
+  width:100%;
+  background:#dce4ff;
+  z-index:1;
+  border-radius:4px;
 }
 
-.active .circle{
-  background:var(--azul-claro);
+.progress-line{
+  position:absolute;
+  top:22px;
+  left:0;
+  height:6px;
+  width:0%;
+  background:linear-gradient(90deg,var(--azul-light),var(--azul-claro));
+  z-index:2;
+  transition:.4s;
+  border-radius:4px;
+}
+
+.step{
+  z-index:3;
+  text-align:center;
+  width:25%;
+}
+
+.circle{
+  width:45px;
+  height:45px;
+  margin:0 auto;
+  background:#d7e1ff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
   color:white;
+  transition:.3s;
 }
 
-.active .text{
-  color:var(--azul);
+.step.active .circle{
+  background:var(--azul-claro);
+}
+
+.step span{
+  display:block;
+  margin-top:6px;
+  font-size:13px;
+  color:#444;
+}
+
+.step.active span{
   font-weight:600;
+  color:var(--azul);
 }
 
-/* LISTA ITENS */
+/* ============= PERCENTUAL ============= */
+.percent{
+  text-align:center;
+  font-weight:700;
+  margin-top:-10px;
+  margin-bottom:5px;
+  color:var(--azul);
+}
+
+/* ======================== TABELA ========================= */
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:15px;
 }
 
-th,td{
-  padding:8px;
-  border-bottom:1px solid #ddd;
-}
-
 th{
   background:var(--azul);
   color:white;
+  padding:10px;
+  font-size:14px;
+}
+
+td{
+  background:white;
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  font-size:14px;
 }
 </style>
 </head>
@@ -106,109 +146,133 @@ th{
 <div id="cards"></div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec"; // troque pelo seu
+const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
 (async function(){
-    const empresas = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
-    const itens     = await fetch(`${API}?action=getItens&codigo=ALL`).then(r=>r.json());
-    const remessas  = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
-    const faturado  = await fetch(`${API}?action=listarFaturado`).then(r=>r.json());
 
-    let html = "";
+  const empresas  = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+  const itens     = await fetch(`${API}?action=getItens&codigo=ALL`).then(r=>r.json());
+  const remessas  = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
+  const faturado  = await fetch(`${API}?action=listarFaturado`).then(r=>r.json());
 
-    empresas.forEach(emp=>{
-        // ITENS DA EMPRESA
-        const itensEmpresa = itens.filter(i => i.codigoLicitacao === emp.codigo);
+  let html = "";
 
-        const iniciou = itensEmpresa.length > 0;
+  empresas.forEach(emp=>{
 
-        // total itens
-        let totalItens = 0;
-        itensEmpresa.forEach(i=>{
-            totalItens += Number(i.quantMin) * Number(i.valorUnit);
-        });
+    const itensEmpresa = itens.filter(i => i.codigoLicitacao === emp.codigo);
 
-        // ROMANEIO
-        const rom = remessas.find(r => r.codigoLicitacao === emp.codigo);
+    // STATUS 1 - iniciado
+    const iniciou = itensEmpresa.length > 0;
 
-        const emEntrega = !!rom;
+    // TOTAL CONTRATADO
+    let totalItens = 0;
+    let totalQtd = 0;
 
-        // FATURAMENTO
-        const fat = faturado.find(f => f.romaneioID === (rom?.romaneioID || ""));
-        let concluido = fat?.status === "RECEBIDO";
-
-        // TIMELINE STATUS
-        const s1 = iniciou ? "active" : "";
-        const s2 = totalItens > 0 ? "active" : "";
-        const s3 = emEntrega ? "active" : "";
-        const s4 = concluido ? "active" : "";
-
-        html += `
-        <div class="card">
-            <h2>${emp.nome}</h2>
-            <p><b>CNPJ:</b> ${emp.cnpj}</p>
-            <p><b>Valor total:</b> R$ ${totalItens.toFixed(2)}</p>
-
-            <div class="timeline">
-
-                <div class="step ${s1}">
-                    <div class="circle">✔</div>
-                    <div class="text">Iniciado</div>
-                </div>
-
-                <div class="line"></div>
-
-                <div class="step ${s2}">
-                    <div class="circle">✔</div>
-                    <div class="text">Em análise</div>
-                </div>
-
-                <div class="line"></div>
-
-                <div class="step ${s3}">
-                    <div class="circle">✔</div>
-                    <div class="text">Em entrega</div>
-                </div>
-
-                <div class="line"></div>
-
-                <div class="step ${s4}">
-                    <div class="circle">✔</div>
-                    <div class="text">Concluído</div>
-                </div>
-            </div>
-
-            ${itensEmpresa.length > 0 ?
-            `<h3>Itens cadastrados</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>TR</th>
-                        <th>Descrição</th>
-                        <th>Quantidade</th>
-                        <th>Valor Unit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                ${
-                    itensEmpresa.map(i=>`
-                        <tr>
-                            <td>${i.itemTR}</td>
-                            <td>${i.especificacao.substring(0,50)}...</td>
-                            <td>${i.quantMin}</td>
-                            <td>R$ ${Number(i.valorUnit).toFixed(2)}</td>
-                        </tr>
-                    `).join("")
-                }
-                </tbody>
-            </table>`
-            : "<i>Nenhum item cadastrado ainda.</i>"}
-
-        </div>
-        `;
+    itensEmpresa.forEach(i=>{
+      totalItens += Number(i.quantMin) * Number(i.valorUnit);
+      totalQtd    += Number(i.quantMin);
     });
 
-    document.getElementById("cards").innerHTML = html;
+    // REMESSAS
+    const rom = remessas.filter(r => r.codigoLicitacao === emp.codigo);
+
+    // TOTAL ENTREGUE
+    let totalEntregue = 0;
+
+    rom.forEach(r=>{
+      try{
+        const js = JSON.parse(r.json);
+        js.itens.forEach(it=>{
+          totalEntregue += Number(it.quant);
+        });
+      }catch(e){}
+    });
+
+    const percentual = totalQtd > 0 ? (totalEntregue / totalQtd) * 100 : 0;
+
+    // STATUS 2 - em análise
+    const s2 = totalItens > 0;
+
+    // STATUS 3 - em entrega (se já entregou algo)
+    const s3 = percentual > 0;
+
+    // STATUS 4 - concluído (se faturado entregue)
+    const fat = faturado.find(f => f.romaneioID === (rom[0]?.romaneioID || ""));
+    const s4 = fat?.status === "RECEBIDO";
+
+    html += `
+    <div class="card">
+
+      <h2>${emp.nome}</h2>
+      <p><b>CNPJ:</b> ${emp.cnpj}</p>
+      <p><b>Valor total:</b> R$ ${totalItens.toLocaleString("pt-BR",{minimumFractionDigits:2})}</p>
+
+      <div class="percent">${percentual.toFixed(2)}% entregue</div>
+
+      <div class="timeline">
+
+        <div class="line"></div>
+        <div class="progress-line" style="width:${percentual}%;"></div>
+
+        <div class="step ${iniciou ? 'active':''}">
+          <div class="circle">✔</div>
+          <span>Iniciado</span>
+        </div>
+
+        <div class="step ${s2 ? 'active':''}">
+          <div class="circle">✔</div>
+          <span>Em análise</span>
+        </div>
+
+        <div class="step ${s3 ? 'active':''}">
+          <div class="circle">✔</div>
+          <span>Em entrega</span>
+        </div>
+
+        <div class="step ${s4 ? 'active':''}">
+          <div class="circle">✔</div>
+          <span>Concluído</span>
+        </div>
+
+      </div>
+
+      <h3>Itens cadastrados</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>TR</th>
+            <th>Descrição</th>
+            <th>Marca</th>
+            <th>Qtd</th>
+            <th>Valor Unit</th>
+            <th>Total Item</th>
+          </tr>
+        </thead>
+        <tbody>
+        ${
+          itensEmpresa.map(i=>{
+            const totalItem = Number(i.quantMin)*Number(i.valorUnit);
+            return `
+              <tr>
+                <td>${i.itemTR}</td>
+                <td>${i.especificacao.substring(0,70)}...</td>
+                <td>${i.marca}</td>
+                <td>${i.quantMin}</td>
+                <td>R$ ${Number(i.valorUnit).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+                <td>R$ ${totalItem.toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+              </tr>
+            `;
+          }).join("")
+        }
+        </tbody>
+      </table>
+
+    </div>
+    `;
+  });
+
+  document.getElementById("cards").innerHTML = html;
+
 })();
 </script>
 
