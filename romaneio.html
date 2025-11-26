@@ -47,7 +47,7 @@ h1{
 /* Grid de cards */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
   gap:20px;
   margin-bottom:30px;
 }
@@ -165,7 +165,7 @@ th{
   <table>
     <thead>
       <tr>
-        <th>Item</th>
+        <th>TR</th>
         <th>Descrição</th>
         <th>Marca</th>
         <th>Valor</th>
@@ -197,31 +197,22 @@ th{
 
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzNi5EcrhsvfvkEcplTdMiYgUvcsQk_dLc0sW8G8lgCEWV-xRP5DRtrK-rZxL41eGVR/exec";
+const API = "https://script.google.com/macros/s/AKfycbzNi5EcrhsvfvkEcplTdMiYgUvcsQk_dLc0sW8G8lgCEWV-xRP5DRtrK-rZxL41eGVR/exec"; // TROCAR AQUI
 
 /* ===========================
-   CARREGAR LISTA DE LICITAÇÕES
+   CARREGAR CARDS (LICITAÇÕES)
 =========================== */
 async function carregarLicitacoes(){
-  const tabela = await fetch(`${API}?action=getItens&codigo=ALL`)
+  const lista = await fetch(`${API}?action=listarRemessas`)
     .catch(()=>null);
 
-  const cards = {};
-  const itens = await fetch(`${API}?action=listarRemessas`).then(r=>r.json()).catch(()=>[]);
-
-  const lic = await fetch(`${API}?action=getLicitacoes`).catch(()=>null);
-
-  const empresas = await fetch(`${API}?action=getEmpresas`)
+  const licitacoes = await fetch(`${API}?action=getEmpresas`)
     .then(r=>r.json()).catch(()=>[]);
 
-  const licitacoes = await fetch(`${API}?action=getItens&codigo=ALL`)
+  const licSheet = await fetch(`${API}?action=getLicitacoes`)
     .then(r=>r.json()).catch(()=>[]);
 
-  /* Aqui pegamos apenas os CODs exclusivos */
-  const lista = await fetch(`${API}?action=getLicitacoes`)
-    .then(r=>r.json()).catch(()=>[]);
-
-  montarCards(lista);
+  montarCards(licSheet);
 }
 
 /* ===========================
@@ -235,7 +226,7 @@ function montarCards(lista){
       <div class="card" onclick="selecionarLic('${l.codigo}', this)">
         <h2>${l.instituicao}</h2>
         <small>Código: ${l.codigo}</small><br>
-        <small>Status: ${l.status}</small>
+        <small>Status: ${l.status || "-"}</small>
       </div>
     `;
   });
@@ -259,32 +250,34 @@ function filtrarCards(){
 /* ===========================
    SELECIONAR LICITAÇÃO
 =========================== */
+let empresaSel = {};
 async function selecionarLic(codigo, el){
   document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel"));
   el.classList.add("sel");
 
-  const dados = await fetch(`${API}?action=getEmpresa&codigo=${codigo}`)
+  empresaSel = await fetch(`${API}?action=getEmpresa&codigo=${codigo}`)
     .then(r=>r.json()).catch(()=>null);
 
   document.getElementById("boxEmpresa").style.display="block";
   document.getElementById("boxEmpresa").innerHTML = `
-    <h2 style="color:var(--azul);">${dados.nome}</h2>
-    <b>Instituição:</b> ${dados.instituicao}<br>
-    <b>CNPJ:</b> ${dados.cnpj}<br>
-    <b>UF:</b> ${dados.uf}<br>
+    <h2 style="color:var(--azul);">${empresaSel.nome}</h2>
+    <b>Código:</b> ${codigo}<br>
+    <b>Instituição:</b> ${empresaSel.instituicao}<br>
+    <b>CNPJ:</b> ${empresaSel.cnpj}<br>
+    <b>UF:</b> ${empresaSel.uf}<br>
   `;
 
-  carregarItens(codigo, dados);
+  carregarItens(codigo);
 }
 
 /* ===========================
-   CARREGAR ITENS
+   CARREGAR ITENS DA LICITAÇÃO
 =========================== */
 let listaItens=[];
 let fornecedores=[];
 let remessas=[];
 
-async function carregarItens(codigo, empresa){
+async function carregarItens(codigo){
 
   fornecedores = await fetch(`${API}?action=getFornecedores`)
     .then(r=>r.json()).catch(()=>[]);
@@ -314,7 +307,7 @@ async function carregarItens(codigo, empresa){
 }
 
 /* ===========================
-   CALCULAR ENVIADOS
+   CALCULAR QUANTIDADE ENVIADA
 =========================== */
 function calcularEnviados(cod,itemTR){
   let total=0;
@@ -339,13 +332,12 @@ function calcularEnviados(cod,itemTR){
    MONTAR TABELA DE ITENS
 =========================== */
 function montarItens(){
-
   let html="";
 
   listaItens.forEach((it,i)=>{
+
     let selects = `<select onchange="defFornecedor(${i},this.value)">
       <option value="">Selecione</option>`;
-
     fornecedores.forEach(f=>{
       selects += `<option value="${f.nome}">${f.nome}</option>`;
     });
@@ -390,7 +382,7 @@ function defQtd(i,v){
 }
 
 /* ===========================
-   RESUMO
+   POPUP DE RESUMO
 =========================== */
 function abrirResumo(){
 
@@ -406,7 +398,7 @@ function abrirResumo(){
 
   sel.forEach(i=>{
     html += `<div>
-      <b>${i.itemTR}</b> — ${i.quantSolicitada} x R$ ${Number(i.valorUnit).toFixed(2)}
+      <b>TR ${i.itemTR}</b> — ${i.quantSolicitada} x R$ ${Number(i.valorUnit).toFixed(2)}
       = <b>R$ ${i.subtotal.toFixed(2)}</b><br>
       Fornecedor: ${i.fornecedor}
       <br><br>
@@ -428,7 +420,6 @@ function fecharPopup(){
 =========================== */
 async function confirmarRomaneio(){
 
-  let cardSel = document.querySelector(".card.sel h2").innerText;
   let codigo = document.querySelector(".card.sel small").innerText.split(": ")[1];
 
   let itensEnviar = listaItens
@@ -448,8 +439,8 @@ async function confirmarRomaneio(){
   let payload = {
     data:new Date().toISOString().split("T")[0],
     codigoLicitacao:codigo,
-    empresa:cardSel,
-    cnpj:"",
+    empresa:empresaSel.nome,
+    cnpj:empresaSel.cnpj,
     itens:itensEnviar,
     total:total,
     dataPrevista:new Date().toISOString().split("T")[0]
