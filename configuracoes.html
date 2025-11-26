@@ -15,8 +15,8 @@
   --dourado:#c9a86c;
   --bg:#eef2f7;
   --card:#ffffff;
-  --radius:18px;
-  --shadow:0 10px 28px rgba(0,0,0,.15);
+  --radius:20px;
+  --shadow:0 12px 28px rgba(0,0,0,.12);
 
   --glass:rgba(255,255,255,.78);
   --blur:blur(14px);
@@ -43,63 +43,80 @@ h1 {
 }
 
 /* =====================================================
-   GRID E CARDS
+   GRID ORGANIZADO E PREMIUM
 ===================================================== */
 .grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:25px;
+  grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));
+  gap:35px;
+  padding-bottom:30px;
 }
 
+/* =====================================================
+   CARD PREMIUM
+===================================================== */
 .card {
   background:var(--glass);
   backdrop-filter:var(--blur);
   border-radius:var(--radius);
-  padding:22px;
   box-shadow:var(--shadow);
   border:1px solid rgba(255,255,255,.45);
-  animation:fadeCard .35s ease;
+  padding:25px 28px;
+  display:flex;
+  flex-direction:column;
+  min-height:440px;
+  transition:.25s ease;
 }
 
-@keyframes fadeCard{
-  from{opacity:0; transform:translateY(18px);}
-  to{opacity:1; transform:translateY(0);}
+.card:hover {
+  transform:translateY(-6px);
+  box-shadow:0 16px 32px rgba(0,0,0,.16);
 }
 
+/* TÍTULO DO CARD */
 .card h2 {
-  margin-top:0;
+  margin:0 0 18px 0;
   color:var(--azul);
-  font-size:22px;
+  font-size:23px;
   font-weight:700;
-  border-left:4px solid var(--dourado);
-  padding-left:10px;
+  padding-bottom:10px;
+  border-bottom:3px solid var(--dourado);
+  width:100%;
 }
 
-/* BOTÃO AÇÃO */
+/* BOTÃO PRINCIPAL */
 .card button {
   width:100%;
-  padding:13px;
+  padding:14px;
   background:var(--dourado);
   color:#000;
-  font-size:15px;
+  font-size:16px;
   font-weight:700;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   cursor:pointer;
+  margin-bottom:18px;
   transition:.2s;
 }
+
 .card button:hover {
   background:#b89554;
-  transform:translateY(-1px);
+  transform:translateY(-2px);
 }
 
 /* =====================================================
-   TABELAS
+   TABELAS MAIS BONITAS
 ===================================================== */
+.tableWrap {
+  flex:1;
+  overflow-y:auto;
+  margin-top:5px;
+  padding-right:5px;
+}
+
 table {
   width:100%;
   border-collapse:collapse;
-  margin-top:15px;
   background:white;
   border-radius:14px;
   overflow:hidden;
@@ -110,7 +127,6 @@ th {
   color:white;
   padding:12px;
   font-size:14px;
-  letter-spacing:.5px;
 }
 
 td {
@@ -119,8 +135,12 @@ td {
   font-size:14px;
 }
 
+tr:nth-child(even) td {
+  background:#f5f7fa;
+}
+
 tr:hover td {
-  background:#f8f9fb;
+  background:#eef2f7;
 }
 
 /* BOTÕES AÇÕES */
@@ -132,11 +152,8 @@ tr:hover td {
   border:none;
   cursor:pointer;
   margin-right:5px;
-  transition:.2s;
 }
-.btnEditar:hover {
-  background:var(--azul-claro);
-}
+.btnEditar:hover { background:var(--azul-claro); }
 
 .btnExcluir {
   background:#bb2b2b;
@@ -145,11 +162,8 @@ tr:hover td {
   border-radius:8px;
   border:none;
   cursor:pointer;
-  transition:.2s;
 }
-.btnExcluir:hover {
-  background:#a12222;
-}
+.btnExcluir:hover { background:#a12222; }
 
 /* =====================================================
    POPUP
@@ -167,9 +181,9 @@ tr:hover td {
 
 .popup {
   background:white;
-  padding:25px;
+  padding:28px;
   width:100%;
-  max-width:420px;
+  max-width:440px;
   border-radius:20px;
   box-shadow:var(--shadow);
   animation:scale .25s ease;
@@ -189,7 +203,7 @@ tr:hover td {
 
 input,select {
   width:100%;
-  padding:12px;
+  padding:14px;
   border:1px solid #ccc;
   border-radius:12px;
   margin-bottom:15px;
@@ -206,7 +220,6 @@ input,select {
   border-radius:12px;
   font-size:16px;
   cursor:pointer;
-  transition:.2s;
   margin-bottom:10px;
 }
 .btnSalvar:hover { background:var(--azul-claro); }
@@ -228,57 +241,66 @@ input,select {
 
 <div class="grid">
 
-  <!-- CONTAS -->
+  <!-- CONTAS BANCÁRIAS -->
   <div class="card">
     <h2>Contas Bancárias</h2>
+
     <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
 
-    <table id="tabelaContas">
-      <thead>
-        <tr>
-          <th>Banco</th>
-          <th>Agência</th>
-          <th>Conta</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="tableWrap">
+      <table id="tabelaContas">
+        <thead>
+          <tr>
+            <th>Banco</th>
+            <th>Agência</th>
+            <th>Conta</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- FORNECEDORES -->
   <div class="card">
     <h2>Fornecedores</h2>
+
     <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
 
-    <table id="tabelaFornec">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>CNPJ</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="tableWrap">
+      <table id="tabelaFornec">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CNPJ</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- EMPRESAS -->
   <div class="card">
     <h2>Empresas</h2>
+
     <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
 
-    <table id="tabelaEmpresas">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>CNPJ</th>
-          <th>UF</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="tableWrap">
+      <table id="tabelaEmpresas">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CNPJ</th>
+            <th>UF</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 
 </div>
@@ -299,7 +321,7 @@ let editando = null;
 let editCodigo = null;
 
 /* =====================================================
-   FUNÇÕES DE MÁSCARA
+   MASCARAS
 ===================================================== */
 function maskCNPJ(v){
   v = v.replace(/\D/g,"");
@@ -318,7 +340,6 @@ function maskPhone(v){
 }
 
 function onlyNumbers(v){ return v.replace(/\D/g,""); }
-
 function toUpper(e){ e.value = e.value.toUpperCase(); }
 
 /* =====================================================
@@ -334,7 +355,8 @@ function abrirPopup(tipo, dados=null){
     html = `
       <h3>${dados ? "Editar Conta" : "Cadastrar Conta Bancária"}</h3>
 
-      <input id="banco" placeholder="Banco" value="${dados?.banco || ""}" oninput="toUpper(this)">
+      <input id="banco" placeholder="Banco" value="${dados?.banco || ""}" 
+             oninput="toUpper(this)">
 
       <input id="agencia" placeholder="Agência" value="${dados?.agencia || ""}"
              oninput="this.value=onlyNumbers(this.value)">
@@ -342,9 +364,11 @@ function abrirPopup(tipo, dados=null){
       <input id="conta" placeholder="Conta" value="${dados?.conta || ""}"
              oninput="this.value=onlyNumbers(this.value)">
 
-      <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo || ""}" oninput="toUpper(this)">
+      <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo || ""}" 
+             oninput="toUpper(this)">
 
-      <input id="pix" placeholder="Chave PIX" value="${dados?.pix || ""}" oninput="toUpper(this)">
+      <input id="pix" placeholder="Chave PIX" value="${dados?.pix || ""}" 
+             oninput="toUpper(this)">
 
       <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
@@ -355,10 +379,11 @@ function abrirPopup(tipo, dados=null){
     html = `
       <h3>${dados ? "Editar Fornecedor" : "Cadastrar Fornecedor"}</h3>
 
-      <input id="nome" placeholder="Nome" value="${dados?.nome || ""}" oninput="toUpper(this)">
+      <input id="nome" placeholder="Nome" value="${dados?.nome || ""}" 
+             oninput="toUpper(this)">
 
-      <input id="cnpj" placeholder="CNPJ" maxlength="18"
-             value="${dados?.cnpj || ""}"
+      <input id="cnpj" placeholder="CNPJ" maxlength="18" 
+             value="${dados?.cnpj || ""}" 
              oninput="this.value=maskCNPJ(this.value)">
 
       <input id="telefone" placeholder="Telefone"
@@ -374,12 +399,13 @@ function abrirPopup(tipo, dados=null){
     html = `
       <h3>${dados ? "Editar Empresa" : "Cadastrar Empresa"}</h3>
 
-      <input id="nome" placeholder="Nome da Instituição" value="${dados?.nome || ""}" oninput="toUpper(this)">
+      <input id="nome" placeholder="Nome da Instituição" value="${dados?.nome || ""}"
+             oninput="toUpper(this)">
 
       <input id="cnpj" placeholder="CNPJ" maxlength="18"
              value="${dados?.cnpj || ""}"
              oninput="this.value=maskCNPJ(this.value)">
-
+             
       <input id="uf" placeholder="UF" maxlength="2"
              value="${dados?.uf || ""}" 
              oninput="toUpper(this)">
@@ -389,16 +415,16 @@ function abrirPopup(tipo, dados=null){
     `;
   }
 
-  document.getElementById("popupContent").innerHTML = html;
-  document.getElementById("popup").style.display = "flex";
+  popupContent.innerHTML = html;
+  popup.style.display = "flex";
 }
 
 function fecharPopup(){
-  document.getElementById("popup").style.display = "none";
+  popup.style.display = "none";
 }
 
 /* =====================================================
-   SALVAR REGISTRO
+   SALVAR
 ===================================================== */
 async function salvar(){
   let body = {};
@@ -452,8 +478,7 @@ async function salvar(){
 async function excluir(tipo, codigo){
   if(!confirm("Deseja realmente excluir?")) return;
   
-  const url = `${API}?action=delete${tipo}&codigo=${codigo}`;
-  const res = await fetch(url).then(r=>r.json());
+  const res = await fetch(`${API}?action=delete${tipo}&codigo=${codigo}`).then(r=>r.json());
 
   if(res.ok){
     carregarTudo();
@@ -463,7 +488,7 @@ async function excluir(tipo, codigo){
 }
 
 /* =====================================================
-   CARREGAR TABELAS
+   CARREGAR
 ===================================================== */
 async function carregarContas(){
   let dados = await fetch(`${API}?action=getContas`).then(r=>r.json());
