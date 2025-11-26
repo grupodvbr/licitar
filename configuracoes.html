@@ -18,7 +18,7 @@
   --radius:18px;
   --shadow:0 10px 28px rgba(0,0,0,.15);
 
-  --glass:rgba(255,255,255,.75);
+  --glass:rgba(255,255,255,.78);
   --blur:blur(14px);
 }
 
@@ -57,12 +57,12 @@ h1 {
   border-radius:var(--radius);
   padding:22px;
   box-shadow:var(--shadow);
-  border:1px solid rgba(255,255,255,.4);
-  animation:fadeCard .4s ease;
+  border:1px solid rgba(255,255,255,.45);
+  animation:fadeCard .35s ease;
 }
 
 @keyframes fadeCard{
-  from{opacity:0; transform:translateY(15px);}
+  from{opacity:0; transform:translateY(18px);}
   to{opacity:1; transform:translateY(0);}
 }
 
@@ -163,12 +163,6 @@ tr:hover td {
   justify-content:center;
   align-items:center;
   padding:20px;
-  animation:fade .2s ease;
-}
-
-@keyframes fade {
-  from{opacity:0;}
-  to{opacity:1;}
 }
 
 .popup {
@@ -213,11 +207,9 @@ input,select {
   font-size:16px;
   cursor:pointer;
   transition:.2s;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
-.btnSalvar:hover {
-  background:var(--azul-claro);
-}
+.btnSalvar:hover { background:var(--azul-claro); }
 
 .btnClose {
   width:100%;
@@ -226,11 +218,8 @@ input,select {
   padding:12px;
   border:none;
   border-radius:12px;
-  transition:.2s;
 }
-.btnClose:hover {
-  background:#555;
-}
+.btnClose:hover { background:#555; }
 </style>
 </head>
 <body>
@@ -299,6 +288,7 @@ input,select {
   <div class="popup" id="popupContent"></div>
 </div>
 
+
 <script>
 /* =====================================================
    API 
@@ -307,6 +297,29 @@ const API = "https://script.google.com/macros/s/AKfycbwrYwsj3w2Ik53-aQaLLpcvPtjz
 
 let editando = null;
 let editCodigo = null;
+
+/* =====================================================
+   FUNÇÕES DE MÁSCARA
+===================================================== */
+function maskCNPJ(v){
+  v = v.replace(/\D/g,"");
+  v = v.replace(/^(\d{2})(\d)/,"$1.$2");
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
+  v = v.replace(/\.(\d{3})(\d)/,".$1/$2");
+  v = v.replace(/(\d{4})(\d)/,"$1-$2");
+  return v;
+}
+
+function maskPhone(v){
+  v = v.replace(/\D/g,"");
+  v = v.replace(/^(\d{2})(\d)/,"($1) $2");
+  v = v.replace(/(\d{5})(\d)/,"$1-$2");
+  return v;
+}
+
+function onlyNumbers(v){ return v.replace(/\D/g,""); }
+
+function toUpper(e){ e.value = e.value.toUpperCase(); }
 
 /* =====================================================
    ABRIR POPUP
@@ -320,11 +333,19 @@ function abrirPopup(tipo, dados=null){
   if(tipo === "contas"){
     html = `
       <h3>${dados ? "Editar Conta" : "Cadastrar Conta Bancária"}</h3>
-      <input id="banco" placeholder="Banco" value="${dados?.banco || ""}">
-      <input id="agencia" placeholder="Agência" value="${dados?.agencia || ""}">
-      <input id="conta" placeholder="Conta" value="${dados?.conta || ""}">
-      <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo || ""}">
-      <input id="pix" placeholder="Chave PIX" value="${dados?.pix || ""}">
+
+      <input id="banco" placeholder="Banco" value="${dados?.banco || ""}" oninput="toUpper(this)">
+
+      <input id="agencia" placeholder="Agência" value="${dados?.agencia || ""}"
+             oninput="this.value=onlyNumbers(this.value)">
+
+      <input id="conta" placeholder="Conta" value="${dados?.conta || ""}"
+             oninput="this.value=onlyNumbers(this.value)">
+
+      <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo || ""}" oninput="toUpper(this)">
+
+      <input id="pix" placeholder="Chave PIX" value="${dados?.pix || ""}" oninput="toUpper(this)">
+
       <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
@@ -333,9 +354,17 @@ function abrirPopup(tipo, dados=null){
   if(tipo === "fornecedores"){
     html = `
       <h3>${dados ? "Editar Fornecedor" : "Cadastrar Fornecedor"}</h3>
-      <input id="nome" placeholder="Nome" value="${dados?.nome || ""}">
-      <input id="cnpj" placeholder="CNPJ" value="${dados?.cnpj || ""}">
-      <input id="telefone" placeholder="Telefone" value="${dados?.telefone || ""}">
+
+      <input id="nome" placeholder="Nome" value="${dados?.nome || ""}" oninput="toUpper(this)">
+
+      <input id="cnpj" placeholder="CNPJ" maxlength="18"
+             value="${dados?.cnpj || ""}"
+             oninput="this.value=maskCNPJ(this.value)">
+
+      <input id="telefone" placeholder="Telefone"
+             value="${dados?.telefone || ""}"
+             oninput="this.value=maskPhone(this.value)">
+
       <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
@@ -344,9 +373,17 @@ function abrirPopup(tipo, dados=null){
   if(tipo === "empresas"){
     html = `
       <h3>${dados ? "Editar Empresa" : "Cadastrar Empresa"}</h3>
-      <input id="nome" placeholder="Nome da Instituição" value="${dados?.nome || ""}">
-      <input id="cnpj" placeholder="CNPJ" value="${dados?.cnpj || ""}">
-      <input id="uf" placeholder="UF" value="${dados?.uf || ""}">
+
+      <input id="nome" placeholder="Nome da Instituição" value="${dados?.nome || ""}" oninput="toUpper(this)">
+
+      <input id="cnpj" placeholder="CNPJ" maxlength="18"
+             value="${dados?.cnpj || ""}"
+             oninput="this.value=maskCNPJ(this.value)">
+
+      <input id="uf" placeholder="UF" maxlength="2"
+             value="${dados?.uf || ""}" 
+             oninput="toUpper(this)">
+
       <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
@@ -369,29 +406,29 @@ async function salvar(){
 
   if(editando === "contas"){
     body = {
-      banco: banco.value,
-      agencia: agencia.value,
-      conta: conta.value,
-      tipo: tipo.value,
-      pix: pix.value
+      banco:banco.value.trim(),
+      agencia:agencia.value.trim(),
+      conta:conta.value.trim(),
+      tipo:tipo.value.trim(),
+      pix:pix.value.trim()
     };
     rota = editCodigo ? "updateConta" : "addConta";
   }
 
   if(editando === "fornecedores"){
     body = {
-      nome: nome.value,
-      cnpj: cnpj.value,
-      telefone: telefone.value
+      nome:nome.value.trim(),
+      cnpj:cnpj.value.trim(),
+      telefone:telefone.value.trim()
     };
     rota = editCodigo ? "updateFornecedor" : "addFornecedor";
   }
 
   if(editando === "empresas"){
     body = {
-      nome: nome.value,
-      cnpj: cnpj.value,
-      uf: uf.value
+      nome:nome.value.trim(),
+      cnpj:cnpj.value.trim(),
+      uf:uf.value.trim()
     };
     rota = editCodigo ? "updateEmpresa" : "addEmpresa";
   }
@@ -399,14 +436,13 @@ async function salvar(){
   if(editCodigo) body.codigo = editCodigo;
 
   const url = `${API}?action=${rota}&${new URLSearchParams(body)}`;
-
   const res = await fetch(url).then(r=>r.json());
 
   if(res.ok){
     fecharPopup();
     carregarTudo();
   } else {
-    alert("Erro ao salvar cadastro.");
+    alert("Erro ao salvar registro.");
   }
 }
 
@@ -414,7 +450,7 @@ async function salvar(){
    EXCLUIR
 ===================================================== */
 async function excluir(tipo, codigo){
-  if(!confirm("Tem certeza que deseja excluir?")) return;
+  if(!confirm("Deseja realmente excluir?")) return;
   
   const url = `${API}?action=delete${tipo}&codigo=${codigo}`;
   const res = await fetch(url).then(r=>r.json());
