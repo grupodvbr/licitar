@@ -59,7 +59,7 @@ h1 {
   border:1px solid rgba(255,255,255,.45);
   display:flex;
   flex-direction:column;
-  height:480px; /* 🟡 ALTURA FIXA */
+  height:480px;
 }
 
 /* TÍTULO */
@@ -100,13 +100,12 @@ h1 {
   font-size:15px;
 }
 
-/* LISTA COM SCROLL */
+/* LISTA */
 .scroll-area {
   flex:1;
   overflow-y:auto;
   padding-right:6px;
 }
-
 .scroll-area::-webkit-scrollbar {
   width:6px;
 }
@@ -115,7 +114,7 @@ h1 {
   border-radius:10px;
 }
 
-/* ITENS */
+/* ITEM LISTA */
 .item {
   padding:10px 5px;
   border-bottom:1px solid var(--line);
@@ -140,9 +139,7 @@ h1 {
   cursor:pointer;
   font-weight:600;
 }
-.acoes a:hover {
-  color:var(--dourado);
-}
+.acoes a:hover { color:var(--dourado); }
 
 /* POPUP */
 .overlay {
@@ -163,7 +160,7 @@ h1 {
   box-shadow:var(--shadow);
 }
 
-/* INPUTS */
+/* INPUT */
 .popup input {
   width:100%;
   padding:14px;
@@ -193,6 +190,7 @@ h1 {
   border-radius:12px;
   border:none;
 }
+
 #loading {
   position:fixed;
   top:0; left:0;
@@ -214,41 +212,30 @@ h1 {
 
 <div class="grid">
 
-  <!-- ==============================
-       CONTAS BANCÁRIAS (SEM PESQUISA)
-  =============================== -->
+  <!-- CONTAS -->
   <div class="card">
     <h2>Contas Bancárias</h2>
     <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
-
     <div class="scroll-area">
       <div id="listaContas"></div>
     </div>
   </div>
 
-  <!-- ==============================
-        FORNECEDORES (COM PESQUISA)
-  =============================== -->
+  <!-- FORNECEDORES -->
   <div class="card">
     <h2>Fornecedores</h2>
     <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
-
     <input type="text" id="buscaFornec" class="search" placeholder="Pesquisar fornecedor..." oninput="filtrar('fornec')">
-
     <div class="scroll-area">
       <div id="listaFornec"></div>
     </div>
   </div>
 
-  <!-- ==============================
-        EMPRESAS (COM PESQUISA)
-  =============================== -->
+  <!-- EMPRESAS -->
   <div class="card">
     <h2>Empresas</h2>
     <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
-
     <input type="text" id="buscaEmp" class="search" placeholder="Pesquisar empresa..." oninput="filtrar('emp')">
-
     <div class="scroll-area">
       <div id="listaEmpresas"></div>
     </div>
@@ -262,8 +249,10 @@ h1 {
 </div>
 
 <script>
-/* API */
-const API = "https://script.google.com/macros/s/AKfycbxp6oJQfnzxBQO691SynA27BDnWAdFXspvl1bP04rLaZeekTlhuaJngafFDfIjlhizi/exec";
+/* ============================================================
+   API (GAS COMPLETO QUE TE ENVIAREI DEPOIS)
+============================================================ */
+const API = "https://script.google.com/macros/s/AKfycbyen9bySngVpCPDTNK2-P2ls-2qw0d5OKREjwsSMq5h-JnGgPUkCGN9EvBwAjcxEGYc/exec"; // vou gerar já com as rotas
 
 let editando=null;
 let editCodigo=null;
@@ -299,7 +288,7 @@ function abrirPopup(tipo, dados=null){
       <h3>${dados?"Editar Fornecedor":"Cadastrar Fornecedor"}</h3>
       <input id="nome" placeholder="Nome" value="${dados?.nome||""}" oninput="toUpper(this)">
       <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
-      <input id="tel1" placeholder="Whatsapp Principal" maxlength="16" value="${dados?.tel1||""}" oninput="this.value=maskPhone(this.value)">
+      <input id="tel1" placeholder="Whatsapp Principal *" maxlength="16" value="${dados?.tel1||""}" oninput="this.value=maskPhone(this.value)">
       <input id="tel2" placeholder="Whatsapp Secundário" maxlength="16" value="${dados?.tel2||""}" oninput="this.value=maskPhone(this.value)">
       <button class="btnSalvar" onclick="salvar()">Salvar</button>
       <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
@@ -322,24 +311,51 @@ function abrirPopup(tipo, dados=null){
 }
 function fecharPopup(){ popup.style.display="none"; }
 
-/* SALVAR */
+/* SALVAR (AJUSTADO) */
 async function salvar(){
   document.getElementById("loading").style.display="flex";
 
   let body={}, rota="";
 
+  /* CONTAS */
   if(editando==="contas"){
-    body={banco:banco.value,agencia:agencia.value,conta:conta.value,tipo:tipo.value,pix:pix.value};
+    body={
+      banco:banco.value.trim(),
+      agencia:agencia.value.trim(),
+      conta:conta.value.trim(),
+      tipo:tipo.value.trim(),
+      pix:pix.value.trim()
+    };
     rota=editCodigo?"updateConta":"addConta";
   }
 
+  /* FORNECEDORES – VALIDAÇÃO */
   if(editando==="fornecedores"){
-    body={nome:nome.value,cnpj:cnpj.value,tel1:tel1.value,tel2:tel2.value};
+    let numeroLimpo = onlyNumbers(tel1.value);
+
+    if(numeroLimpo.length < 10){
+      loading.style.display="none";
+      alert("O WhatsApp principal é obrigatório.");
+      return;
+    }
+
+    body={
+      nome:nome.value.trim(),
+      cnpj:onlyNumbers(cnpj.value.trim()),
+      tel1:numeroLimpo,
+      tel2:onlyNumbers(tel2.value.trim())
+    };
+
     rota=editCodigo?"updateFornecedor":"addFornecedor";
   }
 
+  /* EMPRESAS */
   if(editando==="empresas"){
-    body={nome:nome.value,cnpj:cnpj.value,uf:uf.value};
+    body={
+      nome:nome.value.trim(),
+      cnpj:onlyNumbers(cnpj.value.trim()),
+      uf:uf.value.trim()
+    };
     rota=editCodigo?"updateEmpresa":"addEmpresa";
   }
 
@@ -358,7 +374,7 @@ async function salvar(){
   }
 }
 
-/* FILTROS */
+/* FILTRAR */
 function filtrar(tipo){
   let termo="";
   let itens=[];
