@@ -30,7 +30,7 @@ body{
 #overlayProcessando{
   position:fixed;
   inset:0;
-  background:rgba(255,255,255,0.92);
+  background:rgba(255,255,255,0.90);
   backdrop-filter:blur(4px);
   display:none;
   justify-content:center;
@@ -43,7 +43,7 @@ body{
 
 /* ===== TELA INICIAL ===== */
 #telaInicial{
-  padding:25px 30px 40px 90px; /* espaço para menu lateral */
+  padding:30px 30px 40px 90px; /* espaço para sidebar */
 }
 
 #telaInicial h1{
@@ -98,7 +98,7 @@ body{
 #telaEmpresa{
   display:none;
   min-height:100vh;
-  padding-left:90px; /* espaço do menu */
+  padding-left:90px; /* espaço do menu lateral */
   background:#fff;
 }
 
@@ -185,6 +185,12 @@ th{
   border-radius:20px;
   box-shadow:var(--shadow);
 }
+
+#finalizadoBox{
+  display:none;
+  padding:30px;
+  text-align:center;
+}
 </style>
 </head>
 
@@ -203,7 +209,6 @@ th{
 <!-- ================== TELA EMPRESA ================== -->
 <div id="telaEmpresa">
 
-  <!-- topo -->
   <div class="topoEmpresa">
     <span onclick="voltarTela()">←</span>
     <div id="nomeTopo"></div>
@@ -235,7 +240,7 @@ th{
     <button class="btn" onclick="mostrarResumo()">Gerar Romaneio</button>
   </div>
 
-  <div id="finalizadoBox" style="display:none; text-align:center; padding:30px;">
+  <div id="finalizadoBox">
     <h2 style="color:var(--azul);font-weight:800;">Romaneio Gerado ✔</h2>
     <button class="btn" onclick="location.href='romaneios.html'">Ver Romaneios</button>
   </div>
@@ -273,7 +278,7 @@ async function carregar(){
     html += `
       <div class="card" onclick="abrirEmpresa('${e.codigo}')">
         <h2>${e.nome}</h2>
-        <small>${e.instituicao}</small>
+        <small>${e.cnpj}</small>
       </div>`;
   });
   listaCards.innerHTML = html;
@@ -316,13 +321,14 @@ async function abrirEmpresa(cod){
 function voltarTela(){
   telaEmpresa.style.display="none";
   telaInicial.style.display="block";
+  finalizadoBox.style.display="none";
 }
 
 /* ================== CARREGAR ITENS ================== */
 async function carregarItens(cod){
 
   fornecedores = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
-  remessas = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
+  remessas   = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
 
   const itens = await fetch(`${API}?action=getItens&codigo=${cod}`).then(r=>r.json());
 
@@ -341,7 +347,6 @@ async function carregarItens(cod){
   montarTabela();
 }
 
-/* SOMA ENVIADOS */
 function calcularEnviados(cod, tr){
   let tot = 0;
   remessas.forEach(r=>{
@@ -357,16 +362,13 @@ function calcularEnviados(cod, tr){
   return tot;
 }
 
-/* MONTAR TABELA */
 function montarTabela(){
   let html="";
   itensList.forEach((it,i)=>{
 
-    let selectFor = `
-      <select onchange="itensList[${i}].fornecedor=this.value">
-        <option value="">Fornecedor</option>
-        ${fornecedores.map(f=>`<option>${f.nome}</option>`).join("")}
-      </select>`;
+    let fornecedoresHTML = fornecedores
+      .map(f=>`<option>${f.nome}</option>`)
+      .join("");
 
     html += `
       <tr>
@@ -377,10 +379,16 @@ function montarTabela(){
         <td>${it.quantMin}</td>
         <td>${it.enviados}</td>
         <td>${it.disponivel}</td>
-        <td>${selectFor}</td>
+        <td>
+          <select onchange="itensList[${i}].fornecedor=this.value">
+            <option value="">Fornecedor</option>
+            ${fornecedoresHTML}
+          </select>
+        </td>
         <td><input type="number" min="0" max="${it.disponivel}" onchange="setQtd(${i},this.value)"></td>
         <td id="t${i}">R$ 0,00</td>
-      </tr>`;
+      </tr>
+    `;
   });
 
   tbodyItens.innerHTML = html;
@@ -398,12 +406,17 @@ function mostrarResumo(){
   const sel = itensList.filter(i=>i.qtd>0 && i.fornecedor!="");
   if(sel.length===0) return alert("Selecione itens e fornecedores!");
 
-  let total = sel.reduce((s,i)=>s+i.subtotal,0);
+  const total = sel.reduce((s,i)=>s+i.subtotal,0);
 
-  resumo.innerHTML = sel.map(i=>`
-    <p><b>${i.itemTR}</b> — ${i.qtd} × R$ ${money(i.valorUnit)} = 
-    <b>R$ ${money(i.subtotal)}</b><br>Fornecedor: <b>${i.fornecedor}</b></p>
-  `).join("") + `<hr><h3>Total: R$ ${money(total)}</h3>`;
+  resumo.innerHTML =
+    sel.map(i=>`
+      <p>
+        <b>${i.itemTR}</b> — ${i.qtd} × R$ ${money(i.valorUnit)} =
+        <b>R$ ${money(i.subtotal)}</b><br>
+        Fornecedor: <b>${i.fornecedor}</b>
+      </p>
+    `).join("") +
+    `<hr><h3>Total: R$ ${money(total)}</h3>`;
 
   popup.style.display = "flex";
 }
