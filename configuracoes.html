@@ -7,24 +7,25 @@
 
 <style>
 /* =====================================================
-   PALETA OFICIAL LICITAR
+   PALETA PREMIUM LICITAR
 ===================================================== */
 :root {
   --azul:#0b1e39;
   --azul-claro:#15345c;
   --dourado:#c9a86c;
   --bg:#eef2f7;
-  --card:#ffffff;
-  --radius:20px;
-  --shadow:0 12px 28px rgba(0,0,0,.12);
 
-  --glass:rgba(255,255,255,.78);
-  --blur:blur(14px);
+  --card-bg:rgba(255,255,255,.65);
+  --blur:blur(18px);
+
+  --line:#d7dce3;
+  --line-hover:#c7ccd4;
+
+  --shadow:0 10px 28px rgba(0,0,0,.12);
+  --radius:22px;
 }
 
-/* =====================================================
-   BASE
-===================================================== */
+/* BASE */
 body {
   margin:0;
   padding:25px;
@@ -36,134 +37,100 @@ body {
 h1 {
   text-align:center;
   color:var(--azul);
-  margin-bottom:35px;
+  margin-bottom:40px;
   font-size:32px;
-  font-weight:700;
-  letter-spacing:-0.5px;
+  font-weight:800;
 }
 
-/* =====================================================
-   GRID ORGANIZADO E PREMIUM
-===================================================== */
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));
-  gap:35px;
-  padding-bottom:30px;
-}
-
-/* =====================================================
-   CARD PREMIUM
-===================================================== */
+/* CARD PRINCIPAL */
 .card {
-  background:var(--glass);
+  background:var(--card-bg);
   backdrop-filter:var(--blur);
   border-radius:var(--radius);
+  padding:25px;
   box-shadow:var(--shadow);
   border:1px solid rgba(255,255,255,.45);
-  padding:25px 28px;
-  display:flex;
-  flex-direction:column;
-  min-height:440px;
-  transition:.25s ease;
 }
 
-.card:hover {
-  transform:translateY(-6px);
-  box-shadow:0 16px 32px rgba(0,0,0,.16);
+/* GRID */
+.grid {
+  display:grid;
+  gap:30px;
+  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
 }
 
 /* TÍTULO DO CARD */
 .card h2 {
-  margin:0 0 18px 0;
-  color:var(--azul);
-  font-size:23px;
-  font-weight:700;
+  margin:0 0 18px;
   padding-bottom:10px;
   border-bottom:3px solid var(--dourado);
-  width:100%;
+  color:var(--azul);
+  font-size:24px;
+  font-weight:700;
 }
 
-/* BOTÃO PRINCIPAL */
+/* BOTÃO PRINCIPAL DO CARD */
 .card button {
   width:100%;
   padding:14px;
   background:var(--dourado);
-  color:#000;
-  font-size:16px;
-  font-weight:700;
   border:none;
   border-radius:14px;
+  font-size:16px;
+  font-weight:700;
   cursor:pointer;
   margin-bottom:18px;
   transition:.2s;
 }
-
 .card button:hover {
   background:#b89554;
   transform:translateY(-2px);
 }
 
 /* =====================================================
-   TABELAS MAIS BONITAS
+   LISTA PREMIUM (MODELO 4)
 ===================================================== */
-.tableWrap {
-  flex:1;
-  overflow-y:auto;
-  margin-top:5px;
-  padding-right:5px;
+.lista {
+  display:flex;
+  flex-direction:column;
 }
 
-table {
-  width:100%;
-  border-collapse:collapse;
-  background:white;
-  border-radius:14px;
-  overflow:hidden;
+.item {
+  padding:12px 5px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  border-bottom:1px solid var(--line);
+  transition:.2s;
+}
+.item:hover {
+  background:#f2f4f7;
+  border-color:var(--line-hover);
 }
 
-th {
-  background:var(--azul);
-  color:white;
-  padding:12px;
-  font-size:14px;
+.item-top {
+  display:flex;
+  justify-content:space-between;
+  font-size:16px;
+  font-weight:600;
+  color:var(--azul);
 }
 
-td {
-  padding:12px;
-  border-bottom:1px solid #eee;
-  font-size:14px;
+.item-sub {
+  font-size:13px;
+  color:#555;
 }
 
-tr:nth-child(even) td {
-  background:#f5f7fa;
-}
-
-tr:hover td {
-  background:#eef2f7;
-}
-
-/* BOTÕES AÇÕES */
-.btnEditar {
-  background:var(--azul);
-  color:#fff;
-  padding:7px 12px;
-  border-radius:8px;
-  border:none;
+/* BOTÕES */
+.acoes a {
+  color:var(--azul);
   cursor:pointer;
-  margin-right:5px;
+  margin-left:10px;
+  font-weight:600;
 }
-.btnEditar:hover { background:var(--azul-claro); }
-
-.btnExcluir {
-  background:#bb2b2b;
-  color:#fff;
-  padding:7px 12px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
+.acoes a:hover {
+  color:var(--dourado);
 }
-.btnExcluir:hover { background:#a12222; }
 
 /* =====================================================
    POPUP
@@ -172,36 +139,28 @@ tr:hover td {
   position:fixed;
   top:0; left:0;
   width:100%; height:100%;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,.45);
   display:none;
   justify-content:center;
   align-items:center;
-  padding:20px;
 }
 
 .popup {
-  background:white;
-  padding:28px;
   width:100%;
-  max-width:440px;
+  max-width:420px;
+  background:white;
   border-radius:20px;
+  padding:28px;
   box-shadow:var(--shadow);
-  animation:scale .25s ease;
+  animation:fadeScale .25s ease;
 }
 
-@keyframes scale {
-  from{opacity:0; transform:scale(.85);}
-  to{opacity:1; transform:scale(1);}
+@keyframes fadeScale {
+  from {opacity:0; transform:scale(.85);}
+  to {opacity:1; transform:scale(1);}
 }
 
-.popup h3 {
-  margin-top:0;
-  color:var(--azul);
-  font-size:22px;
-  margin-bottom:18px;
-}
-
-input,select {
+.popup input {
   width:100%;
   padding:14px;
   border:1px solid #ccc;
@@ -210,97 +169,90 @@ input,select {
   font-size:15px;
 }
 
-/* Botões popup */
+/* Botões dentro do popup */
 .btnSalvar {
   width:100%;
   background:var(--azul);
   color:white;
+  font-size:17px;
   padding:14px;
   border:none;
   border-radius:12px;
-  font-size:16px;
-  cursor:pointer;
   margin-bottom:10px;
 }
 .btnSalvar:hover { background:var(--azul-claro); }
 
 .btnClose {
   width:100%;
-  background:#666;
-  color:white;
   padding:12px;
-  border:none;
+  background:#666;
+  color:#fff;
   border-radius:12px;
+  border:none;
 }
 .btnClose:hover { background:#555; }
+
+/* CAMPO OBRIGATÓRIO COM ERRO */
+.erro {
+  border-color:#d7263d!important;
+  animation:shake .2s;
+}
+@keyframes shake {
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-4px);}
+  50%{transform:translateX(4px);}
+  75%{transform:translateX(-4px);}
+  100%{transform:translateX(0);}
+}
+
+/* =====================================================
+   OVERLAY DE SALVANDO
+===================================================== */
+#loading {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(255,255,255,.75);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  font-size:22px;
+  color:var(--azul);
+  font-weight:700;
+  backdrop-filter:blur(4px);
+}
 </style>
 </head>
 <body>
 
 <h1>Painel de Cadastros</h1>
 
+<div id="loading">Salvando...</div>
+
 <div class="grid">
 
-  <!-- CONTAS BANCÁRIAS -->
+  <!-- CONTAS -->
   <div class="card">
     <h2>Contas Bancárias</h2>
-
     <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
 
-    <div class="tableWrap">
-      <table id="tabelaContas">
-        <thead>
-          <tr>
-            <th>Banco</th>
-            <th>Agência</th>
-            <th>Conta</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <div class="lista" id="listaContas"></div>
   </div>
 
   <!-- FORNECEDORES -->
   <div class="card">
     <h2>Fornecedores</h2>
-
     <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
 
-    <div class="tableWrap">
-      <table id="tabelaFornec">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>CNPJ</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <div class="lista" id="listaFornec"></div>
   </div>
 
   <!-- EMPRESAS -->
   <div class="card">
     <h2>Empresas</h2>
-
     <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
 
-    <div class="tableWrap">
-      <table id="tabelaEmpresas">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>CNPJ</th>
-            <th>UF</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <div class="lista" id="listaEmpresas"></div>
   </div>
 
 </div>
@@ -310,160 +262,109 @@ input,select {
   <div class="popup" id="popupContent"></div>
 </div>
 
-
 <script>
-/* =====================================================
-   API 
-===================================================== */
+/* API */
 const API = "https://script.google.com/macros/s/AKfycbxp6oJQfnzxBQO691SynA27BDnWAdFXspvl1bP04rLaZeekTlhuaJngafFDfIjlhizi/exec";
 
 let editando = null;
 let editCodigo = null;
 
-/* =====================================================
-   MASCARAS
-===================================================== */
-function maskCNPJ(v){
-  v = v.replace(/\D/g,"");
-  v = v.replace(/^(\d{2})(\d)/,"$1.$2");
-  v = v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
-  v = v.replace(/\.(\d{3})(\d)/,".$1/$2");
-  v = v.replace(/(\d{4})(\d)/,"$1-$2");
-  return v;
-}
+/* MÁSCARAS */
+function maskCNPJ(v){v=v.replace(/\D/g,"");v=v.replace(/^(\d{2})(\d)/,"$1.$2");v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");v=v.replace(/\.(\d{3})(\d)/,".$1/$2");v=v.replace(/(\d{4})(\d)/,"$1-$2");return v;}
+function maskPhone(v){v=v.replace(/\D/g,"");v=v.replace(/^(\d{2})(\d)/,"($1) $2");v=v.replace(/(\d{5})(\d)/,"$1-$2");return v;}
+function onlyNumbers(v){return v.replace(/\D/g,"");}
+function toUpper(e){e.value=e.value.toUpperCase();}
 
-function maskPhone(v){
-  v = v.replace(/\D/g,"");
-  v = v.replace(/^(\d{2})(\d)/,"($1) $2");
-  v = v.replace(/(\d{5})(\d)/,"$1-$2");
-  return v;
-}
-
-function onlyNumbers(v){ return v.replace(/\D/g,""); }
-function toUpper(e){ e.value = e.value.toUpperCase(); }
-
-/* =====================================================
-   ABRIR POPUP
-===================================================== */
+/* ABRIR POPUP */
 function abrirPopup(tipo, dados=null){
   editando = tipo;
   editCodigo = dados ? dados.codigo : null;
 
-  let html = "";
+  let h = "";
 
-  if(tipo === "contas"){
-    html = `
-      <h3>${dados ? "Editar Conta" : "Cadastrar Conta Bancária"}</h3>
+  if(tipo==="contas"){
+    h = `
+    <h3>${dados?"Editar Conta":"Cadastrar Conta Bancária"}</h3>
 
-      <input id="banco" placeholder="Banco" value="${dados?.banco || ""}" 
-             oninput="toUpper(this)">
+    <input id="banco" placeholder="Banco" value="${dados?.banco||""}" oninput="toUpper(this)">
+    <input id="agencia" placeholder="Agência" value="${dados?.agencia||""}" oninput="this.value=onlyNumbers(this.value)">
+    <input id="conta" placeholder="Conta" value="${dados?.conta||""}" oninput="this.value=onlyNumbers(this.value)">
+    <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo||""}" oninput="toUpper(this)">
+    <input id="pix" placeholder="Chave PIX" value="${dados?.pix||""}">
 
-      <input id="agencia" placeholder="Agência" value="${dados?.agencia || ""}"
-             oninput="this.value=onlyNumbers(this.value)">
-
-      <input id="conta" placeholder="Conta" value="${dados?.conta || ""}"
-             oninput="this.value=onlyNumbers(this.value)">
-
-      <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo || ""}" 
-             oninput="toUpper(this)">
-
-      <input id="pix" placeholder="Chave PIX" value="${dados?.pix || ""}" 
-             oninput="toUpper(this)">
-
-      <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
-      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
+    <button class='btnSalvar' onclick="salvar()">Salvar Registro</button>
+    <button class='btnClose' onclick="fecharPopup()">Cancelar</button>
     `;
   }
 
-  if(tipo === "fornecedores"){
-    html = `
-      <h3>${dados ? "Editar Fornecedor" : "Cadastrar Fornecedor"}</h3>
+  if(tipo==="fornecedores"){
+    h = `
+    <h3>${dados?"Editar Fornecedor":"Cadastrar Fornecedor"}</h3>
 
-      <input id="nome" placeholder="Nome" value="${dados?.nome || ""}" 
-             oninput="toUpper(this)">
+    <input id="nome" placeholder="Nome" value="${dados?.nome||""}" oninput="toUpper(this)">
+    <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
 
-      <input id="cnpj" placeholder="CNPJ" maxlength="18" 
-             value="${dados?.cnpj || ""}" 
-             oninput="this.value=maskCNPJ(this.value)">
+    <input id="tel1" placeholder="Whatsapp Principal (obrigatório)" maxlength="16"
+           value="${dados?.tel1||""}" oninput="this.value=maskPhone(this.value)">
 
-      <input id="tel1" placeholder="Whatsapp Principal (obrigatório)"
-             maxlength="16"
-             value="${dados?.tel1 || ""}"
-             oninput="this.value=maskPhone(this.value)">
+    <input id="tel2" placeholder="Whatsapp Secundário (opcional)" maxlength="16"
+           value="${dados?.tel2||""}" oninput="this.value=maskPhone(this.value)">
 
-      <input id="tel2" placeholder="Whatsapp Secundário (opcional)"
-             maxlength="16"
-             value="${dados?.tel2 || ""}"
-             oninput="this.value=maskPhone(this.value)">
-
-      <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
-      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
+    <button class='btnSalvar' onclick="salvar()">Salvar Registro</button>
+    <button class='btnClose' onclick="fecharPopup()">Cancelar</button>
     `;
   }
 
-  if(tipo === "empresas"){
-    html = `
-      <h3>${dados ? "Editar Empresa" : "Cadastrar Empresa"}</h3>
+  if(tipo==="empresas"){
+    h = `
+    <h3>${dados?"Editar Empresa":"Cadastrar Empresa"}</h3>
 
-      <input id="nome" placeholder="Nome da Instituição" value="${dados?.nome || ""}"
-             oninput="toUpper(this)">
+    <input id="nome" placeholder="Nome da Empresa" value="${dados?.nome||""}" oninput="toUpper(this)">
+    <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
+    <input id="uf" placeholder="UF" maxlength="2" value="${dados?.uf||""}" oninput="toUpper(this)">
 
-      <input id="cnpj" placeholder="CNPJ" maxlength="18"
-             value="${dados?.cnpj || ""}"
-             oninput="this.value=maskCNPJ(this.value)">
-             
-      <input id="uf" placeholder="UF" maxlength="2"
-             value="${dados?.uf || ""}" 
-             oninput="toUpper(this)">
-
-      <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
-      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
+    <button class='btnSalvar' onclick="salvar()">Salvar Registro</button>
+    <button class='btnClose' onclick="fecharPopup()">Cancelar</button>
     `;
   }
 
-  popupContent.innerHTML = html;
-  popup.style.display = "flex";
+  popupContent.innerHTML = h;
+  popup.style.display="flex";
 }
 
-function fecharPopup(){
-  popup.style.display = "none";
-}
+function fecharPopup(){ popup.style.display="none"; }
 
 /* =====================================================
-   SALVAR
+   SALVAR REGISTRO
 ===================================================== */
 async function salvar(){
-  let body = {};
-  let rota = "";
+  document.getElementById("loading").style.display="flex";
 
-  if(editando === "contas"){
-    body = {
-      banco:banco.value.trim(),
-      agencia:agencia.value.trim(),
-      conta:conta.value.trim(),
-      tipo:tipo.value.trim(),
-      pix:pix.value.trim()
-    };
-    rota = editCodigo ? "updateConta" : "addConta";
+  let body={}, rota="";
+
+  if(editando==="fornecedores"){
+    if(!tel1.value.trim()){
+      tel1.classList.add("erro");
+      document.getElementById("loading").style.display="none";
+      return;
+    } else {
+      tel1.classList.remove("erro");
+    }
   }
 
-  if(editando === "fornecedores"){
-    body = {
-      nome:nome.value.trim(),
-      cnpj:cnpj.value.trim(),
-      tel1:tel1.value.trim(),
-      tel2:tel2.value.trim()
-    };
-    rota = editCodigo ? "updateFornecedor" : "addFornecedor";
+  if(editando==="contas"){
+    body={banco:banco.value.trim(), agencia:agencia.value.trim(), conta:conta.value.trim(), tipo:tipo.value.trim(), pix:pix.value.trim()};
+    rota = editCodigo?"updateConta":"addConta";
   }
 
-  if(editando === "empresas"){
-    body = {
-      nome:nome.value.trim(),
-      cnpj:cnpj.value.trim(),
-      uf:uf.value.trim()
-    };
-    rota = editCodigo ? "updateEmpresa" : "addEmpresa";
+  if(editando==="fornecedores"){
+    body={nome:nome.value.trim(), cnpj:cnpj.value.trim(), tel1:tel1.value.trim(), tel2:tel2.value.trim()};
+    rota = editCodigo?"updateFornecedor":"addFornecedor";
+  }
+
+  if(editando==="empresas"){
+    body={nome:nome.value.trim(), cnpj:cnpj.value.trim(), uf:uf.value.trim()};
+    rota = editCodigo?"updateEmpresa":"addEmpresa";
   }
 
   if(editCodigo) body.codigo = editCodigo;
@@ -471,12 +372,80 @@ async function salvar(){
   const url = `${API}?action=${rota}&${new URLSearchParams(body)}`;
   const res = await fetch(url).then(r=>r.json());
 
+  document.getElementById("loading").style.display="none";
+
   if(res.ok){
     fecharPopup();
     carregarTudo();
   } else {
-    alert("Erro ao salvar registro.");
+    alert("Erro ao salvar.");
   }
+}
+
+/* =====================================================
+   LISTAGENS
+===================================================== */
+async function carregarContas(){
+  let d = await fetch(`${API}?action=getContas`).then(r=>r.json());
+  let h="";
+
+  d.forEach(x=>{
+    h += `
+      <div class="item">
+        <div class="item-top">
+          <span>🏦 ${x.banco} • Ag ${x.agencia} • Conta ${x.conta}</span>
+          <span class="acoes">
+            <a onclick='abrirPopup("contas", ${JSON.stringify(x)})'>Editar</a> |
+            <a onclick='excluir("Conta","${x.codigo}")'>Excluir</a>
+          </span>
+        </div>
+        <div class="item-sub">Tipo: ${x.tipo} • PIX: ${x.pix||"-"}</div>
+      </div>`;
+  });
+
+  listaContas.innerHTML = h;
+}
+
+async function carregarFornecedores(){
+  let d = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+  let h="";
+
+  d.forEach(x=>{
+    h += `
+      <div class="item">
+        <div class="item-top">
+          <span>🏭 ${x.nome}</span>
+          <span class="acoes">
+            <a onclick='abrirPopup("fornecedores", ${JSON.stringify(x)})'>Editar</a> |
+            <a onclick='excluir("Fornecedor","${x.codigo}")'>Excluir</a>
+          </span>
+        </div>
+        <div class="item-sub">CNPJ • ${x.cnpj} • WhatsApp: ${x.tel1}</div>
+      </div>`;
+  });
+
+  listaFornec.innerHTML = h;
+}
+
+async function carregarEmpresas(){
+  let d = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+  let h="";
+
+  d.forEach(x=>{
+    h += `
+      <div class="item">
+        <div class="item-top">
+          <span>🏢 ${x.nome}</span>
+          <span class="acoes">
+            <a onclick='abrirPopup("empresas", ${JSON.stringify(x)})'>Editar</a> |
+            <a onclick='excluir("Empresa","${x.codigo}")'>Excluir</a>
+          </span>
+        </div>
+        <div class="item-sub">CNPJ • ${x.cnpj} • UF: ${x.uf}</div>
+      </div>`;
+  });
+
+  listaEmpresas.innerHTML = h;
 }
 
 /* =====================================================
@@ -484,76 +453,8 @@ async function salvar(){
 ===================================================== */
 async function excluir(tipo, codigo){
   if(!confirm("Deseja realmente excluir?")) return;
-  
-  const res = await fetch(`${API}?action=delete${tipo}&codigo=${codigo}`).then(r=>r.json());
-
-  if(res.ok){
-    carregarTudo();
-  } else {
-    alert("Erro ao excluir.");
-  }
-}
-
-/* =====================================================
-   CARREGAR
-===================================================== */
-async function carregarContas(){
-  let dados = await fetch(`${API}?action=getContas`).then(r=>r.json());
-  let html = "";
-
-  dados.forEach(c=>{
-    html += `
-      <tr>
-        <td>${c.banco}</td>
-        <td>${c.agencia}</td>
-        <td>${c.conta}</td>
-        <td>
-          <button class="btnEditar" onclick='abrirPopup("contas", ${JSON.stringify(c)})'>Editar</button>
-          <button class="btnExcluir" onclick='excluir("Conta","${c.codigo}")'>Excluir</button>
-        </td>
-      </tr>`;
-  });
-
-  tabelaContas.querySelector("tbody").innerHTML = html;
-}
-
-async function carregarFornecedores(){
-  let dados = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
-  let html = "";
-
-  dados.forEach(f=>{
-    html += `
-      <tr>
-        <td>${f.nome}</td>
-        <td>${f.cnpj}</td>
-        <td>
-          <button class="btnEditar" onclick='abrirPopup("fornecedores", ${JSON.stringify(f)})'>Editar</button>
-          <button class="btnExcluir" onclick='excluir("Fornecedor","${f.codigo}")'>Excluir</button>
-        </td>
-      </tr>`;
-  });
-
-  tabelaFornec.querySelector("tbody").innerHTML = html;
-}
-
-async function carregarEmpresas(){
-  let dados = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
-  let html = "";
-
-  dados.forEach(emp=>{
-    html += `
-      <tr>
-        <td>${emp.nome}</td>
-        <td>${emp.cnpj}</td>
-        <td>${emp.uf}</td>
-        <td>
-          <button class="btnEditar" onclick='abrirPopup("empresas", ${JSON.stringify(emp)})'>Editar</button>
-          <button class="btnExcluir" onclick='excluir("Empresa","${emp.codigo}")'>Excluir</button>
-        </td>
-      </tr>`;
-  });
-
-  tabelaEmpresas.querySelector("tbody").innerHTML = html;
+  await fetch(`${API}?action=delete${tipo}&codigo=${codigo}`);
+  carregarTudo();
 }
 
 /* =====================================================
