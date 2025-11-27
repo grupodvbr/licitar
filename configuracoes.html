@@ -386,8 +386,14 @@ function abrirPopup(tipo, dados=null){
              value="${dados?.cnpj || ""}" 
              oninput="this.value=maskCNPJ(this.value)">
 
-      <input id="telefone" placeholder="Telefone"
-             value="${dados?.telefone || ""}"
+      <input id="tel1" placeholder="Whatsapp Principal (obrigatório)"
+             maxlength="16"
+             value="${dados?.tel1 || ""}"
+             oninput="this.value=maskPhone(this.value)">
+
+      <input id="tel2" placeholder="Whatsapp Secundário (opcional)"
+             maxlength="16"
+             value="${dados?.tel2 || ""}"
              oninput="this.value=maskPhone(this.value)">
 
       <button class="btnSalvar" onclick="salvar()">Salvar Registro</button>
@@ -445,7 +451,8 @@ async function salvar(){
     body = {
       nome:nome.value.trim(),
       cnpj:cnpj.value.trim(),
-      telefone:telefone.value.trim()
+      tel1:tel1.value.trim(),
+      tel2:tel2.value.trim()
     };
     rota = editCodigo ? "updateFornecedor" : "addFornecedor";
   }
