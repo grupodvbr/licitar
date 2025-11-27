@@ -10,89 +10,85 @@
 <style>
 :root{
   --azul:#0b1e39;
-  --azul-claro:#152c4d;
+  --azul-escuro:#091627;
   --dourado:#c9a86c;
   --bg:#eef2f7;
   --card:#ffffff;
   --radius:18px;
-  --shadow:0 8px 30px rgba(0,0,0,0.12);
+  --shadow:0 8px 28px rgba(0,0,0,0.12);
 }
 
 /* BASE */
 body{
   margin:0;
-  padding:22px;
   background:var(--bg);
   font-family:'Inter', sans-serif;
   overflow-x:hidden;
 }
 
-/* ============== OVERLAY ============== */
+/* ======= overlay ======= */
 #overlay,
 #overlayProcessando{
   position:fixed;
   inset:0;
-  background:rgba(255,255,255,.9);
+  background:rgba(255,255,255,0.95);
   display:flex;
   justify-content:center;
   align-items:center;
   z-index:99999;
-  font-size:26px;
+  font-size:28px;
   font-weight:700;
   color:var(--azul);
 }
 #overlayProcessando{ display:none; }
 
-/* TÍTULO */
-h1{
+/* ======= tela inicial ======= */
+#telaInicial{
+  padding:25px;
+}
+
+#telaInicial h1{
   text-align:center;
   color:var(--azul);
+  margin-top:15px;
   margin-bottom:25px;
-  font-size:30px;
+  font-size:32px;
   font-weight:800;
 }
 
-/* BUSCA */
 #busca{
   width:100%;
   max-width:450px;
   display:block;
   margin:0 auto 25px;
-  padding:12px 15px;
-  border:1px solid #bbb;
+  padding:15px 18px;
+  border:1px solid #ccc;
   border-radius:14px;
   font-size:16px;
-  transition:.2s;
 }
 #busca:focus{
   outline:none;
   border-color:var(--azul);
 }
 
-/* ============== CARDS ============== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
   gap:22px;
-  margin-bottom:25px;
+  padding:0 10px 30px;
 }
 
 .card{
   background:white;
+  padding:25px;
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  padding:22px;
   cursor:pointer;
-  border:2px solid transparent;
   transition:.25s;
+  text-align:center;
 }
-.card:hover{
-  transform:translateY(-6px);
-}
-.card.sel{
-  border:3px solid var(--dourado);
-  background:#fff6da;
-}
+.card:hover{ transform:translateY(-6px); }
+
 .card h2{
   margin:0;
   font-size:22px;
@@ -100,25 +96,55 @@ h1{
   font-weight:700;
 }
 .card small{
-  margin-top:5px;
+  margin-top:8px;
   display:block;
   font-size:15px;
-  color:#555;
+  color:#666;
 }
 
-/* ============== BOX EMPRESA ============== */
-#boxEmpresa{
+/* ======= tela empresa ======= */
+#telaEmpresa{
   display:none;
+  padding:0;
+  min-height:100vh;
+  background:#fff;
+}
+
+/* topo fixo */
+.topoEmpresa{
+  background:var(--azul);
+  color:white;
+  padding:15px 20px;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  font-size:20px;
+  font-weight:600;
+  position:sticky;
+  top:0;
+  z-index:90;
+}
+
+.topoEmpresa span{
+  cursor:pointer;
+  font-size:26px;
+}
+
+/* bloco empresa */
+.boxEmpresa{
   background:white;
-  padding:20px;
-  border-radius:var(--radius);
+  padding:22px;
   box-shadow:var(--shadow);
-  margin-bottom:25px;
+  margin:15px;
+  border-radius:var(--radius);
+  font-size:16px;
   line-height:1.7;
 }
 
-/* ============== TABELA ============== */
-#boxItens{ display:none; }
+/* tabela */
+.boxItens{
+  padding:15px;
+}
 
 table{
   width:100%;
@@ -127,7 +153,9 @@ table{
   border-radius:var(--radius);
   overflow:hidden;
   box-shadow:var(--shadow);
+  margin-bottom:20px;
 }
+
 th,td{
   padding:10px;
   border-bottom:1px solid #eee;
@@ -138,19 +166,19 @@ th{
   color:white;
   text-align:left;
 }
-td input, select{
+
+select,input{
   padding:6px;
-  border:1px solid #bbb;
   border-radius:8px;
-  font-size:14px;
+  border:1px solid #bbb;
 }
 
-/* ============== BOTÕES ============== */
+/* botões */
 .btn{
   background:var(--dourado);
   color:black;
   border:none;
-  padding:15px 20px;
+  padding:14px 20px;
   border-radius:14px;
   cursor:pointer;
   font-size:16px;
@@ -163,7 +191,7 @@ td input, select{
 #popup{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,0.55);
   display:none;
   justify-content:center;
   align-items:center;
@@ -171,7 +199,7 @@ td input, select{
 }
 .popup{
   background:white;
-  width:95%;
+  width:92%;
   max-width:520px;
   padding:25px;
   border-radius:20px;
@@ -183,54 +211,73 @@ td input, select{
   to{opacity:1; transform:scale(1);}
 }
 
-/* BOTÃO ROMANEIO GERADO */
+/* final */
 #finalizadoBox{
   display:none;
   text-align:center;
-  margin-top:25px;
+  padding:30px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- Overlays -->
 <div id="overlay">Carregando...</div>
 <div id="overlayProcessando">Processando...</div>
 
-<h1>Gerar Romaneio</h1>
-
-<input id="busca" placeholder="Pesquisar empresa..." onkeyup="filtrar()">
-
-<div id="listaCards" class="grid"></div>
-
-<div id="boxEmpresa"></div>
-
-<div id="boxItens">
-  <h2 style="color:var(--azul);">Itens da Licitação</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>TR</th>
-        <th>Descrição</th>
-        <th>Marca</th>
-        <th>Valor</th>
-        <th>Mín</th>
-        <th>Enviados</th>
-        <th>Disp</th>
-        <th>Fornecedor</th>
-        <th>Qtd</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody id="tbodyItens"></tbody>
-  </table>
-
-  <br>
-  <button class="btn" onclick="mostrarResumo()">Gerar Romaneio</button>
+<!-- ===================== TELA INICIAL ===================== -->
+<div id="telaInicial">
+  <h1>Gerar Romaneio</h1>
+  <input id="busca" placeholder="Pesquisar empresa..." onkeyup="filtrar()">
+  <div id="listaCards" class="grid"></div>
 </div>
 
-<!-- POPUP -->
+<!-- ===================== TELA EMPRESA ===================== -->
+<div id="telaEmpresa">
+
+  <!-- TOPO -->
+  <div class="topoEmpresa">
+    <span onclick="voltar()">←</span>
+    <div id="nomeTopo"></div>
+  </div>
+
+  <!-- Dados Empresa -->
+  <div class="boxEmpresa" id="boxEmpresa"></div>
+
+  <!-- Itens -->
+  <div class="boxItens">
+    <h2 style="color:var(--azul); margin:5px 0 12px;">Itens da Licitação</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>TR</th>
+          <th>Descrição</th>
+          <th>Marca</th>
+          <th>Valor</th>
+          <th>Mín</th>
+          <th>Enviados</th>
+          <th>Disp</th>
+          <th>Fornecedor</th>
+          <th>Qtd</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyItens"></tbody>
+    </table>
+
+    <button class="btn" onclick="mostrarResumo()">Gerar Romaneio</button>
+  </div>
+
+  <div id="finalizadoBox">
+    <h2 style="color:var(--azul);font-weight:800;">Romaneio Gerado ✔</h2>
+    <button class="btn" onclick="location.href='romaneios.html'">Ver Romaneios</button>
+  </div>
+
+</div>
+
+<!-- ===================== POPUP ===================== -->
 <div id="popup">
   <div class="popup">
     <h3 style="color:var(--azul); margin-top:0;">Resumo do Romaneio</h3>
@@ -241,16 +288,10 @@ td input, select{
   </div>
 </div>
 
-<!-- MENSAGEM FINAL -->
-<div id="finalizadoBox">
-  <h2 style="color:var(--azul); font-weight:800;">Romaneio Gerado ✔</h2>
-  <button class="btn" onclick="location.href='romaneios.html'">Ver Romaneios</button>
-</div>
-
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
-/* FORMATADOR */
+/* formatador */
 function money(v){
   return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2});
 }
@@ -261,24 +302,22 @@ async function carregar(){
   montarCards(empresas);
 }
 
-/* ====================== CARDS ====================== */
+/* monta cards */
 function montarCards(empresas){
   let html = "";
-
   empresas.forEach(e=>{
     html += `
-      <div class="card" onclick="selecionar('${e.codigo}', this)">
+      <div class="card" onclick="selecionar('${e.codigo}')">
         <h2>${e.nome}</h2>
         <small>${e.instituicao}</small>
       </div>
     `;
   });
-
   listaCards.innerHTML = html;
   overlay.style.display="none";
 }
 
-/* BUSCA */
+/* busca */
 function filtrar(){
   const termo = busca.value.toLowerCase();
   document.querySelectorAll(".card").forEach(c=>{
@@ -286,24 +325,34 @@ function filtrar(){
   });
 }
 
-/* ====================== SELECIONAR EMPRESA ====================== */
-async function selecionar(cod, el){
-  document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel"));
-  el.classList.add("sel");
+/* ====================== SELEÇÃO ====================== */
+async function selecionar(cod){
 
   overlayProcessando.style.display="flex";
 
   const emp = await fetch(`${API}?action=getEmpresa&codigo=${cod}`).then(r=>r.json());
 
-  boxEmpresa.style.display="block";
+  nomeTopo.innerHTML = emp.nome;
+
   boxEmpresa.innerHTML = `
-    <h2 style="margin:0;color:var(--azul)">${emp.nome}</h2>
     <b>Instituição:</b> ${emp.instituicao}<br>
     <b>CNPJ:</b> ${emp.cnpj}<br>
     <b>UF:</b> ${emp.uf}<br>
   `;
 
-  carregarItens(cod);
+  await carregarItens(cod);
+
+  telaInicial.style.display="none";
+  telaEmpresa.style.display="block";
+
+  overlayProcessando.style.display="none";
+}
+
+/* voltar */
+function voltar(){
+  telaEmpresa.style.display="none";
+  telaInicial.style.display="block";
+  finalizadoBox.style.display="none";
 }
 
 /* ====================== ITENS ====================== */
@@ -331,13 +380,8 @@ async function carregarItens(cod){
   });
 
   montarTabela();
-
-  boxItens.style.display="block";
-
-  overlayProcessando.style.display="none";
 }
 
-/* CÁLCULO */
 function getEnviados(cod, tr){
   let tot=0;
   remessas.forEach(r=>{
@@ -353,16 +397,15 @@ function getEnviados(cod, tr){
   return tot;
 }
 
-/* TABELA */
+/* tabela */
 function montarTabela(){
   let html="";
-
   itensList.forEach((it,i)=>{
 
-    let selFornec = `<select onchange="selForn(${i},this.value)">
+    let selF = `<select onchange="selForn(${i},this.value)">
       <option value="">Fornecedor</option>`;
-    fornecedores.forEach(f=> selFornec += `<option>${f.nome}</option>`);
-    selFornec += "</select>";
+    fornecedores.forEach(f=> selF += `<option>${f.nome}</option>`);
+    selF += `</select>`;
 
     html += `
       <tr>
@@ -373,10 +416,11 @@ function montarTabela(){
         <td>${it.quantMin}</td>
         <td>${it.enviados}</td>
         <td>${it.disponivel}</td>
-        <td>${selFornec}</td>
+        <td>${selF}</td>
         <td><input type="number" min="0" max="${it.disponivel}" onchange="selQtd(${i},this.value)"></td>
         <td id="tot${i}">R$ 0,00</td>
-      </tr>`;
+      </tr>
+    `;
   });
 
   tbodyItens.innerHTML = html;
@@ -387,25 +431,22 @@ function selForn(i,v){ itensList[i].fornecedor = v; }
 function selQtd(i,v){
   v = Number(v);
   if(v > itensList[i].disponivel) return alert("Quantidade maior que o disponível!");
-
   itensList[i].qtd = v;
   itensList[i].subtotal = v * itensList[i].valorUnit;
-
-  document.getElementById("tot"+i).innerHTML = "R$ " + money(itensList[i].subtotal);
+  document.getElementById("tot"+i).innerHTML = "R$ "+money(itensList[i].subtotal);
 }
 
 /* ====================== RESUMO ====================== */
 function mostrarResumo(){
-
   const sel = itensList.filter(i=>i.qtd>0 && i.fornecedor!="");
   if(sel.length===0) return alert("Selecione itens e fornecedor!");
 
   let total = sel.reduce((s,i)=>s+i.subtotal,0);
-  let html="";
 
+  let html="";
   sel.forEach(i=>{
     html += `<p>
-      <b>${i.itemTR}</b> — ${i.qtd} x R$ ${money(i.valorUnit)}
+      <b>${i.itemTR}</b> — ${i.qtd} × R$ ${money(i.valorUnit)}
       = <b>R$ ${money(i.subtotal)}</b><br>
       Fornecedor: <b>${i.fornecedor}</b>
     </p>`;
@@ -421,11 +462,10 @@ function fechar(){ popup.style.display="none"; }
 
 /* ====================== CONFIRMAR ====================== */
 async function confirmarRomaneio(){
-
   popup.style.display="none";
   overlayProcessando.style.display="flex";
 
-  const cardSel = document.querySelector(".card.sel h2").innerText;
+  const empresaNome = nomeTopo.innerText;
 
   const itensEnviar = itensList.filter(i=>i.qtd>0).map(i=>({
     itemTR:i.itemTR,
@@ -439,19 +479,17 @@ async function confirmarRomaneio(){
 
   const payload = {
     data:new Date().toISOString().slice(0,10),
-    codigoLicitacao:cardSel,
+    codigoLicitacao:empresaNome,
     itens:itensEnviar
   };
 
   await fetch(`${API}?action=registrarRomaneio&data=${encodeURIComponent(JSON.stringify(payload))}`);
 
   overlayProcessando.style.display="none";
-
   finalizadoBox.style.display="block";
   window.scrollTo(0,document.body.scrollHeight);
 }
 
-/* INICIAR */
 carregar();
 </script>
 
