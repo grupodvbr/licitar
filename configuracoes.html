@@ -42,7 +42,14 @@ h1 {
   font-weight:800;
 }
 
-/* CARD PRINCIPAL */
+/* GRID */
+.grid {
+  display:grid;
+  gap:30px;
+  grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+}
+
+/* CARD */
 .card {
   background:var(--card-bg);
   backdrop-filter:var(--blur);
@@ -50,26 +57,22 @@ h1 {
   padding:25px;
   box-shadow:var(--shadow);
   border:1px solid rgba(255,255,255,.45);
+  display:flex;
+  flex-direction:column;
+  height:480px; /* 🟡 ALTURA FIXA */
 }
 
-/* GRID */
-.grid {
-  display:grid;
-  gap:30px;
-  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
-}
-
-/* TÍTULO DO CARD */
+/* TÍTULO */
 .card h2 {
-  margin:0 0 18px;
-  padding-bottom:10px;
+  margin:0 0 15px;
+  padding-bottom:8px;
   border-bottom:3px solid var(--dourado);
   color:var(--azul);
-  font-size:24px;
+  font-size:22px;
   font-weight:700;
 }
 
-/* BOTÃO PRINCIPAL DO CARD */
+/* BOTÃO */
 .card button {
   width:100%;
   padding:14px;
@@ -79,7 +82,7 @@ h1 {
   font-size:16px;
   font-weight:700;
   cursor:pointer;
-  margin-bottom:18px;
+  margin-bottom:12px;
   transition:.2s;
 }
 .card button:hover {
@@ -87,64 +90,70 @@ h1 {
   transform:translateY(-2px);
 }
 
-/* =====================================================
-   LISTA PREMIUM (MODELO 4)
-===================================================== */
-.lista {
-  display:flex;
-  flex-direction:column;
+/* CAMPO PESQUISA */
+.search {
+  width:100%;
+  padding:10px 14px;
+  border:1px solid #ccc;
+  border-radius:12px;
+  margin-bottom:12px;
+  font-size:15px;
 }
 
+/* LISTA COM SCROLL */
+.scroll-area {
+  flex:1;
+  overflow-y:auto;
+  padding-right:6px;
+}
+
+.scroll-area::-webkit-scrollbar {
+  width:6px;
+}
+.scroll-area::-webkit-scrollbar-thumb {
+  background:#ccc;
+  border-radius:10px;
+}
+
+/* ITENS */
 .item {
-  padding:12px 5px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+  padding:10px 5px;
   border-bottom:1px solid var(--line);
   transition:.2s;
 }
 .item:hover {
   background:#f2f4f7;
-  border-color:var(--line-hover);
 }
-
 .item-top {
   display:flex;
   justify-content:space-between;
-  font-size:16px;
   font-weight:600;
   color:var(--azul);
 }
-
 .item-sub {
   font-size:13px;
   color:#555;
 }
-
-/* BOTÕES */
 .acoes a {
   color:var(--azul);
-  cursor:pointer;
   margin-left:10px;
+  cursor:pointer;
   font-weight:600;
 }
 .acoes a:hover {
   color:var(--dourado);
 }
 
-/* =====================================================
-   POPUP
-===================================================== */
+/* POPUP */
 .overlay {
   position:fixed;
   top:0; left:0;
   width:100%; height:100%;
-  background:rgba(0,0,0,.45);
   display:none;
   justify-content:center;
   align-items:center;
+  background:rgba(0,0,0,.5);
 }
-
 .popup {
   width:100%;
   max-width:420px;
@@ -152,32 +161,26 @@ h1 {
   border-radius:20px;
   padding:28px;
   box-shadow:var(--shadow);
-  animation:fadeScale .25s ease;
 }
 
-@keyframes fadeScale {
-  from {opacity:0; transform:scale(.85);}
-  to {opacity:1; transform:scale(1);}
-}
-
+/* INPUTS */
 .popup input {
   width:100%;
   padding:14px;
   border:1px solid #ccc;
   border-radius:12px;
-  margin-bottom:15px;
+  margin-bottom:12px;
   font-size:15px;
 }
 
-/* Botões dentro do popup */
 .btnSalvar {
   width:100%;
+  padding:14px;
   background:var(--azul);
   color:white;
-  font-size:17px;
-  padding:14px;
   border:none;
   border-radius:12px;
+  font-size:16px;
   margin-bottom:10px;
 }
 .btnSalvar:hover { background:var(--azul-claro); }
@@ -186,73 +189,69 @@ h1 {
   width:100%;
   padding:12px;
   background:#666;
-  color:#fff;
+  color:white;
   border-radius:12px;
   border:none;
 }
-.btnClose:hover { background:#555; }
-
-/* CAMPO OBRIGATÓRIO COM ERRO */
-.erro {
-  border-color:#d7263d!important;
-  animation:shake .2s;
-}
-@keyframes shake {
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-4px);}
-  50%{transform:translateX(4px);}
-  75%{transform:translateX(-4px);}
-  100%{transform:translateX(0);}
-}
-
-/* =====================================================
-   OVERLAY DE SALVANDO
-===================================================== */
 #loading {
   position:fixed;
   top:0; left:0;
   width:100%; height:100%;
-  background:rgba(255,255,255,.75);
   display:none;
   justify-content:center;
   align-items:center;
+  background:rgba(255,255,255,.75);
   font-size:22px;
-  color:var(--azul);
   font-weight:700;
-  backdrop-filter:blur(4px);
+  color:var(--azul);
 }
 </style>
 </head>
 <body>
 
 <h1>Painel de Cadastros</h1>
-
 <div id="loading">Salvando...</div>
 
 <div class="grid">
 
-  <!-- CONTAS -->
+  <!-- ==============================
+       CONTAS BANCÁRIAS (SEM PESQUISA)
+  =============================== -->
   <div class="card">
     <h2>Contas Bancárias</h2>
     <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
 
-    <div class="lista" id="listaContas"></div>
+    <div class="scroll-area">
+      <div id="listaContas"></div>
+    </div>
   </div>
 
-  <!-- FORNECEDORES -->
+  <!-- ==============================
+        FORNECEDORES (COM PESQUISA)
+  =============================== -->
   <div class="card">
     <h2>Fornecedores</h2>
     <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
 
-    <div class="lista" id="listaFornec"></div>
+    <input type="text" id="buscaFornec" class="search" placeholder="Pesquisar fornecedor..." oninput="filtrar('fornec')">
+
+    <div class="scroll-area">
+      <div id="listaFornec"></div>
+    </div>
   </div>
 
-  <!-- EMPRESAS -->
+  <!-- ==============================
+        EMPRESAS (COM PESQUISA)
+  =============================== -->
   <div class="card">
     <h2>Empresas</h2>
     <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
 
-    <div class="lista" id="listaEmpresas"></div>
+    <input type="text" id="buscaEmp" class="search" placeholder="Pesquisar empresa..." oninput="filtrar('emp')">
+
+    <div class="scroll-area">
+      <div id="listaEmpresas"></div>
+    </div>
   </div>
 
 </div>
@@ -266,8 +265,8 @@ h1 {
 /* API */
 const API = "https://script.google.com/macros/s/AKfycbxp6oJQfnzxBQO691SynA27BDnWAdFXspvl1bP04rLaZeekTlhuaJngafFDfIjlhizi/exec";
 
-let editando = null;
-let editCodigo = null;
+let editando=null;
+let editCodigo=null;
 
 /* MÁSCARAS */
 function maskCNPJ(v){v=v.replace(/\D/g,"");v=v.replace(/^(\d{2})(\d)/,"$1.$2");v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");v=v.replace(/\.(\d{3})(\d)/,".$1/$2");v=v.replace(/(\d{4})(\d)/,"$1-$2");return v;}
@@ -275,104 +274,81 @@ function maskPhone(v){v=v.replace(/\D/g,"");v=v.replace(/^(\d{2})(\d)/,"($1) $2"
 function onlyNumbers(v){return v.replace(/\D/g,"");}
 function toUpper(e){e.value=e.value.toUpperCase();}
 
-/* ABRIR POPUP */
+/* POPUP */
 function abrirPopup(tipo, dados=null){
-  editando = tipo;
-  editCodigo = dados ? dados.codigo : null;
+  editando=tipo;
+  editCodigo=dados?dados.codigo:null;
 
-  let h = "";
+  let h="";
 
   if(tipo==="contas"){
-    h = `
-    <h3>${dados?"Editar Conta":"Cadastrar Conta Bancária"}</h3>
-
-    <input id="banco" placeholder="Banco" value="${dados?.banco||""}" oninput="toUpper(this)">
-    <input id="agencia" placeholder="Agência" value="${dados?.agencia||""}" oninput="this.value=onlyNumbers(this.value)">
-    <input id="conta" placeholder="Conta" value="${dados?.conta||""}" oninput="this.value=onlyNumbers(this.value)">
-    <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo||""}" oninput="toUpper(this)">
-    <input id="pix" placeholder="Chave PIX" value="${dados?.pix||""}">
-
-    <button class='btnSalvar' onclick="salvar()">Salvar Registro</button>
-    <button class='btnClose' onclick="fecharPopup()">Cancelar</button>
+    h=`
+      <h3>${dados?"Editar Conta":"Cadastrar Conta"}</h3>
+      <input id="banco" placeholder="Banco" value="${dados?.banco||""}" oninput="toUpper(this)">
+      <input id="agencia" placeholder="Agência" value="${dados?.agencia||""}">
+      <input id="conta" placeholder="Conta" value="${dados?.conta||""}">
+      <input id="tipo" placeholder="Tipo (CC/CP)" value="${dados?.tipo||""}">
+      <input id="pix" placeholder="Chave PIX" value="${dados?.pix||""}">
+      <button class="btnSalvar" onclick="salvar()">Salvar</button>
+      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
   }
 
   if(tipo==="fornecedores"){
-    h = `
-    <h3>${dados?"Editar Fornecedor":"Cadastrar Fornecedor"}</h3>
-
-    <input id="nome" placeholder="Nome" value="${dados?.nome||""}" oninput="toUpper(this)">
-    <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
-
-    <input id="tel1" placeholder="Whatsapp Principal (obrigatório)" maxlength="16"
-           value="${dados?.tel1||""}" oninput="this.value=maskPhone(this.value)">
-
-    <input id="tel2" placeholder="Whatsapp Secundário (opcional)" maxlength="16"
-           value="${dados?.tel2||""}" oninput="this.value=maskPhone(this.value)">
-
-    <button class='btnSalvar' onclick="salvar()">Salvar Registro</button>
-    <button class='btnClose' onclick="fecharPopup()">Cancelar</button>
+    h=`
+      <h3>${dados?"Editar Fornecedor":"Cadastrar Fornecedor"}</h3>
+      <input id="nome" placeholder="Nome" value="${dados?.nome||""}" oninput="toUpper(this)">
+      <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
+      <input id="tel1" placeholder="Whatsapp Principal" maxlength="16" value="${dados?.tel1||""}" oninput="this.value=maskPhone(this.value)">
+      <input id="tel2" placeholder="Whatsapp Secundário" maxlength="16" value="${dados?.tel2||""}" oninput="this.value=maskPhone(this.value)">
+      <button class="btnSalvar" onclick="salvar()">Salvar</button>
+      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
   }
 
   if(tipo==="empresas"){
-    h = `
-    <h3>${dados?"Editar Empresa":"Cadastrar Empresa"}</h3>
-
-    <input id="nome" placeholder="Nome da Empresa" value="${dados?.nome||""}" oninput="toUpper(this)">
-    <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
-    <input id="uf" placeholder="UF" maxlength="2" value="${dados?.uf||""}" oninput="toUpper(this)">
-
-    <button class='btnSalvar' onclick="salvar()">Salvar Registro</button>
-    <button class='btnClose' onclick="fecharPopup()">Cancelar</button>
+    h=`
+      <h3>${dados?"Editar Empresa":"Cadastrar Empresa"}</h3>
+      <input id="nome" placeholder="Nome da Empresa" value="${dados?.nome||""}" oninput="toUpper(this)">
+      <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
+      <input id="uf" placeholder="UF" maxlength="2" value="${dados?.uf||""}" oninput="toUpper(this)">
+      <button class="btnSalvar" onclick="salvar()">Salvar</button>
+      <button class="btnClose" onclick="fecharPopup()">Cancelar</button>
     `;
   }
 
-  popupContent.innerHTML = h;
+  popupContent.innerHTML=h;
   popup.style.display="flex";
 }
-
 function fecharPopup(){ popup.style.display="none"; }
 
-/* =====================================================
-   SALVAR REGISTRO
-===================================================== */
+/* SALVAR */
 async function salvar(){
   document.getElementById("loading").style.display="flex";
 
   let body={}, rota="";
 
-  if(editando==="fornecedores"){
-    if(!tel1.value.trim()){
-      tel1.classList.add("erro");
-      document.getElementById("loading").style.display="none";
-      return;
-    } else {
-      tel1.classList.remove("erro");
-    }
-  }
-
   if(editando==="contas"){
-    body={banco:banco.value.trim(), agencia:agencia.value.trim(), conta:conta.value.trim(), tipo:tipo.value.trim(), pix:pix.value.trim()};
-    rota = editCodigo?"updateConta":"addConta";
+    body={banco:banco.value,agencia:agencia.value,conta:conta.value,tipo:tipo.value,pix:pix.value};
+    rota=editCodigo?"updateConta":"addConta";
   }
 
   if(editando==="fornecedores"){
-    body={nome:nome.value.trim(), cnpj:cnpj.value.trim(), tel1:tel1.value.trim(), tel2:tel2.value.trim()};
-    rota = editCodigo?"updateFornecedor":"addFornecedor";
+    body={nome:nome.value,cnpj:cnpj.value,tel1:tel1.value,tel2:tel2.value};
+    rota=editCodigo?"updateFornecedor":"addFornecedor";
   }
 
   if(editando==="empresas"){
-    body={nome:nome.value.trim(), cnpj:cnpj.value.trim(), uf:uf.value.trim()};
-    rota = editCodigo?"updateEmpresa":"addEmpresa";
+    body={nome:nome.value,cnpj:cnpj.value,uf:uf.value};
+    rota=editCodigo?"updateEmpresa":"addEmpresa";
   }
 
-  if(editCodigo) body.codigo = editCodigo;
+  if(editCodigo) body.codigo=editCodigo;
 
-  const url = `${API}?action=${rota}&${new URLSearchParams(body)}`;
-  const res = await fetch(url).then(r=>r.json());
+  const url=`${API}?action=${rota}&${new URLSearchParams(body)}`;
+  const res=await fetch(url).then(r=>r.json());
 
-  document.getElementById("loading").style.display="none";
+  loading.style.display="none";
 
   if(res.ok){
     fecharPopup();
@@ -382,91 +358,105 @@ async function salvar(){
   }
 }
 
-/* =====================================================
-   LISTAGENS
-===================================================== */
+/* FILTROS */
+function filtrar(tipo){
+  let termo="";
+  let itens=[];
+
+  if(tipo==="fornec"){
+    termo=document.getElementById("buscaFornec").value.toLowerCase();
+    itens=document.querySelectorAll("#listaFornec .item");
+  }
+  if(tipo==="emp"){
+    termo=document.getElementById("buscaEmp").value.toLowerCase();
+    itens=document.querySelectorAll("#listaEmpresas .item");
+  }
+
+  itens.forEach(x=>{
+    let texto=x.innerText.toLowerCase();
+    x.style.display=texto.includes(termo)?"block":"none";
+  });
+}
+
+/* LISTAGENS */
 async function carregarContas(){
-  let d = await fetch(`${API}?action=getContas`).then(r=>r.json());
-  let h="";
+  let d=await fetch(`${API}?action=getContas`).then(r=>r.json());
+  let html="";
 
   d.forEach(x=>{
-    h += `
-      <div class="item">
-        <div class="item-top">
-          <span>🏦 ${x.banco} • Ag ${x.agencia} • Conta ${x.conta}</span>
-          <span class="acoes">
-            <a onclick='abrirPopup("contas", ${JSON.stringify(x)})'>Editar</a> |
-            <a onclick='excluir("Conta","${x.codigo}")'>Excluir</a>
-          </span>
-        </div>
-        <div class="item-sub">Tipo: ${x.tipo} • PIX: ${x.pix||"-"}</div>
-      </div>`;
+    html+=`
+    <div class="item">
+      <div class="item-top">
+        <span>🏦 ${x.banco} • Ag ${x.agencia} • Conta ${x.conta}</span>
+        <span class="acoes">
+          <a onclick='abrirPopup("contas",${JSON.stringify(x)})'>Editar</a> |
+          <a onclick='excluir("Conta","${x.codigo}")'>Excluir</a>
+        </span>
+      </div>
+      <div class="item-sub">Tipo: ${x.tipo} • PIX: ${x.pix||"-"}</div>
+    </div>`;
   });
 
-  listaContas.innerHTML = h;
+  listaContas.innerHTML=html;
 }
 
 async function carregarFornecedores(){
-  let d = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
-  let h="";
+  let d=await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+  let html="";
 
   d.forEach(x=>{
-    h += `
-      <div class="item">
-        <div class="item-top">
-          <span>🏭 ${x.nome}</span>
-          <span class="acoes">
-            <a onclick='abrirPopup("fornecedores", ${JSON.stringify(x)})'>Editar</a> |
-            <a onclick='excluir("Fornecedor","${x.codigo}")'>Excluir</a>
-          </span>
-        </div>
-        <div class="item-sub">CNPJ • ${x.cnpj} • WhatsApp: ${x.tel1}</div>
-      </div>`;
+    html+=`
+    <div class="item">
+      <div class="item-top">
+        <span>🏭 ${x.nome}</span>
+        <span class="acoes">
+          <a onclick='abrirPopup("fornecedores",${JSON.stringify(x)})'>Editar</a> |
+          <a onclick='excluir("Fornecedor","${x.codigo}")'>Excluir</a>
+        </span>
+      </div>
+      <div class="item-sub">CNPJ: ${x.cnpj} • WhatsApp: ${x.tel1}</div>
+    </div>`;
   });
 
-  listaFornec.innerHTML = h;
+  listaFornec.innerHTML=html;
 }
 
 async function carregarEmpresas(){
-  let d = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
-  let h="";
+  let d=await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+  let html="";
 
   d.forEach(x=>{
-    h += `
-      <div class="item">
-        <div class="item-top">
-          <span>🏢 ${x.nome}</span>
-          <span class="acoes">
-            <a onclick='abrirPopup("empresas", ${JSON.stringify(x)})'>Editar</a> |
-            <a onclick='excluir("Empresa","${x.codigo}")'>Excluir</a>
-          </span>
-        </div>
-        <div class="item-sub">CNPJ • ${x.cnpj} • UF: ${x.uf}</div>
-      </div>`;
+    html+=`
+    <div class="item">
+      <div class="item-top">
+        <span>🏢 ${x.nome}</span>
+        <span class="acoes">
+          <a onclick='abrirPopup("empresas",${JSON.stringify(x)})'>Editar</a> |
+          <a onclick='excluir("Empresa","${x.codigo}")'>Excluir</a>
+        </span>
+      </div>
+      <div class="item-sub">CNPJ: ${x.cnpj} • UF: ${x.uf}</div>
+    </div>`;
   });
 
-  listaEmpresas.innerHTML = h;
+  listaEmpresas.innerHTML=html;
 }
 
-/* =====================================================
-   EXCLUIR
-===================================================== */
-async function excluir(tipo, codigo){
-  if(!confirm("Deseja realmente excluir?")) return;
+/* EXCLUIR */
+async function excluir(tipo,codigo){
+  if(!confirm("Deseja excluir?")) return;
   await fetch(`${API}?action=delete${tipo}&codigo=${codigo}`);
   carregarTudo();
 }
 
-/* =====================================================
-   INICIAR
-===================================================== */
+/* INICIAR */
 function carregarTudo(){
   carregarContas();
   carregarFornecedores();
   carregarEmpresas();
 }
+window.onload=carregarTudo;
 
-window.onload = carregarTudo;
 </script>
 
 </body>
