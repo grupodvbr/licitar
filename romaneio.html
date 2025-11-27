@@ -5,10 +5,12 @@
 <title>Gerar Romaneio • LICITAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 :root{
   --azul:#0b1e39;
-  --azul-escuro:#091627;
+  --azul-claro:#152c4d;
   --dourado:#c9a86c;
   --bg:#eef2f7;
   --card:#ffffff;
@@ -16,6 +18,7 @@
   --shadow:0 8px 30px rgba(0,0,0,0.12);
 }
 
+/* BASE */
 body{
   margin:0;
   padding:22px;
@@ -24,21 +27,23 @@ body{
   overflow-x:hidden;
 }
 
-/* ================= OVERLAY ================= */
-#overlay{
+/* ============== OVERLAY ============== */
+#overlay,
+#overlayProcessando{
   position:fixed;
   inset:0;
-  background:white;
+  background:rgba(255,255,255,.9);
   display:flex;
   justify-content:center;
   align-items:center;
-  z-index:999999;
+  z-index:99999;
   font-size:26px;
   font-weight:700;
   color:var(--azul);
 }
+#overlayProcessando{ display:none; }
 
-/* ================= TÍTULO ================= */
+/* TÍTULO */
 h1{
   text-align:center;
   color:var(--azul);
@@ -47,7 +52,7 @@ h1{
   font-weight:800;
 }
 
-/* ================= BUSCA ================= */
+/* BUSCA */
 #busca{
   width:100%;
   max-width:450px;
@@ -64,10 +69,10 @@ h1{
   border-color:var(--azul);
 }
 
-/* ================= GRID DE CARDS ================= */
+/* ============== CARDS ============== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
   gap:22px;
   margin-bottom:25px;
 }
@@ -76,27 +81,32 @@ h1{
   background:white;
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  padding:20px;
+  padding:22px;
   cursor:pointer;
   border:2px solid transparent;
   transition:.25s;
 }
-.card:hover{ transform:translateY(-5px); }
+.card:hover{
+  transform:translateY(-6px);
+}
 .card.sel{
   border:3px solid var(--dourado);
-  background:#fff7e0;
+  background:#fff6da;
 }
 .card h2{
   margin:0;
-  font-size:20px;
+  font-size:22px;
   color:var(--azul);
+  font-weight:700;
 }
 .card small{
-  color:#444;
-  font-weight:500;
+  margin-top:5px;
+  display:block;
+  font-size:15px;
+  color:#555;
 }
 
-/* ================= BOX EMPRESA ================= */
+/* ============== BOX EMPRESA ============== */
 #boxEmpresa{
   display:none;
   background:white;
@@ -107,7 +117,7 @@ h1{
   line-height:1.7;
 }
 
-/* ================= TABELA ================= */
+/* ============== TABELA ============== */
 #boxItens{ display:none; }
 
 table{
@@ -128,19 +138,19 @@ th{
   color:white;
   text-align:left;
 }
-td input{
-  width:70px;
+td input, select{
   padding:6px;
   border:1px solid #bbb;
   border-radius:8px;
+  font-size:14px;
 }
 
-/* ================= BOTÕES ================= */
+/* ============== BOTÕES ============== */
 .btn{
   background:var(--dourado);
   color:black;
   border:none;
-  padding:14px 22px;
+  padding:15px 20px;
   border-radius:14px;
   cursor:pointer;
   font-size:16px;
@@ -149,7 +159,7 @@ td input{
 }
 .btn:hover{ background:#b4904f; }
 
-/* ================= POPUP ================= */
+/* POPUP */
 #popup{
   position:fixed;
   inset:0;
@@ -162,7 +172,7 @@ td input{
 .popup{
   background:white;
   width:95%;
-  max-width:500px;
+  max-width:520px;
   padding:25px;
   border-radius:20px;
   box-shadow:var(--shadow);
@@ -172,23 +182,31 @@ td input{
   from{opacity:0; transform:scale(0.85);}
   to{opacity:1; transform:scale(1);}
 }
+
+/* BOTÃO ROMANEIO GERADO */
+#finalizadoBox{
+  display:none;
+  text-align:center;
+  margin-top:25px;
+}
 </style>
 </head>
 
 <body>
 
 <div id="overlay">Carregando...</div>
+<div id="overlayProcessando">Processando...</div>
 
 <h1>Gerar Romaneio</h1>
 
-<input id="busca" placeholder="Pesquisar licitação..." onkeyup="filtrar()">
+<input id="busca" placeholder="Pesquisar empresa..." onkeyup="filtrar()">
 
 <div id="listaCards" class="grid"></div>
 
 <div id="boxEmpresa"></div>
 
 <div id="boxItens">
-  <h2 style="color:var(--azul);">Itens Disponíveis</h2>
+  <h2 style="color:var(--azul);">Itens da Licitação</h2>
 
   <table>
     <thead>
@@ -199,7 +217,7 @@ td input{
         <th>Valor</th>
         <th>Mín</th>
         <th>Enviados</th>
-        <th>Disp.</th>
+        <th>Disp</th>
         <th>Fornecedor</th>
         <th>Qtd</th>
         <th>Total</th>
@@ -223,42 +241,44 @@ td input{
   </div>
 </div>
 
+<!-- MENSAGEM FINAL -->
+<div id="finalizadoBox">
+  <h2 style="color:var(--azul); font-weight:800;">Romaneio Gerado ✔</h2>
+  <button class="btn" onclick="location.href='romaneios.html'">Ver Romaneios</button>
+</div>
+
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
-/* ===== FORMATADOR DE VALOR ===== */
+/* FORMATADOR */
 function money(v){
   return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2});
 }
 
-/* ====================== CARREGAR INICIAL ====================== */
+/* ====================== INICIAL ====================== */
 async function carregar(){
-  const itens = await fetch(`${API}?action=getItens&codigo=ALL`).then(r=>r.json());
-  const lic = {};
-  itens.forEach(i => lic[i.codigoLicitacao] = true);
-  montarCards(Object.keys(lic).map(c => ({codigo:c})));
+  const empresas = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+  montarCards(empresas);
 }
 
-/* ====================== MONTAR CARDS ====================== */
-async function montarCards(lista){
-  const empresas = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+/* ====================== CARDS ====================== */
+function montarCards(empresas){
   let html = "";
 
-  lista.forEach(l=>{
-    const info = empresas.find(e => e.codigo === l.codigo.replace("LIC","EMP")) || {};
-
+  empresas.forEach(e=>{
     html += `
-      <div class="card" onclick="selecionar('${l.codigo}', this)">
-        <h2>${l.codigo}</h2>
-        <small>${info.nome || ''}</small>
-      </div>`;
+      <div class="card" onclick="selecionar('${e.codigo}', this)">
+        <h2>${e.nome}</h2>
+        <small>${e.instituicao}</small>
+      </div>
+    `;
   });
 
-  document.getElementById("listaCards").innerHTML = html;
+  listaCards.innerHTML = html;
   overlay.style.display="none";
 }
 
-/* ====================== BUSCA ====================== */
+/* BUSCA */
 function filtrar(){
   const termo = busca.value.toLowerCase();
   document.querySelectorAll(".card").forEach(c=>{
@@ -266,16 +286,18 @@ function filtrar(){
   });
 }
 
-/* ====================== SELECIONAR ====================== */
+/* ====================== SELECIONAR EMPRESA ====================== */
 async function selecionar(cod, el){
   document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel"));
   el.classList.add("sel");
+
+  overlayProcessando.style.display="flex";
 
   const emp = await fetch(`${API}?action=getEmpresa&codigo=${cod}`).then(r=>r.json());
 
   boxEmpresa.style.display="block";
   boxEmpresa.innerHTML = `
-    <h2 style="margin-top:0;color:var(--azul)">${emp.nome}</h2>
+    <h2 style="margin:0;color:var(--azul)">${emp.nome}</h2>
     <b>Instituição:</b> ${emp.instituicao}<br>
     <b>CNPJ:</b> ${emp.cnpj}<br>
     <b>UF:</b> ${emp.uf}<br>
@@ -309,10 +331,13 @@ async function carregarItens(cod){
   });
 
   montarTabela();
+
   boxItens.style.display="block";
+
+  overlayProcessando.style.display="none";
 }
 
-/* ====================== CÁLCULO ENVIADOS ====================== */
+/* CÁLCULO */
 function getEnviados(cod, tr){
   let tot=0;
   remessas.forEach(r=>{
@@ -328,7 +353,7 @@ function getEnviados(cod, tr){
   return tot;
 }
 
-/* ====================== TABELA ====================== */
+/* TABELA */
 function montarTabela(){
   let html="";
 
@@ -380,7 +405,7 @@ function mostrarResumo(){
 
   sel.forEach(i=>{
     html += `<p>
-      <b>${i.itemTR}</b> — ${i.qtd} x R$ ${money(i.valorUnit)}  
+      <b>${i.itemTR}</b> — ${i.qtd} x R$ ${money(i.valorUnit)}
       = <b>R$ ${money(i.subtotal)}</b><br>
       Fornecedor: <b>${i.fornecedor}</b>
     </p>`;
@@ -396,6 +421,9 @@ function fechar(){ popup.style.display="none"; }
 
 /* ====================== CONFIRMAR ====================== */
 async function confirmarRomaneio(){
+
+  popup.style.display="none";
+  overlayProcessando.style.display="flex";
 
   const cardSel = document.querySelector(".card.sel h2").innerText;
 
@@ -417,11 +445,13 @@ async function confirmarRomaneio(){
 
   await fetch(`${API}?action=registrarRomaneio&data=${encodeURIComponent(JSON.stringify(payload))}`);
 
-  alert("Romaneio gerado com sucesso!");
-  location.reload();
+  overlayProcessando.style.display="none";
+
+  finalizadoBox.style.display="block";
+  window.scrollTo(0,document.body.scrollHeight);
 }
 
-/* ====================== INICIAR ====================== */
+/* INICIAR */
 carregar();
 </script>
 
