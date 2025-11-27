@@ -291,6 +291,9 @@ select,input{
 <script>
 const API = "https://script.google.com/macros/s/AKfycbyz86L3UfB61bZf3SoTxmCBG-CkPi5cSFvfcnbCDFUrkQkJIREMip5HH7pqu1S1y2t2/exec";
 
+/* === VARIÁVEL CORRIGIDA PARA REGISTRAR O ROMANEIO === */
+let codigoSelecionado = "";
+
 /* formatador */
 function money(v){
   return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2});
@@ -327,6 +330,8 @@ function filtrar(){
 
 /* ====================== SELEÇÃO ====================== */
 async function selecionar(cod){
+
+  codigoSelecionado = cod; // <<< CORREÇÃO FUNDAMENTAL
 
   overlayProcessando.style.display="flex";
 
@@ -447,7 +452,7 @@ function mostrarResumo(){
   sel.forEach(i=>{
     html += `<p>
       <b>${i.itemTR}</b> — ${i.qtd} × R$ ${money(i.valorUnit)}
-      = <b>R$ ${money(i.subtotal)}</b><br>
+      = <b>R${money(i.subtotal)}</b><br>
       Fornecedor: <b>${i.fornecedor}</b>
     </p>`;
   });
@@ -465,8 +470,6 @@ async function confirmarRomaneio(){
   popup.style.display="none";
   overlayProcessando.style.display="flex";
 
-  const empresaNome = nomeTopo.innerText;
-
   const itensEnviar = itensList.filter(i=>i.qtd>0).map(i=>({
     itemTR:i.itemTR,
     fornecedor:i.fornecedor,
@@ -479,7 +482,7 @@ async function confirmarRomaneio(){
 
   const payload = {
     data:new Date().toISOString().slice(0,10),
-    codigoLicitacao:empresaNome,
+    codigoLicitacao: codigoSelecionado, // <<< AGORA FUNCIONA
     itens:itensEnviar
   };
 
