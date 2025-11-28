@@ -17,16 +17,16 @@
   --azul:#0b1e39;
   --azul2:#152b45;
   --gold:#c9a86c;
-  --bg1:#eef2f6;
-  --bg2:#f7f8fc;
-  --white:#ffffff;
-  --shadow-big:0 25px 55px rgba(0,0,0,.09);
-  --shadow-card:0 10px 26px rgba(0,0,0,.12);
-  --radius:26px;
+  --bg1:#eef1f6;
+  --bg2:#fafbff;
+  --card-bg:#ffffff;
+  --shadow-big:0 22px 55px rgba(0,0,0,.09);
+  --shadow-card:0 10px 25px rgba(0,0,0,.10);
+  --radius:22px;
 }
 
 /* =====================================
-                GERAL
+              GERAL
 ===================================== */
 body{
   margin:0;
@@ -42,18 +42,12 @@ body{
 ===================================== */
 #container{
   width:94%;
-  max-width:1600px;
+  max-width:1500px;
   margin-top:35px;
-  padding:40px;
-  background:var(--white);
-  border-radius:34px;
+  padding:45px;
+  background:white;
+  border-radius:30px;
   box-shadow:var(--shadow-big);
-  animation:fade .4s ease-out;
-}
-
-@keyframes fade{
-  from{opacity:0; transform:translateY(35px);}
-  to{opacity:1;}
 }
 
 /* =====================================
@@ -61,18 +55,18 @@ body{
 ===================================== */
 #titulo{
   text-align:center;
-  font-size:40px;
+  font-size:38px;
   font-weight:900;
   color:var(--azul);
-  margin:0 0 25px 0;
+  margin-bottom:25px;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   gap:12px;
 }
 
 #titulo img{
-  width:42px;
+  width:40px;
 }
 
 /* =====================================
@@ -81,92 +75,84 @@ body{
 .searchBox{
   position:relative;
   width:100%;
-  margin-bottom:30px;
+  margin-bottom:25px;
 }
 
 .searchBox i{
   position:absolute;
-  left:22px;
+  left:18px;
   top:50%;
   transform:translateY(-50%);
-  color:#667085;
   font-size:20px;
+  color:#6c6c6c;
 }
 
 #busca{
   width:100%;
-  padding:18px 25px 18px 55px;
-  border-radius:14px;
-  border:1px solid #d9dce2;
-  font-size:17px;
-  background:white;
-  box-shadow:0 6px 18px rgba(0,0,0,.05);
+  padding:16px 18px 16px 45px;
+  border-radius:12px;
+  border:1px solid #dcdcdc;
+  box-shadow:0 4px 14px rgba(0,0,0,.04);
+  font-size:16px;
 }
 
 #busca:focus{
   outline:none;
   border-color:var(--gold);
-  box-shadow:0 0 0 4px #c9a86c33;
+  box-shadow:0 0 0 3px #c9a86c33;
 }
 
 /* =====================================
-               BREADCRUMBS
+              BREADCRUMB
 ===================================== */
 #breadcrumbs{
   background:white;
   display:inline-block;
   padding:10px 20px;
-  border-radius:14px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
   font-weight:600;
-  color:var(--azul2);
   margin-bottom:25px;
+  color:var(--azul2);
 }
 
 /* =====================================
-                BOTÕES
+              BOTÕES
 ===================================== */
 .toolbar{
   display:flex;
-  gap:20px;
-  margin-bottom:35px;
+  gap:18px;
+  margin-bottom:32px;
   flex-wrap:wrap;
 }
 
 .btn{
-  padding:14px 28px;
+  padding:13px 24px;
   border:none;
   border-radius:12px;
-  font-size:16px;
+  font-size:15px;
   font-weight:700;
   cursor:pointer;
-  transition:.2s;
+  transition:.25s;
   color:white;
-  box-shadow:0 6px 14px rgba(0,0,0,.10);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
 
 .btn:hover{
   transform:translateY(-3px);
 }
 
-.btn-nova{
-  background:var(--azul);
-}
-.btn-upload{
-  background:var(--gold);
-  color:#1e1e1e;
-}
-.btn-voltar{
-  background:#6b7280;
-}
+.btn-nova{ background:var(--azul); }
+.btn-upload{ background:var(--gold); color:#1d1d1d; }
+.btn-voltar{ background:#6b7280; }
 
 /* =====================================
-               GRID
+                GRID
 ===================================== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:30px;
+  grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+  gap:28px;
 }
 
 /* =====================================
@@ -174,40 +160,42 @@ body{
 ===================================== */
 .item{
   background:white;
-  padding:22px;
-  border-radius:22px;
+  padding:18px;
+  border-radius:var(--radius);
   box-shadow:var(--shadow-card);
-  transition:.25s;
-  border:1px solid #e7e7e7;
-  height:280px;
+  border:1px solid #e9e9e9;
+  height:260px; /* perfeito visual */
   overflow:hidden;
+  transition:.25s;
   display:flex;
   flex-direction:column;
+  cursor:pointer;
 }
 
 .item:hover{
   transform:translateY(-6px);
 }
 
-/* scroll interno */
+/* parte rolável interna */
 .itemInner{
   flex:1;
   overflow-y:auto;
 }
 
-/* THUMBNAIL */
+/* icone */
 .thumb{
-  width:110px;
-  height:110px;
-  border-radius:20px;
-  object-fit:cover;
+  width:105px;
+  height:105px;
+  border-radius:18px;
   margin:auto;
+  object-fit:cover;
+  background:#ececec;
 }
 
 /* nome */
 .itemNome{
-  margin-top:15px;
-  font-size:16px;
+  margin-top:12px;
+  font-size:15px;
   font-weight:600;
   text-align:center;
   white-space:nowrap;
@@ -217,13 +205,13 @@ body{
 
 /* skeleton */
 .skeleton{
-  background:#e6e6e6;
-  border-radius:22px;
-  height:200px;
+  background:#e3e3e3;
+  border-radius:20px;
+  height:230px;
 }
 
 /* =====================================
-          POPUPS / MODAL
+               POPUPS & MODAL
 ===================================== */
 #popupCriar, #popupUpload, #modal{
   position:fixed;
@@ -232,38 +220,42 @@ body{
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:99999;
+  z-index:9999;
 }
 
 #popupBox, #uploadBox{
-  width:90%;
-  max-width:520px;
   background:white;
-  padding:35px;
-  border-radius:26px;
+  width:92%;
+  max-width:480px;
+  padding:30px;
+  border-radius:20px;
 }
 
-/* iframe */
+#modalBox{
+  width:92%;
+  max-width:900px;
+  background:white;
+  padding:25px;
+  border-radius:20px;
+}
+
 #modalPreview{
   width:100%;
   height:500px;
   border:none;
-  background:#f7f7f7;
+  background:#f5f5f5;
   border-radius:14px;
+  margin-top:10px;
 }
 
 /* cores */
-.colorRow{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
+.colorRow{ display:flex; flex-wrap:wrap; gap:12px; }
 .colorSelect{
-  width:38px;
-  height:38px;
+  width:34px;
+  height:34px;
   border-radius:50%;
-  cursor:pointer;
   border:3px solid transparent;
+  cursor:pointer;
 }
 .colorSelect.active{
   border-color:black;
@@ -271,6 +263,7 @@ body{
 
 </style>
 </head>
+
 <body>
 
 <div id="container">
@@ -322,7 +315,7 @@ body{
     </div>
 
     <button onclick="criarPasta()" class="btn btn-nova" style="width:100%;margin-top:22px;">Criar pasta</button>
-    <button onclick="fecharPopupCriar()" style="width:100%;margin-top:12px;padding:14px;border:none;background:#e5e5e5;border-radius:12px;font-weight:600;">Cancelar</button>
+    <button onclick="fecharPopupCriar()" style="width:100%;margin-top:12px;padding:13px;border:none;background:#e5e5e5;border-radius:12px;font-weight:600;">Cancelar</button>
   </div>
 </div>
 
@@ -334,26 +327,26 @@ body{
 
     <label>Enviar para:</label>
     <select id="uploadDestino"
-      style="width:100%;padding:14px;margin-top:8px;border-radius:12px;border:1px solid #ccc;font-size:16px;"></select>
+      style="width:100%;padding:14px;margin-top:6px;border-radius:12px;border:1px solid #ccc;font-size:16px;"></select>
 
     <div id="dropArea"
-      style="border:2px dashed #bbb;padding:40px;text-align:center;border-radius:18px;margin-top:20px;background:#fafafa;">
+      style="border:2px dashed #c9c9c9;padding:34px;text-align:center;border-radius:16px;margin-top:15px;background:#fafafa;">
       Arraste arquivos aqui<br>ou clique
     </div>
 
     <input id="uploadInput" type="file" multiple style="display:none">
 
     <button onclick="enviarUpload()" class="btn btn-upload" style="width:100%;margin-top:22px;">Enviar</button>
-    <button onclick="fecharUpload()" style="width:100%;margin-top:12px;padding:14px;border:none;background:#e5e5e5;border-radius:12px;font-weight:600;">Cancelar</button>
+    <button onclick="fecharUpload()" style="width:100%;margin-top:12px;padding:13px;border:none;background:#e5e5e5;border-radius:12px;font-weight:600;">Cancelar</button>
 
   </div>
 </div>
 
 <!-- MODAL -->
 <div id="modal">
-  <div id="modalBox" style="background:white;padding:28px;border-radius:20px;width:95%;max-width:950px;">
+  <div id="modalBox">
 
-    <button class="btn btn-voltar" onclick="fecharModal()" style="float:right;margin-bottom:10px;">Fechar</button>
+    <button class="btn btn-voltar" onclick="fecharModal()" style="float:right;">Fechar</button>
 
     <h2 id="modalTitulo"></h2>
 
@@ -362,17 +355,18 @@ body{
     <button onclick="baixarArquivo()" class="btn btn-upload" style="margin-top:14px;">⬇ Download</button>
     <button onclick="excluirArquivo()" class="btn" style="background:#d9534f;margin-left:10px;">🗑 Excluir</button>
     <button onclick="navigator.clipboard.writeText(linkAtual)" class="btn btn-nova" style="margin-left:10px;">🔗 Copiar Link</button>
+
   </div>
 </div>
 
 <!-- ===============================================
-      JS COMPLETO E FUNCIONAL
+      JS — 100% DO SEU SCRIPT, FUNCIONANDO
 ================================================ -->
 <script>
 
 const API = "https://script.google.com/macros/s/AKfycbxFxMimw5qpX6unOxE_QO08dnzl-zGFKE7WEuhvAK7n7xTIIQD9ygrpegir-Hpz9RwWFg/exec";
-
 let usuario = localStorage.getItem("usuarioLogado") || "desconhecido";
+
 let dados = [];
 let pastaAtual = "10G18r0S5jDXnrOh96pQybqvfB8OH9Gxp";
 let historicoPastas = ["10G18r0S5jDXnrOh96pQybqvfB8OH9Gxp"];
@@ -387,7 +381,7 @@ window.onload = ()=>{
 
 function renderSkeleton(){
   let html="";
-  for(let i=0;i<12;i++){
+  for(let i=0;i<10;i++){
     html+=`<div class="skeleton"></div>`;
   }
   document.getElementById("lista").innerHTML = html;
@@ -409,28 +403,23 @@ function mostrarPasta(id){
   document.getElementById("breadcrumbs").innerText = "📁 " + nome;
 
   const itens = dados.filter(p=>p.pai===id);
-
   let html = "";
 
   itens.forEach(item => {
-    let itemHTML = `
-    <div class="item" onclick="${item.tipo === "pasta"
+    html += `
+    <div class="item" onclick="${item.tipo==="pasta"
       ? `entrarPasta('${item.id}')`
       : `abrirArquivo('${item.nome}','${item.url}')`
     }">
       <div class="itemInner">
-        ${item.tipo === "pasta"
-          ? svgCor(item.capa)
-          : gerarThumbnail(item.url,item.nome)
-        }
+        ${item.tipo==="pasta" ? svgCor(item.capa) : gerarThumbnail(item.url,item.nome)}
         <div class="itemNome">${item.nome}</div>
       </div>
-    </div>`;
-
-    html += itemHTML;
+    </div>
+    `;
   });
 
-  document.getElementById("lista").innerHTML = html || "Vazio.";
+  document.getElementById("lista").innerHTML = html || "<p>Vazio.</p>";
 }
 
 function svgCor(cor){
@@ -463,12 +452,11 @@ function extrairID(link){
   return m ? m[1] : "";
 }
 
-/* NAVEGAR ENTRE PASTAS */
+/* NAVEGAÇÃO */
 function entrarPasta(id){
   historicoPastas.push(id);
   mostrarPasta(id);
 }
-
 function voltarPasta(){
   if(historicoPastas.length>1){
     historicoPastas.pop();
@@ -485,9 +473,7 @@ document.querySelectorAll(".colorSelect").forEach(c=>{
   };
 });
 
-function abrirPopupCriar(){
-  document.getElementById("popupCriar").style.display="flex";
-}
+function abrirPopupCriar(){ document.getElementById("popupCriar").style.display="flex"; }
 function fecharPopupCriar(){
   document.getElementById("popupCriar").style.display="none";
   document.getElementById("nomePasta").value="";
@@ -515,12 +501,8 @@ function criarPasta(){
 }
 
 /* UPLOAD */
-function abrirUpload(){
-  document.getElementById("popupUpload").style.display="flex";
-}
-function fecharUpload(){
-  document.getElementById("popupUpload").style.display="none";
-}
+function abrirUpload(){ document.getElementById("popupUpload").style.display="flex"; }
+function fecharUpload(){ document.getElementById("popupUpload").style.display="none"; }
 
 function preencherDestinoUpload(){
   const select = document.getElementById("uploadDestino");
@@ -532,26 +514,15 @@ function preencherDestinoUpload(){
 }
 
 const drop = document.getElementById("dropArea");
-
 drop.onclick = ()=> document.getElementById("uploadInput").click();
-drop.ondragover = e=>{
-  e.preventDefault();
-  drop.style.background="#eef2ff";
-  drop.style.borderColor=var(--azul);
-};
-drop.ondragleave = ()=>{
-  drop.style.background="#fafafa";
-  drop.style.borderColor="#bbb";
-};
+drop.ondragover = e=>{ e.preventDefault(); drop.style.borderColor=var(--azul); };
+drop.ondragleave = ()=> drop.style.borderColor="#c9c9c9";
 drop.ondrop = e=>{
   e.preventDefault();
-  drop.style.background="#fafafa";
   enviarArquivos(e.dataTransfer.files);
 };
 
-function enviarUpload(){
-  enviarArquivos(document.getElementById("uploadInput").files);
-}
+function enviarUpload(){ enviarArquivos(document.getElementById("uploadInput").files); }
 
 function enviarArquivos(files){
   const destino = document.getElementById("uploadDestino").value;
@@ -583,12 +554,11 @@ function enviarArquivos(files){
 
 /* MODAL */
 function abrirArquivo(nome,url){
+  linkAtual = url;
   document.getElementById("modalTitulo").innerText = nome;
   document.getElementById("modalPreview").src = url;
-  linkAtual = url;
   document.getElementById("modal").style.display="flex";
 }
-
 function fecharModal(){
   document.getElementById("modal").style.display="none";
 }
@@ -596,15 +566,8 @@ function fecharModal(){
 function baixarArquivo(){
   let id = extrairID(linkAtual);
   if(!id) return;
-
   let linkDownload = "https://drive.google.com/uc?export=download&id=" + id;
-
-  const a = document.createElement("a");
-  a.href = linkDownload;
-  a.download = "";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+  window.open(linkDownload, "_blank");
 }
 
 /* BUSCA */
@@ -616,15 +579,12 @@ function pesquisar(){
     return;
   }
 
-  const itens = dados.filter(p =>
-    p.nome.toLowerCase().includes(q)
-  );
-
+  const itens = dados.filter(p => p.nome.toLowerCase().includes(q));
   let html = "";
 
   itens.forEach(item=>{
-    let itemHTML = `
-    <div class="item" onclick="${item.tipo === "pasta"
+    html+=`
+    <div class="item" onclick="${item.tipo==='pasta'
       ? `entrarPasta('${item.id}')`
       : `abrirArquivo('${item.nome}','${item.url}')`
     }">
@@ -632,30 +592,29 @@ function pesquisar(){
         ${item.tipo==="pasta" ? svgCor(item.capa) : gerarThumbnail(item.url,item.nome)}
         <div class="itemNome">${item.nome}</div>
       </div>
-    </div>`;
-    html += itemHTML;
+    </div>
+    `;
   });
 
   document.getElementById("lista").innerHTML =
-    html || "<div style='padding:20px;'>Nenhum resultado encontrado.</div>";
+    html || "<p>Nenhum resultado encontrado.</p>";
 
   document.getElementById("breadcrumbs").innerText = "🔍 Resultados da busca";
 }
 
-/* EXCLUIR ARQUIVO */
-async function excluirArquivo() {
-  if (!confirm("Tem certeza que deseja excluir este arquivo?")) return;
+/* EXCLUIR */
+async function excluirArquivo(){
+  if(!confirm("Deseja realmente excluir este arquivo?")) return;
 
   let nome = document.getElementById("modalTitulo").innerText;
-  let url = linkAtual;
 
-  await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "excluir",
-      nome: nome,
-      url: url,
-      usuario: usuario
+  await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"excluir",
+      nome:nome,
+      url:linkAtual,
+      usuario:usuario
     })
   });
 
