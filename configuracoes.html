@@ -5,217 +5,280 @@
 <title>Cadastros do Sistema • LICITAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Fonte -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-/* =====================================================
-   PALETA PREMIUM LICITAR
-===================================================== */
+/* ============================================================
+   TEMA OFICIAL – LICITAR (Azul + Dourado Premium)
+============================================================ */
 :root {
-  --azul:#0b1e39;
+  --azul: #0b1e39;
   --azul-claro:#15345c;
+  --azul-hover:#0e2544;
+
   --dourado:#c9a86c;
+  --dourado-escuro:#b29058;
+
   --bg:#eef2f7;
 
-  --card-bg:rgba(255,255,255,.65);
-  --blur:blur(18px);
+  --card-bg: rgba(255,255,255,0.60);
+  --glass-blur: blur(18px);
 
-  --line:#d7dce3;
-  --line-hover:#c7ccd4;
+  --line:#d1d6de;
+  --shadow:0 10px 30px rgba(0,0,0,.14);
 
-  --shadow:0 10px 28px rgba(0,0,0,.12);
   --radius:22px;
 }
 
-/* BASE */
-body {
+/* ============================================================
+   BASE
+============================================================ */
+body{
   margin:0;
   padding:25px;
   background:var(--bg);
-  font-family:'Inter',sans-serif;
+  font-family:'Inter', sans-serif;
   color:#111;
 }
 
-h1 {
+h1{
   text-align:center;
-  color:var(--azul);
-  margin-bottom:40px;
-  font-size:32px;
+  margin:10px 0 40px;
+  font-size:34px;
   font-weight:800;
+  color:var(--azul);
+  letter-spacing:.5px;
 }
 
-/* GRID */
-.grid {
+/* ============================================================
+   GRID
+============================================================ */
+.grid{
   display:grid;
-  gap:30px;
-  grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+  gap:35px;
+  grid-template-columns:repeat(auto-fit, minmax(380px, 1fr));
 }
 
-/* CARD */
-.card {
+/* ============================================================
+   CARD PREMIUM
+============================================================ */
+.card{
   background:var(--card-bg);
-  backdrop-filter:var(--blur);
+  backdrop-filter:var(--glass-blur);
   border-radius:var(--radius);
-  padding:25px;
+  padding:28px;
   box-shadow:var(--shadow);
   border:1px solid rgba(255,255,255,.45);
   display:flex;
   flex-direction:column;
-  height:480px;
+  height:500px;
+  position:relative;
+  animation:fadeIn .5s ease;
 }
 
-/* TÍTULO */
-.card h2 {
-  margin:0 0 15px;
-  padding-bottom:8px;
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.card h2{
+  margin:0 0 18px;
+  padding-bottom:10px;
   border-bottom:3px solid var(--dourado);
   color:var(--azul);
-  font-size:22px;
+  font-size:23px;
   font-weight:700;
+  letter-spacing:.3px;
 }
 
-/* BOTÃO */
-.card button {
+/* BOTÕES */
+.card button{
   width:100%;
-  padding:14px;
+  padding:15px;
+  margin-bottom:14px;
   background:var(--dourado);
+  color:#fff;
   border:none;
-  border-radius:14px;
+  border-radius:16px;
   font-size:16px;
   font-weight:700;
   cursor:pointer;
-  margin-bottom:12px;
-  transition:.2s;
+  transition:.25s;
 }
-.card button:hover {
-  background:#b89554;
+
+.card button:hover{
+  background:var(--dourado-escuro);
   transform:translateY(-2px);
 }
 
-/* CAMPO PESQUISA */
-.search {
+/* Pesquisar */
+.search{
   width:100%;
-  padding:10px 14px;
-  border:1px solid #ccc;
-  border-radius:12px;
-  margin-bottom:12px;
+  padding:12px 15px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  margin-bottom:15px;
   font-size:15px;
+  background:white;
+  transition:.2s;
+}
+.search:focus{
+  border-color:var(--dourado);
+  outline:none;
 }
 
-/* LISTA */
-.scroll-area {
+/* Lista com rolagem */
+.scroll-area{
   flex:1;
   overflow-y:auto;
   padding-right:6px;
 }
-.scroll-area::-webkit-scrollbar {
+.scroll-area::-webkit-scrollbar{
   width:6px;
 }
-.scroll-area::-webkit-scrollbar-thumb {
-  background:#ccc;
-  border-radius:10px;
+.scroll-area::-webkit-scrollbar-thumb{
+  background:#c9ced6;
+  border-radius:6px;
 }
 
-/* ITEM LISTA */
-.item {
-  padding:10px 5px;
+/* ITEM */
+.item{
+  padding:12px 6px;
   border-bottom:1px solid var(--line);
   transition:.2s;
 }
-.item:hover {
-  background:#f2f4f7;
+.item:hover{
+  background:#f4f6fa;
 }
-.item-top {
+
+.item-top{
   display:flex;
   justify-content:space-between;
-  font-weight:600;
   color:var(--azul);
+  font-weight:600;
 }
-.item-sub {
+.item-sub{
   font-size:13px;
-  color:#555;
+  margin-top:4px;
+  color:#444;
 }
-.acoes a {
+
+.acoes a{
   color:var(--azul);
-  margin-left:10px;
-  cursor:pointer;
   font-weight:600;
+  cursor:pointer;
 }
-.acoes a:hover { color:var(--dourado); }
+.acoes a:hover{
+  color:var(--dourado);
+}
 
-/* POPUP */
-.overlay {
+/* ============================================================
+   POPUP
+============================================================ */
+.overlay{
   position:fixed;
   top:0; left:0;
   width:100%; height:100%;
   display:none;
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(4px);
 }
-.popup {
-  width:100%;
-  max-width:420px;
+
+.popup{
+  width:92%;
+  max-width:450px;
   background:white;
-  border-radius:20px;
   padding:28px;
+  border-radius:20px;
   box-shadow:var(--shadow);
+  animation:fadeInUp .35s ease;
 }
 
-/* INPUT */
-.popup input {
-  width:100%;
-  padding:14px;
-  border:1px solid #ccc;
-  border-radius:12px;
-  margin-bottom:12px;
-  font-size:15px;
+@keyframes fadeInUp{
+  from{opacity:0; transform:translateY(30px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
-.btnSalvar {
-  width:100%;
-  padding:14px;
-  background:var(--azul);
-  color:white;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-  margin-bottom:10px;
-}
-.btnSalvar:hover { background:var(--azul-claro); }
-
-.btnClose {
-  width:100%;
-  padding:12px;
-  background:#666;
-  color:white;
-  border-radius:12px;
-  border:none;
-}
-
-#loading {
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:rgba(255,255,255,.75);
+.popup h3{
+  margin-top:0;
+  color:var(--azul);
   font-size:22px;
   font-weight:700;
+  border-left:5px solid var(--dourado);
+  padding-left:10px;
+  margin-bottom:18px;
+}
+
+/* Inputs Popup */
+.popup input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  font-size:15px;
+  margin-bottom:12px;
+}
+.popup input:focus{
+  border-color:var(--dourado);
+  outline:none;
+}
+
+.btnSalvar{
+  background:var(--azul);
+  color:#fff;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  font-size:16px;
+  font-weight:700;
+  width:100%;
+  margin-bottom:10px;
+}
+.btnSalvar:hover{
+  background:var(--azul-hover);
+}
+
+.btnClose{
+  background:#555;
+  color:#fff;
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:14px;
+}
+
+/* Loading */
+#loading{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(255,255,255,.8);
+  font-size:22px;
+  font-weight:800;
   color:var(--azul);
 }
 </style>
 </head>
+
 <body>
 
-<h1>Painel de Cadastros</h1>
+<h1>Cadastro Gerais do Sistema</h1>
+
 <div id="loading">Salvando...</div>
 
 <div class="grid">
 
-  <!-- CONTAS -->
+  <!-- CONTAS BANCÁRIAS -->
   <div class="card">
     <h2>Contas Bancárias</h2>
-    <button onclick="abrirPopup('contas')">Cadastrar Nova Conta</button>
+    <button onclick="abrirPopup('contas')">+ Nova Conta</button>
+
     <div class="scroll-area">
       <div id="listaContas"></div>
     </div>
@@ -224,8 +287,9 @@ h1 {
   <!-- FORNECEDORES -->
   <div class="card">
     <h2>Fornecedores</h2>
-    <button onclick="abrirPopup('fornecedores')">Cadastrar Fornecedor</button>
-    <input type="text" id="buscaFornec" class="search" placeholder="Pesquisar fornecedor..." oninput="filtrar('fornec')">
+    <button onclick="abrirPopup('fornecedores')">+ Novo Fornecedor</button>
+    <input id="buscaFornec" class="search" placeholder="Pesquisar fornecedor..." oninput="filtrar('fornec')">
+
     <div class="scroll-area">
       <div id="listaFornec"></div>
     </div>
@@ -234,8 +298,9 @@ h1 {
   <!-- EMPRESAS -->
   <div class="card">
     <h2>Empresas</h2>
-    <button onclick="abrirPopup('empresas')">Cadastrar Empresa</button>
-    <input type="text" id="buscaEmp" class="search" placeholder="Pesquisar empresa..." oninput="filtrar('emp')">
+    <button onclick="abrirPopup('empresas')">+ Nova Empresa</button>
+    <input id="buscaEmp" class="search" placeholder="Pesquisar empresa..." oninput="filtrar('emp')">
+
     <div class="scroll-area">
       <div id="listaEmpresas"></div>
     </div>
@@ -245,33 +310,45 @@ h1 {
 
 <!-- POPUP -->
 <div id="popup" class="overlay">
-  <div class="popup" id="popupContent"></div>
+  <div id="popupContent" class="popup"></div>
 </div>
 
 <script>
 /* ============================================================
-   API (GAS COMPLETO QUE TE ENVIAREI DEPOIS)
+   API (SEU GAS)
 ============================================================ */
-const API = "https://script.google.com/macros/s/AKfycbyen9bySngVpCPDTNK2-P2ls-2qw0d5OKREjwsSMq5h-JnGgPUkCGN9EvBwAjcxEGYc/exec"; // vou gerar já com as rotas
+const API = "https://script.google.com/macros/s/AKfycbyen9bySngVpCPDTNK2-P2ls-2qw0d5OKREjwsSMq5h-JnGgPUkCGN9EvBwAjcxEGYc/exec";
 
 let editando=null;
 let editCodigo=null;
 
 /* MÁSCARAS */
-function maskCNPJ(v){v=v.replace(/\D/g,"");v=v.replace(/^(\d{2})(\d)/,"$1.$2");v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");v=v.replace(/\.(\d{3})(\d)/,".$1/$2");v=v.replace(/(\d{4})(\d)/,"$1-$2");return v;}
-function maskPhone(v){v=v.replace(/\D/g,"");v=v.replace(/^(\d{2})(\d)/,"($1) $2");v=v.replace(/(\d{5})(\d)/,"$1-$2");return v;}
-function onlyNumbers(v){return v.replace(/\D/g,"");}
-function toUpper(e){e.value=e.value.toUpperCase();}
+function maskCNPJ(v){
+  v=v.replace(/\D/g,"");
+  v=v.replace(/^(\d{2})(\d)/,"$1.$2");
+  v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
+  v=v.replace(/\.(\d{3})(\d)/,".$1/$2");
+  v=v.replace(/(\d{4})(\d)/,"$1-$2");
+  return v;
+}
+function maskPhone(v){
+  v=v.replace(/\D/g,"");
+  v=v.replace(/^(\d{2})(\d)/,"($1) $2");
+  v=v.replace(/(\d{5})(\d)/,"$1-$2");
+  return v;
+}
+function onlyNumbers(v){ return v.replace(/\D/g,""); }
+function toUpper(e){ e.value=e.value.toUpperCase(); }
 
 /* POPUP */
 function abrirPopup(tipo, dados=null){
   editando=tipo;
   editCodigo=dados?dados.codigo:null;
 
-  let h="";
+  let html="";
 
   if(tipo==="contas"){
-    h=`
+    html = `
       <h3>${dados?"Editar Conta":"Cadastrar Conta"}</h3>
       <input id="banco" placeholder="Banco" value="${dados?.banco||""}" oninput="toUpper(this)">
       <input id="agencia" placeholder="Agência" value="${dados?.agencia||""}">
@@ -284,7 +361,7 @@ function abrirPopup(tipo, dados=null){
   }
 
   if(tipo==="fornecedores"){
-    h=`
+    html = `
       <h3>${dados?"Editar Fornecedor":"Cadastrar Fornecedor"}</h3>
       <input id="nome" placeholder="Nome" value="${dados?.nome||""}" oninput="toUpper(this)">
       <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
@@ -296,7 +373,7 @@ function abrirPopup(tipo, dados=null){
   }
 
   if(tipo==="empresas"){
-    h=`
+    html = `
       <h3>${dados?"Editar Empresa":"Cadastrar Empresa"}</h3>
       <input id="nome" placeholder="Nome da Empresa" value="${dados?.nome||""}" oninput="toUpper(this)">
       <input id="cnpj" placeholder="CNPJ" maxlength="18" value="${dados?.cnpj||""}" oninput="this.value=maskCNPJ(this.value)">
@@ -306,18 +383,22 @@ function abrirPopup(tipo, dados=null){
     `;
   }
 
-  popupContent.innerHTML=h;
+  popupContent.innerHTML = html;
   popup.style.display="flex";
 }
-function fecharPopup(){ popup.style.display="none"; }
 
-/* SALVAR (AJUSTADO) */
+function fecharPopup(){
+  popup.style.display="none";
+}
+
+/* ============================================================
+   SALVAR
+============================================================ */
 async function salvar(){
-  document.getElementById("loading").style.display="flex";
+  loading.style.display="flex";
 
   let body={}, rota="";
 
-  /* CONTAS */
   if(editando==="contas"){
     body={
       banco:banco.value.trim(),
@@ -329,11 +410,9 @@ async function salvar(){
     rota=editCodigo?"updateConta":"addConta";
   }
 
-  /* FORNECEDORES – VALIDAÇÃO */
   if(editando==="fornecedores"){
-    let numeroLimpo = onlyNumbers(tel1.value);
-
-    if(numeroLimpo.length < 10){
+    let num = onlyNumbers(tel1.value);
+    if(num.length < 10){
       loading.style.display="none";
       alert("O WhatsApp principal é obrigatório.");
       return;
@@ -342,14 +421,12 @@ async function salvar(){
     body={
       nome:nome.value.trim(),
       cnpj:onlyNumbers(cnpj.value.trim()),
-      tel1:numeroLimpo,
+      tel1:num,
       tel2:onlyNumbers(tel2.value.trim())
     };
-
     rota=editCodigo?"updateFornecedor":"addFornecedor";
   }
 
-  /* EMPRESAS */
   if(editando==="empresas"){
     body={
       nome:nome.value.trim(),
@@ -361,8 +438,8 @@ async function salvar(){
 
   if(editCodigo) body.codigo=editCodigo;
 
-  const url=`${API}?action=${rota}&${new URLSearchParams(body)}`;
-  const res=await fetch(url).then(r=>r.json());
+  const url = `${API}?action=${rota}&${new URLSearchParams(body)}`;
+  const res = await fetch(url).then(r=>r.json());
 
   loading.style.display="none";
 
@@ -374,33 +451,35 @@ async function salvar(){
   }
 }
 
-/* FILTRAR */
+/* ============================================================
+   FILTRAR
+============================================================ */
 function filtrar(tipo){
-  let termo="";
-  let itens=[];
+  let termo="", itens=[];
 
   if(tipo==="fornec"){
-    termo=document.getElementById("buscaFornec").value.toLowerCase();
+    termo=buscaFornec.value.toLowerCase();
     itens=document.querySelectorAll("#listaFornec .item");
   }
   if(tipo==="emp"){
-    termo=document.getElementById("buscaEmp").value.toLowerCase();
+    termo=buscaEmp.value.toLowerCase();
     itens=document.querySelectorAll("#listaEmpresas .item");
   }
 
   itens.forEach(x=>{
-    let texto=x.innerText.toLowerCase();
-    x.style.display=texto.includes(termo)?"block":"none";
+    x.style.display = x.innerText.toLowerCase().includes(termo) ? "block" : "none";
   });
 }
 
-/* LISTAGENS */
+/* ============================================================
+   LISTAGEM
+============================================================ */
 async function carregarContas(){
-  let d=await fetch(`${API}?action=getContas`).then(r=>r.json());
+  let d = await fetch(`${API}?action=getContas`).then(r=>r.json());
   let html="";
 
   d.forEach(x=>{
-    html+=`
+    html += `
     <div class="item">
       <div class="item-top">
         <span>🏦 ${x.banco} • Ag ${x.agencia} • Conta ${x.conta}</span>
@@ -413,15 +492,15 @@ async function carregarContas(){
     </div>`;
   });
 
-  listaContas.innerHTML=html;
+  listaContas.innerHTML = html;
 }
 
 async function carregarFornecedores(){
-  let d=await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+  let d = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
   let html="";
 
   d.forEach(x=>{
-    html+=`
+    html += `
     <div class="item">
       <div class="item-top">
         <span>🏭 ${x.nome}</span>
@@ -434,15 +513,15 @@ async function carregarFornecedores(){
     </div>`;
   });
 
-  listaFornec.innerHTML=html;
+  listaFornec.innerHTML = html;
 }
 
 async function carregarEmpresas(){
-  let d=await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
+  let d = await fetch(`${API}?action=getEmpresas`).then(r=>r.json());
   let html="";
 
   d.forEach(x=>{
-    html+=`
+    html += `
     <div class="item">
       <div class="item-top">
         <span>🏢 ${x.nome}</span>
@@ -455,23 +534,27 @@ async function carregarEmpresas(){
     </div>`;
   });
 
-  listaEmpresas.innerHTML=html;
+  listaEmpresas.innerHTML = html;
 }
 
-/* EXCLUIR */
-async function excluir(tipo,codigo){
+/* ============================================================
+   EXCLUIR
+============================================================ */
+async function excluir(tipo, codigo){
   if(!confirm("Deseja excluir?")) return;
   await fetch(`${API}?action=delete${tipo}&codigo=${codigo}`);
   carregarTudo();
 }
 
-/* INICIAR */
+/* ============================================================
+   INICIAR
+============================================================ */
 function carregarTudo(){
   carregarContas();
   carregarFornecedores();
   carregarEmpresas();
 }
-window.onload=carregarTudo;
+window.onload = carregarTudo;
 
 </script>
 
