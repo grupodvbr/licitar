@@ -6,35 +6,34 @@
 
 <title>Documentos • Sistema</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ===============================
-      PALETA PREMIUM (AZUL+DOURADO)
-   =============================== */
-:root{
-  --bg:#e9edf3;
-  --card:#ffffff;
-  --glass:#ffffffd9;
-  --azul:#0b1e39;
-  --dourado:#c9a86c;
-  --border:#d6d9e0;
-  --text:#1e1e1e;
-  --muted:#6f6f6f;
 
-  --radius:22px;
-  --shadow:0 10px 25px rgba(0,0,0,.08);
+/* ================================
+      PALETA PREMIUM GLASS GOLD
+================================ */
+:root{
+  --azul:#0b1e39;
+  --azul-claro:#183455;
+  --dourado:#c9a86c;
+  --bg1:#eef1f6;
+  --bg2:#f6f7fb;
+  --card:#ffffffcc;
+  --glass:#ffffffd8;
+  --border:#dfe3ea;
+  --shadow:0 25px 45px rgba(0,0,0,.12);
+  --radius:26px;
 }
 
-/* ===============================
-      BASE DO SITE
-   =============================== */
+/* ================================
+         BODY / LAYOUT
+================================ */
 body{
   margin:0;
   padding:0;
-  background:var(--bg);
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
   font-family:'Inter',sans-serif;
-  color:var(--text);
   min-height:100vh;
   display:flex;
   justify-content:center;
@@ -42,67 +41,86 @@ body{
 }
 
 #container{
-  width:93%;
+  width:94%;
   max-width:1700px;
-  margin-top:35px;
+  margin-top:40px;
   background:var(--glass);
   padding:55px;
-  border-radius:30px;
+  border-radius:32px;
+  backdrop-filter:blur(30px) saturate(160%);
   box-shadow:var(--shadow);
-  backdrop-filter:blur(30px) saturate(180%);
-  animation:fadeIn .6s ease-out;
+  animation:fade .6s ease-out;
 }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(25px);}
+@keyframes fade{
+  from{opacity:0;transform:translateY(35px);}
   to{opacity:1;transform:none;}
 }
 
-/* ===============================
-      TÍTULO
-   =============================== */
+/* ================================
+             TÍTULO
+================================ */
 #titulo{
   text-align:center;
   margin:0 0 40px 0;
-  font-size:38px;
+  font-size:40px;
   font-weight:700;
   color:var(--azul);
   letter-spacing:-0.6px;
 }
 
-/* ===============================
-      CAMPO DE BUSCA
-   =============================== */
+/* ================================
+             BUSCA
+================================ */
+.searchBox{
+  position:relative;
+  width:100%;
+}
+
+.searchBox i{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:20px;
+  color:#6c7583;
+}
+
 #busca{
   width:100%;
-  padding:18px 22px;
+  padding:17px 22px 17px 48px;
   border-radius:18px;
   border:2px solid var(--border);
   background:white;
   font-size:18px;
-  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
   transition:.25s;
 }
 
 #busca:focus{
   border-color:var(--dourado);
-  box-shadow:0 0 0 3px #c9a86c55;
+  box-shadow:0 0 0 4px #c9a86c44;
   outline:none;
 }
 
-/* ===============================
-      BREADCRUMB
-   =============================== */
+/* ================================
+           BREADCRUMB
+================================ */
 #breadcrumbs{
-  margin:22px 0 35px 0;
+  margin:26px 0 35px 0;
   font-size:18px;
-  color:var(--azul);
   font-weight:600;
+  color:var(--azul-claro);
+  background:white;
+  padding:14px 22px;
+  border-radius:14px;
+  display:inline-block;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
 
-/* ===============================
-      TOOLBAR
-   =============================== */
+/* ================================
+             BOTÕES
+================================ */
 .toolbar{
   display:flex;
   gap:18px;
@@ -111,75 +129,74 @@ body{
 }
 
 .btn{
-  padding:15px 25px;
+  padding:16px 26px;
   border:none;
-  border-radius:14px;
+  border-radius:16px;
+  font-size:16px;
   font-weight:600;
   cursor:pointer;
-  font-size:16px;
   color:white;
   transition:.25s;
-  box-shadow:0 4px 14px rgba(0,0,0,.15);
+  box-shadow:0 6px 24px rgba(0,0,0,.15);
 }
 
 .btn:hover{
-  transform:translateY(-3px);
-  opacity:.9;
+  transform:translateY(-4px);
+  opacity:.92;
 }
 
 .btn-nova{ background:var(--azul); }
-.btn-upload{ background:var(--dourado); color:#0b1e39; }
+.btn-upload{ background:var(--dourado); color:var(--azul); }
 .btn-voltar{ background:#6b7280; }
 
-/* ===============================
-      GRID DE ITENS
-   =============================== */
+/* ================================
+           GRID DE ITENS
+================================ */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:35px;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:38px;
 }
 
 .item{
   background:white;
   text-align:center;
-  padding:30px 18px;
+  padding:32px 20px;
   border-radius:var(--radius);
   cursor:pointer;
-  transition:.22s;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow);
+  transition:.25s;
+  border:1px solid #e3e5ea;
+  box-shadow:0 8px 22px rgba(0,0,0,.09);
 }
 
 .item:hover{
-  transform:translateY(-8px);
-  box-shadow:0 15px 32px rgba(0,0,0,0.15);
+  transform:translateY(-10px) scale(1.03);
+  box-shadow:0 12px 35px rgba(0,0,0,.18);
 }
 
 .thumb{
-  width:110px;
-  height:110px;
-  border-radius:20px;
+  width:120px;
+  height:120px;
+  border-radius:22px;
   object-fit:cover;
   background:#e5e5e5;
-  margin:auto;
-  display:block;
 }
 
 .itemNome{
   margin-top:16px;
   font-size:17px;
+  font-weight:600;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  font-weight:600;
 }
 
-/* ===============================
-      POPUPS
-   =============================== */
+/* ================================
+             POPUPS
+================================ */
 #popupCriar, #popupUpload{
-  position:fixed; inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.55);
   display:none;
   justify-content:center;
@@ -190,17 +207,16 @@ body{
 #popupBox, #uploadBox{
   background:white;
   width:92%;
-  max-width:500px;
-  padding:35px;
-  border-radius:26px;
-  border:1px solid #ddd;
-  animation:fade .25s ease-out;
-  box-shadow:0 12px 32px rgba(0,0,0,.18);
+  max-width:520px;
+  padding:40px;
+  border-radius:28px;
+  animation:fadePopup .25s ease-out;
+  box-shadow:0 12px 45px rgba(0,0,0,.25);
 }
 
-@keyframes fade{
-  from{opacity:0;transform:translateY(18px);}
-  to{opacity:1;transform:none;}
+@keyframes fadePopup{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;}
 }
 
 .colorRow{
@@ -211,39 +227,42 @@ body{
 }
 
 .colorSelect{
-  width:38px;
-  height:38px;
+  width:40px;
+  height:40px;
   border-radius:50%;
   cursor:pointer;
   border:3px solid transparent;
   transition:.2s;
 }
 
+.colorSelect:hover{
+  transform:scale(1.08);
+}
+
 .colorSelect.active{
   border-color:#000;
 }
 
-
-/* ===============================
-      UPLOAD
-   =============================== */
+/* ================================
+             UPLOAD
+================================ */
 #dropArea{
   border:2px dashed #b5b5b5;
-  padding:45px;
+  padding:50px;
   text-align:center;
   border-radius:22px;
-  margin-top:20px;
+  margin-top:22px;
   background:#fafafa;
   font-size:16px;
 }
 #dropArea.dragover{
   border-color:var(--azul);
-  background:#e6efff;
+  background:#e8efff;
 }
 
-/* ===============================
-      MODAL DE PREVIEW
-   =============================== */
+/* ================================
+             MODAL
+================================ */
 #modal{
   position:fixed;
   inset:0;
@@ -256,30 +275,31 @@ body{
 
 #modalBox{
   background:white;
-  padding:35px;
+  padding:38px;
   border-radius:28px;
-  width:95%;
-  max-width:950px;
-  box-shadow:0 12px 35px rgba(0,0,0,.25);
+  width:96%;
+  max-width:1000px;
+  box-shadow:0 12px 45px rgba(0,0,0,.28);
 }
 
 #modalPreview{
   width:100%;
-  height:520px;
+  height:540px;
   border:none;
   border-radius:20px;
   background:#f2f2f2;
-  margin-top:12px;
+  margin-top:15px;
 }
 
-/* ===============================
-      SKELETON
-   =============================== */
+/* ================================
+             SKELETON
+================================ */
 .skeleton{
-  background:#e5e5e5;
+  background:#e7e7e7;
   border-radius:22px;
-  height:190px;
+  height:200px;
 }
+
 </style>
 </head>
 
@@ -289,7 +309,10 @@ body{
 
   <h1 id="titulo">📁 Gerenciador de Documentos</h1>
 
-  <input id="busca" placeholder="🔍 Pesquisar..." onkeyup="pesquisar()">
+  <div class="searchBox">
+    <i>🔍</i>
+    <input id="busca" placeholder="Pesquisar documentos..." onkeyup="pesquisar()">
+  </div>
 
   <div id="breadcrumbs">📂 Raiz</div>
 
@@ -303,18 +326,19 @@ body{
 
 </div>
 
-
-<!-- POPUP CRIAR PASTA -->
+<!-- ================================
+        POPUP: Criar pasta
+================================ -->
 <div id="popupCriar">
   <div id="popupBox">
-    <h3 style="margin-top:0">Criar nova pasta</h3>
+    <h3 style="margin-top:0;font-size:22px;">Criar nova pasta</h3>
 
     <label>Nome:</label>
     <input id="nomePasta"
-      style="width:100%;padding:14px;border-radius:14px;border:1px solid #ccc;margin-top:8px;"
+      style="width:100%;padding:16px;border-radius:14px;border:1px solid #ccc;margin-top:8px;font-size:16px;"
       type="text">
 
-    <p style="margin-top:18px;">Cor da pasta:</p>
+    <p style="margin-top:20px;font-weight:600;">Cor da pasta:</p>
 
     <div class="colorRow">
       <div class="colorSelect" style="background:#2563eb" data-cor="azul"></div>
@@ -329,37 +353,40 @@ body{
       <div class="colorSelect" style="background:#8b5e3c" data-cor="marrom"></div>
     </div>
 
-    <button onclick="criarPasta()" class="btn btn-nova" style="width:100%;margin-top:23px;">Criar pasta</button>
-    <button onclick="fecharPopupCriar()" style="margin-top:12px;border:none;background:#e5e7eb;padding:14px;width:100%;border-radius:14px;">Cancelar</button>
+    <button onclick="criarPasta()" class="btn btn-nova" style="width:100%;margin-top:25px;">Criar pasta</button>
+    <button onclick="fecharPopupCriar()" style="margin-top:14px;border:none;background:#e5e7eb;padding:14px;width:100%;border-radius:14px;">Cancelar</button>
   </div>
 </div>
 
-
-<!-- POPUP UPLOAD -->
+<!-- ================================
+        POPUP: Upload
+================================ -->
 <div id="popupUpload">
   <div id="uploadBox">
 
-    <h3 style="margin-top:0">Enviar arquivo</h3>
+    <h3 style="margin-top:0;font-size:22px;">Enviar arquivo</h3>
 
     <label>Enviar para:</label>
     <select id="uploadDestino"
-      style="width:100%;padding:14px;margin-top:8px;border-radius:14px;border:1px solid #ccc;"></select>
+      style="width:100%;padding:14px;margin-top:8px;border-radius:14px;border:1px solid #ccc;font-size:16px;"></select>
 
-    <div id="dropArea">Arraste arquivos aqui ou clique para selecionar</div>
+    <div id="dropArea">Arraste arquivos aqui<br>ou clique para selecionar</div>
     <input id="uploadInput" type="file" multiple style="display:none">
 
-    <button onclick="enviarUpload()" class="btn btn-upload" style="width:100%;margin-top:20px;">Enviar</button>
-    <button onclick="fecharUpload()" style="margin-top:12px;border:none;background:#e5e7eb;padding:14px;width:100%;border-radius:14px;">Cancelar</button>
+    <button onclick="enviarUpload()" class="btn btn-upload" style="width:100%;margin-top:22px;">Enviar</button>
+    <button onclick="fecharUpload()" style="margin-top:14px;border:none;background:#e5e7eb;padding:14px;width:100%;border-radius:14px;">Cancelar</button>
 
   </div>
 </div>
 
-
-<!-- MODAL PREVIEW -->
+<!-- ================================
+           MODAL
+================================ -->
 <div id="modal">
   <div id="modalBox">
     <button class="btn btn-voltar" onclick="fecharModal()" style="float:right;">Fechar</button>
-    <h2 id="modalTitulo"></h2>
+    <h2 id="modalTitulo" style="margin:0;"></h2>
+
     <iframe id="modalPreview"></iframe>
 
     <button onclick="baixarArquivo()" class="btn btn-upload" style="margin-top:15px;">⬇ Download</button>
@@ -369,9 +396,9 @@ body{
 </div>
 
 
-<!-- ===============================
-      JAVASCRIPT COMPLETO
-   =============================== -->
+<!-- ================================
+         JAVASCRIPT ORIGINAL
+================================ -->
 <script>
 
 const API = "https://script.google.com/macros/s/AKfycbxFxMimw5qpX6unOxE_QO08dnzl-zGFKE7WEuhvAK7n7xTIIQD9ygrpegir-Hpz9RwWFg/exec";
