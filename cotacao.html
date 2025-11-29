@@ -2,10 +2,10 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Romaneios • LICITAR</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Romaneios • LICITAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -16,67 +16,122 @@
   --card:#ffffff;
   --radius:20px;
   --shadow:0 10px 30px rgba(0,0,0,.12);
+  --shadow-sm:0 6px 18px rgba(0,0,0,.08);
 }
 
 body{
   margin:0;
+  padding:0;
   background:var(--bg);
   font-family:'Inter',sans-serif;
-  color:#111;
 }
 
+/* ================= HEADER ================= */
 header{
   background:var(--azul);
   color:white;
   text-align:center;
-  padding:25px;
+  padding:22px;
   font-size:26px;
   font-weight:800;
+  letter-spacing:1px;
   box-shadow:var(--shadow);
 }
 
+/* ================= LOADING OVERLAY ================= */
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.75);
+  backdrop-filter:blur(4px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  font-size:26px;
+  font-weight:700;
+  color:var(--azul);
+}
+
+.spin{
+  width:45px;
+  height:45px;
+  border:5px solid #cdd3db;
+  border-top-color:var(--azul);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+/* ================= CONTEÚDO ================= */
 .section{
-  margin:20px;
+  padding:24px;
+}
+
+h2{
+  margin:0 0 12px 0;
+  color:var(--azul);
+  font-size:22px;
 }
 
 .cardRom{
-  padding:18px;
   background:white;
-  margin-bottom:18px;
+  margin-bottom:20px;
+  padding:20px;
   border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  transition:.2s;
+}
+
+.cardRom:hover{
+  transform:translateY(-5px);
   box-shadow:var(--shadow);
 }
 
 .cardRom h3{
   margin:0;
-  font-size:22px;
+  font-size:20px;
+  font-weight:800;
   color:var(--azul);
 }
 
-.listaFornec{
-  margin-top:12px;
-  padding-left:12px;
+.cardRom small{
+  display:block;
+  margin-top:4px;
+  font-size:14px;
+  color:#444;
 }
 
+.listaFornec{
+  margin-top:15px;
+  padding:12px;
+  background:#f8f9fa;
+  border-left:4px solid var(--azul);
+  border-radius:12px;
+}
+
+/* BOTÕES */
 .btn{
   background:var(--dourado);
   border:none;
-  padding:10px 15px;
+  padding:10px 16px;
   border-radius:12px;
   cursor:pointer;
   font-weight:700;
   margin-top:10px;
-  margin-right:10px;
+  transition:.2s;
 }
 
-.btn:hover{
-  background:#b08b47;
-}
+.btn:hover{ background:#af8a4f; }
 
+/* POPUP DE LINK */
 #popupLink{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,0.45);
   display:none;
   justify-content:center;
   align-items:center;
@@ -85,7 +140,7 @@ header{
 
 .popupBox{
   background:white;
-  padding:25px;
+  padding:24px;
   width:90%;
   max-width:460px;
   border-radius:18px;
@@ -93,30 +148,33 @@ header{
   text-align:center;
 }
 
-input.copyBox{
+.copyBox{
   width:100%;
   padding:14px;
-  font-size:16px;
   border-radius:12px;
   border:1px solid #ccc;
-  margin-top:14px;
+  font-size:16px;
+  margin-top:12px;
+  background:#f8f8f8;
 }
 </style>
 </head>
 
 <body>
 
+<div id="overlay"><div class="spin"></div></div>
+
 <header>Painel de Romaneios</header>
 
 <div class="section">
-  <h2 style="color:var(--azul); margin-bottom:10px;">Romaneios Gerados</h2>
+  <h2>Romaneios Pendentes de Cotação</h2>
   <div id="listaRomaneios"></div>
 </div>
 
-<!-- POPUP COM LINK PARA FORNECEDOR -->
+<!-- POPUP PARA LINK DO FORNECEDOR -->
 <div id="popupLink">
   <div class="popupBox">
-    <h3 style="color:var(--azul)">Link do Fornecedor</h3>
+    <h3 style="color:var(--azul);font-size:20px;">Link da Cotação</h3>
     <input id="linkGerado" class="copyBox" readonly>
     <br><br>
     <button class="btn" onclick="copiar()">Copiar</button>
@@ -125,29 +183,36 @@ input.copyBox{
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwvMEDSjBE874XfGqKgyc117R1aqDMTC_S79fKPg-hDJbLXntOtD7mJdP6wb-VWUIAz/exec"; // TROCAR
-let fornecedores = [];
+const API = "https://script.google.com/macros/s/AKfycbxGCgSrwDMWyHKKsT_2j7ixjUzctHAw-smKfIyb33AA7OYYG4FkUpLyyrZQFlpeGsIo/exec"; // <= TROCAR
+
 let romaneios = [];
 
-/* ============================
-   CARREGAR TUDO
-============================ */
+/* ================= INICIALIZA ================= */
 async function init(){
-  fornecedores = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
-  romaneios    = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
-  montarRomaneios();
+  try{
+    const r = await fetch(`${API}?action=listarRomaneiosPendentes`);
+    romaneios = await r.json();
+    montar();
+  } catch (e){
+    alert("Erro ao carregar: " + e);
+  }
+  overlay.style.display = "none";
 }
 init();
 
-/* ============================
-   MONTAR ROMANEIOS
-============================ */
-function montarRomaneios(){
+/* ================= MONTAR ROMANEIOS ================= */
+function montar(){
   let html = "";
+
+  if(romaneios.length === 0){
+    html = `<p style="color:#888;">Nenhum romaneio pendente.</p>`;
+    listaRomaneios.innerHTML = html;
+    return;
+  }
 
   romaneios.forEach(r => {
 
-    let fornecHTML = fornecedores.map(f => `
+    let fornecHTML = r.fornecedores.map(f => `
       <div class="listaFornec">
         <b>${f.nome}</b> — CNPJ: ${f.cnpj}<br>
         <button class="btn" onclick="gerarLink('${r.romaneioID}','${f.codigo}')">Enviar para Cotação</button>
@@ -157,10 +222,11 @@ function montarRomaneios(){
     html += `
       <div class="cardRom">
         <h3>Romaneio ${r.romaneioID}</h3>
-        <small><b>Empresa:</b> ${r.empresa}</small><br>
+        <small><b>Empresa:</b> ${r.empresa}</small>
+        <small><b>Data:</b> ${r.data}</small>
         <small><b>Total:</b> R$ ${Number(r.total).toLocaleString("pt-BR",{minimumFractionDigits:2})}</small>
 
-        <h4 style="margin-top:12px;color:var(--azul-claro);">Fornecedores</h4>
+        <h4 style="margin-top:15px;color:var(--azul-claro);font-size:18px;">Fornecedores</h4>
         ${fornecHTML}
       </div>
     `;
@@ -169,24 +235,20 @@ function montarRomaneios(){
   listaRomaneios.innerHTML = html;
 }
 
-/* ============================
-   GERAR LINK PARA FORNECEDOR
-============================ */
+/* ================= GERAR LINK ================= */
 function gerarLink(romaneioID, fornecedorID){
-
   const link = `${API}?action=fornecedorCotacao&romaneioID=${romaneioID}&fornecedor=${fornecedorID}`;
-
   linkGerado.value = link;
-  document.getElementById("popupLink").style.display = "flex";
+  popupLink.style.display = "flex";
 }
 
+/* ================= UTILS ================= */
 function fecharPopup(){
-  document.getElementById("popupLink").style.display = "none";
+  popupLink.style.display = "none";
 }
 
 function copiar(){
   linkGerado.select();
-  linkGerado.setSelectionRange(0,99999);
   document.execCommand("copy");
   alert("Link copiado!");
 }
