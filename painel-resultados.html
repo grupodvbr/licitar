@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Resultados de Cotações</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --azul:#0b1e39;
+  --bg:#f4f5f7;
+  --card:#fff;
+  --shadow:0 8px 22px rgba(0,0,0,.1);
+  --radius:18px;
+}
+
+body{
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  margin:0;
+  padding:20px;
+}
+
+h1{
+  text-align:center;
+  color:var(--azul);
+}
+
+table{
+  width:100%;
+  margin-top:25px;
+  border-collapse:collapse;
+  background:white;
+  box-shadow:var(--shadow);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #ddd;
+  font-size:15px;
+}
+
+th{
+  background:var(--azul);
+  color:white;
+}
+
+tr:hover{
+  background:#f1f1f1;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Resultados de Cotações</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Empresa</th>
+      <th>Fornecedor</th>
+      <th>Data Cotação</th>
+      <th>TR</th>
+      <th>Descrição</th>
+      <th>Qtd</th>
+      <th>Valor</th>
+      <th>Total Item</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbyoSbuesMQvVUH_U4wAUR-o8_tJC9XNiUjt1K-0_U18rRA5OI9Zu_7CT7oKqYNx1KfY6A/exec";
+
+async function carregar(){
+  const dados = await fetch(`${API}?action=listarCotacoesResumo`).then(r=>r.json());
+
+  tbody.innerHTML = dados.map(r=>`
+    <tr>
+      <td>${r.empresa}</td>
+      <td>${r.fornecedor}</td>
+      <td>${r.dataCotacao}</td>
+      <td>${r.itemTR}</td>
+      <td>${r.descricao.substring(0,40)}...</td>
+      <td>${r.quantidade}</td>
+      <td>R$ ${Number(r.valorUnit).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+      <td>R$ ${Number(r.totalItem).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
+    </tr>
+  `).join("");
+}
+carregar();
+</script>
+
+</body>
+</html>
