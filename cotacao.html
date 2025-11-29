@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Painel de Romaneios • LICITAR</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Romaneios • LICITAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
@@ -15,18 +15,18 @@
   --bg:#eef2f7;
   --card:#ffffff;
   --radius:20px;
-  --shadow:0 10px 30px rgba(0,0,0,.12);
-  --shadow-sm:0 6px 18px rgba(0,0,0,.08);
+  --shadow:0 12px 30px rgba(0,0,0,.15);
+  --shadow-sm:0 6px 18px rgba(0,0,0,.10);
 }
 
 body{
   margin:0;
-  padding:0;
   background:var(--bg);
   font-family:'Inter',sans-serif;
+  color:#111;
 }
 
-/* ================= HEADER ================= */
+/* HEADER */
 header{
   background:var(--azul);
   color:white;
@@ -34,86 +34,79 @@ header{
   padding:22px;
   font-size:26px;
   font-weight:800;
-  letter-spacing:1px;
+  letter-spacing:.5px;
   box-shadow:var(--shadow);
 }
 
-/* ================= LOADING OVERLAY ================= */
+/* LOADING */
 #overlay{
   position:fixed;
   inset:0;
-  background:rgba(255,255,255,0.75);
-  backdrop-filter:blur(4px);
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(5px);
   display:flex;
   justify-content:center;
   align-items:center;
   z-index:99999;
-  font-size:26px;
-  font-weight:700;
-  color:var(--azul);
 }
-
 .spin{
   width:45px;
   height:45px;
-  border:5px solid #cdd3db;
+  border:5px solid #cfd3d8;
   border-top-color:var(--azul);
   border-radius:50%;
   animation:spin 1s linear infinite;
 }
+@keyframes spin{ to{ transform:rotate(360deg);} }
 
-@keyframes spin{
-  to{ transform:rotate(360deg); }
-}
-
-/* ================= CONTEÚDO ================= */
+/* CARDS */
 .section{
   padding:24px;
 }
-
-h2{
-  margin:0 0 12px 0;
-  color:var(--azul);
-  font-size:22px;
-}
-
-.cardRom{
+.card{
   background:white;
-  margin-bottom:20px;
   padding:20px;
   border-radius:var(--radius);
   box-shadow:var(--shadow-sm);
+  margin-bottom:18px;
+  cursor:pointer;
   transition:.2s;
 }
-
-.cardRom:hover{
+.card:hover{
   transform:translateY(-5px);
   box-shadow:var(--shadow);
 }
-
-.cardRom h3{
+.card h3{
   margin:0;
   font-size:20px;
   font-weight:800;
   color:var(--azul);
 }
-
-.cardRom small{
+.card small{
   display:block;
   margin-top:4px;
-  font-size:14px;
   color:#444;
 }
 
-.listaFornec{
-  margin-top:15px;
-  padding:12px;
-  background:#f8f9fa;
-  border-left:4px solid var(--azul);
-  border-radius:12px;
+/* POPUP */
+#popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
 }
-
-/* BOTÕES */
+.popupBox{
+  background:white;
+  padding:25px;
+  width:90%;
+  max-width:460px;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  text-align:center;
+}
 .btn{
   background:var(--dourado);
   border:none;
@@ -121,41 +114,25 @@ h2{
   border-radius:12px;
   cursor:pointer;
   font-weight:700;
-  margin-top:10px;
+  margin-top:12px;
   transition:.2s;
 }
+.btn:hover{ background:#b08b47; }
 
-.btn:hover{ background:#af8a4f; }
-
-/* POPUP DE LINK */
-#popupLink{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.45);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+.selectList{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  margin-top:12px;
+  font-size:16px;
 }
-
-.popupBox{
-  background:white;
-  padding:24px;
-  width:90%;
-  max-width:460px;
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  text-align:center;
-}
-
 .copyBox{
   width:100%;
   padding:14px;
-  border-radius:12px;
+  border-radius:10px;
   border:1px solid #ccc;
-  font-size:16px;
-  margin-top:12px;
-  background:#f8f8f8;
+  margin-top:15px;
 }
 </style>
 </head>
@@ -167,90 +144,111 @@ h2{
 <header>Painel de Romaneios</header>
 
 <div class="section">
-  <h2>Romaneios Pendentes de Cotação</h2>
-  <div id="listaRomaneios"></div>
+  <h2 style="color:var(--azul);font-size:22px;">Empresas com Romaneios</h2>
+  <div id="listaEmpresas"></div>
 </div>
 
-<!-- POPUP PARA LINK DO FORNECEDOR -->
-<div id="popupLink">
-  <div class="popupBox">
-    <h3 style="color:var(--azul);font-size:20px;">Link da Cotação</h3>
-    <input id="linkGerado" class="copyBox" readonly>
-    <br><br>
-    <button class="btn" onclick="copiar()">Copiar</button>
-    <button class="btn" style="background:#666;color:white;" onclick="fecharPopup()">Fechar</button>
-  </div>
+<!-- POPUP SELEÇÃO DO ROMANEIO -->
+<div id="popup">
+  <div class="popupBox" id="popupContent"></div>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbxGCgSrwDMWyHKKsT_2j7ixjUzctHAw-smKfIyb33AA7OYYG4FkUpLyyrZQFlpeGsIo/exec"; // <= TROCAR
+const API = "https://script.google.com/macros/s/AKfycbxGCgSrwDMWyHKKsT_2j7ixjUzctHAw-smKfIyb33AA7OYYG4FkUpLyyrZQFlpeGsIo/exec";  // ALTERAR
 
+let empresas = [];
 let romaneios = [];
 
-/* ================= INICIALIZA ================= */
+/* ======================== INIT ======================== */
 async function init(){
-  try{
-    const r = await fetch(`${API}?action=listarRomaneiosPendentes`);
-    romaneios = await r.json();
-    montar();
-  } catch (e){
-    alert("Erro ao carregar: " + e);
-  }
-  overlay.style.display = "none";
+  const r = await fetch(`${API}?action=listarRemessas`);
+  romaneios = await r.json();
+
+  montarEmpresas();
+  overlay.style.display="none";
 }
 init();
 
-/* ================= MONTAR ROMANEIOS ================= */
-function montar(){
-  let html = "";
+/* ======================== LISTAGEM DE EMPRESAS ======================== */
+function montarEmpresas(){
 
-  if(romaneios.length === 0){
-    html = `<p style="color:#888;">Nenhum romaneio pendente.</p>`;
-    listaRomaneios.innerHTML = html;
-    return;
-  }
+  const lista = {};
 
   romaneios.forEach(r => {
+    if (!lista[r.empresa]) lista[r.empresa] = [];
+    lista[r.empresa].push(r);
+  });
 
-    let fornecHTML = r.fornecedores.map(f => `
-      <div class="listaFornec">
-        <b>${f.nome}</b> — CNPJ: ${f.cnpj}<br>
-        <button class="btn" onclick="gerarLink('${r.romaneioID}','${f.codigo}')">Enviar para Cotação</button>
-      </div>
-    `).join("");
+  let html = "";
 
+  Object.keys(lista).forEach(emp => {
     html += `
-      <div class="cardRom">
-        <h3>Romaneio ${r.romaneioID}</h3>
-        <small><b>Empresa:</b> ${r.empresa}</small>
-        <small><b>Data:</b> ${r.data}</small>
-        <small><b>Total:</b> R$ ${Number(r.total).toLocaleString("pt-BR",{minimumFractionDigits:2})}</small>
-
-        <h4 style="margin-top:15px;color:var(--azul-claro);font-size:18px;">Fornecedores</h4>
-        ${fornecHTML}
+      <div class="card" onclick="abrirEmpresa('${emp}')">
+        <h3>${emp}</h3>
+        <small>${lista[emp].length} romaneio(s)</small>
       </div>
     `;
   });
 
-  listaRomaneios.innerHTML = html;
+  listaEmpresas.innerHTML = html || "<p style='color:#666'>Nenhuma empresa com romaneios.</p>";
 }
 
-/* ================= GERAR LINK ================= */
-function gerarLink(romaneioID, fornecedorID){
-  const link = `${API}?action=fornecedorCotacao&romaneioID=${romaneioID}&fornecedor=${fornecedorID}`;
-  linkGerado.value = link;
-  popupLink.style.display = "flex";
+/* ======================== POPUP DA EMPRESA ======================== */
+async function abrirEmpresa(empresa){
+
+  const fornecedores = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+
+  const meusR = romaneios.filter(r => r.empresa === empresa);
+
+  let romOps = meusR.map(r =>
+    `<option value="${r.romaneioID}">${r.romaneioID} — Total R$ ${Number(r.total).toLocaleString("pt-BR",{minimumFractionDigits:2})}</option>`
+  ).join("");
+
+  let fornOps = fornecedores.map(f =>
+    `<option value="${f.codigo}">${f.nome} — ${f.cnpj}</option>`
+  ).join("");
+
+  popupContent.innerHTML = `
+    <h3 style="color:var(--azul);">Gerar Cotação</h3>
+
+    <label>Selecione o Romaneio:</label>
+    <select id="romSel" class="selectList">${romOps}</select>
+
+    <label style="margin-top:14px; display:block;">Selecione o Fornecedor:</label>
+    <select id="fornSel" class="selectList">${fornOps}</select>
+
+    <button class="btn" onclick="gerarLink()">Gerar Link</button>
+    <button class="btn" style="background:#666;color:white" onclick="fechar()">Fechar</button>
+  `;
+
+  popup.style.display="flex";
 }
 
-/* ================= UTILS ================= */
-function fecharPopup(){
-  popupLink.style.display = "none";
+/* ======================== GERAR LINK ======================== */
+function gerarLink(){
+  const rom = document.getElementById("romSel").value;
+  const forn = document.getElementById("fornSel").value;
+
+  const link = `${API}?action=fornecedorCotacao&romaneioID=${rom}&fornecedor=${forn}`;
+
+  popupContent.innerHTML = `
+    <h3 style="color:var(--azul);">Link Gerado</h3>
+    <input class="copyBox" id="copy" readonly value="${link}">
+
+    <button class="btn" onclick="copiar()">Copiar</button>
+    <button class="btn" style="background:#666;color:white" onclick="fechar()">Fechar</button>
+  `;
 }
 
 function copiar(){
-  linkGerado.select();
+  const c = document.getElementById("copy");
+  c.select();
   document.execCommand("copy");
-  alert("Link copiado!");
+  alert("Copiado!");
+}
+
+function fechar(){
+  popup.style.display="none";
 }
 </script>
 
