@@ -2,18 +2,19 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Cotação • LICITAR</title>
+<title>Cotação de Preços • LICITAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --azul:#0b1e39;
+  --azul-claro:#15345c;
   --dourado:#c9a86c;
-  --bg:#f3f4f7;
+  --bg:#eef2f7;
   --radius:20px;
-  --shadow:0 8px 25px rgba(0,0,0,.10);
+  --shadow:0 10px 35px rgba(0,0,0,.12);
 }
 
 body{
@@ -22,145 +23,177 @@ body{
   font-family:'Inter',sans-serif;
 }
 
+/* HEADER */
 header{
   background:var(--azul);
   color:white;
-  padding:25px;
+  padding:20px;
   text-align:center;
-  font-size:24px;
-  font-weight:900;
+  font-size:22px;
+  font-weight:800;
 }
 
+/* LOADING */
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(5px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+.spin{
+  width:45px;
+  height:45px;
+  border:5px solid #ccc;
+  border-top-color:var(--azul);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg);} }
+
 .card{
-  background:white;
   margin:20px;
-  padding:20px;
+  background:white;
   border-radius:var(--radius);
+  padding:20px;
   box-shadow:var(--shadow);
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,td{
-  padding:10px;
-  border-bottom:1px solid #ddd;
-}
-
-th{
-  background:var(--azul);
-  color:white;
-}
-
-input{
-  width:100%;
-  padding:8px;
+.item{
+  background:#fff;
   border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+  border:1px solid #ddd;
+}
+
+.item input{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:8px;
   border:1px solid #ccc;
 }
 
 .btn{
   background:var(--dourado);
   border:none;
-  padding:14px 20px;
-  font-size:17px;
+  padding:13px 20px;
   border-radius:14px;
+  font-size:17px;
   font-weight:700;
   cursor:pointer;
   margin-top:20px;
   width:100%;
 }
-
 .btn:hover{
-  background:#b89350;
+  background:#a6834d;
 }
 </style>
 </head>
 
 <body>
 
-<header>Formulário de Cotação</header>
+<div id="overlay"><div class="spin"></div></div>
 
-<div class="card" id="info"></div>
+<header>Cotação de Preços</header>
 
 <div class="card">
-  <h2 style="color:var(--azul)">Itens para Cotar</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>TR</th>
-        <th>Descrição</th>
-        <th>Qtd</th>
-        <th>Valor (R$)</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
+  <h2 id="fornecedorNome" style="color:var(--azul);margin:0 0 10px;"></h2>
+  <div id="empresaInfo" style="color:#555;font-size:15px;"></div>
 </div>
 
+<div id="listaItens" class="card"></div>
+
 <div class="card">
-  <button class="btn" onclick="enviar()">ENVIAR COTAÇÃO</button>
+  <button class="btn" onclick="enviar()">Enviar Cotação</button>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyoSbuesMQvVUH_U4wAUR-o8_tJC9XNiUjt1K-0_U18rRA5OI9Zu_7CT7oKqYNx1KfY6A/exec";
+const API = "https://script.google.com/macros/s/AKfycbz4bNXkwvJCsVAOG111baPF4qCLD-6F9rHt-tkGDLUWR9-cBMqSEzKfQlXCCgOaYHeK/exec";  // ALTERAR
 
 const url = new URL(window.location.href);
 const romaneioID = url.searchParams.get("romaneioID");
 const fornecedor  = url.searchParams.get("fornecedor");
 
 let dados = null;
-let valores = [];
 
-async function carregar(){
-  dados = await fetch(`${API}?action=fornecedorCotacao&romaneioID=${romaneioID}&fornecedor=${fornecedor}`)
-           .then(r=>r.json());
+/* ================== INICIALIZA ================== */
+async function init(){
+  const res = await fetch(`${API}?action=fornecedorCotacao&romaneioID=${romaneioID}&fornecedor=${fornecedor}`);
+  dados = await res.json();
 
-  info.innerHTML = `
-    <h3>Romaneio: ${dados.romaneioID}</h3>
-    <p><b>Empresa:</b> ${dados.empresa}</p>
-    <p><b>CNPJ:</b> ${dados.cnpj}</p>
-    <p><b>Fornecedor:</b> ${dados.fornecedor.nome}</p>
-    <p><b>CNPJ Fornecedor:</b> ${dados.fornecedor.cnpj}</p>
+  if(!dados.ok){
+    alert("Erro: " + dados.erro);
+    return;
+  }
+
+  fornecedorNome.innerText = dados.fornecedorNome;
+  empresaInfo.innerHTML = `
+    <b>Empresa:</b> ${dados.empresa}<br>
+    <b>CNPJ:</b> ${dados.cnpj}<br>
+    <b>Romaneio:</b> ${romaneioID}
   `;
 
-  valores = dados.itens.map(i => ({
-    itemTR: i.itemTR,
-    descricao: i.especificacao,
-    quantidade: i.quant,
-    valor: i.valorExistente || 0
+  montarItens();
+  overlay.style.display="none";
+}
+init();
+
+/* ================== MONTAR ITENS ================== */
+function montarItens(){
+  let html = "";
+
+  dados.itens.forEach(it => {
+    html += `
+      <div class="item">
+        <b>${it.itemTR}</b> — ${it.especificacao}<br>
+        <b>Qtd:</b> ${it.quant}<br><br>
+
+        <label>Valor Unitário (R$):</label>
+        <input type="number" step="0.01" id="u${it.itemTR}" placeholder="0,00">
+
+        <label>Total (auto):</label>
+        <input id="t${it.itemTR}" readonly>
+      </div>
+    `;
+  });
+
+  listaItens.innerHTML = html;
+
+  // listeners
+  dados.itens.forEach(it => {
+    document.getElementById("u"+it.itemTR).addEventListener("input", e=>{
+      const v = Number(e.target.value||0);
+      document.getElementById("t"+it.itemTR).value = (v * it.quant).toFixed(2);
+    });
+  });
+}
+
+/* ================== ENVIAR COTAÇÃO ================== */
+async function enviar(){
+  const cotacoes = dados.itens.map(it => ({
+    itemTR: it.itemTR,
+    descricao: it.especificacao,
+    quantidade: it.quant,
+    valor: Number(document.getElementById("u"+it.itemTR).value||0)
   }));
 
-  montarTabela();
-}
-carregar();
-
-function montarTabela(){
-  tbody.innerHTML = valores.map((v,i)=>`
-    <tr>
-      <td>${v.itemTR}</td>
-      <td>${v.descricao.substring(0,50)}...</td>
-      <td>${v.quantidade}</td>
-      <td>
-        <input type="number" min="0" step="0.01" value="${v.valor}" 
-              oninput="valores[${i}].valor=this.value">
-      </td>
-    </tr>
-  `).join("");
-}
-
-async function enviar(){
   const payload = {
+    fornecedor: dados.fornecedorNome,
+    fornecedorCNPJ: dados.fornecedorCNPJ,
+    empresa: dados.empresa,
+    cnpj: dados.cnpj,
     romaneioID,
-    fornecedor,
-    cotacoes: valores
+    cotacoes
   };
 
-  await fetch(`${API}?action=salvarCotacaoFornecedor&data=${encodeURIComponent(JSON.stringify(payload))}`);
-  alert("Cotação registrada com sucesso!");
-  window.location.reload();
+  await fetch(`${API}?action=salvarCotacao&data=${encodeURIComponent(JSON.stringify(payload))}`);
+
+  alert("Cotação enviada com sucesso!");
 }
 </script>
 
