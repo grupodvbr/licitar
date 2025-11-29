@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cotações • LICITAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --azul:#0b1e39;
+  --azul-claro:#15345c;
+  --dourado:#c9a86c;
+  --bg:#eef2f7;
+  --card:#ffffff;
+  --radius:20px;
+  --shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+/* BASE */
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  color:#111;
+  padding-bottom:80px;
+}
+
+header{
+  background:var(--azul);
+  color:white;
+  padding:25px 20px;
+  text-align:center;
+  font-size:26px;
+  font-weight:800;
+  box-shadow:var(--shadow);
+}
+
+/* EMPRESA HEADER (FIXO NO CÓDIGO) */
+#empresaBox{
+  background:white;
+  margin:20px;
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+#empresaBox img{
+  width:130px;
+  margin-bottom:15px;
+}
+
+/* LISTA DE ROMANEIOS */
+.section{
+  margin:20px;
+}
+
+.cardRom{
+  background:white;
+  padding:18px;
+  margin-bottom:18px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition:.25s;
+}
+
+.cardRom:hover{
+  transform:translateY(-4px);
+}
+
+.cardRom h3{
+  margin:0;
+  color:var(--azul);
+  font-size:20px;
+}
+
+.cardRom small{
+  display:block;
+  color:#777;
+  margin-top:4px;
+}
+
+/* POPUP */
+#popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.popupBox{
+  background:white;
+  width:92%;
+  max-width:620px;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+.popupBox h2{
+  margin-top:0;
+  color:var(--azul);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-bottom:15px;
+}
+
+th,td{
+  border-bottom:1px solid #ddd;
+  padding:10px;
+  font-size:14px;
+}
+
+th{
+  background:var(--azul);
+  color:white;
+}
+
+input[type=number]{
+  width:100%;
+  padding:8px;
+  border:1px solid #ccc;
+  border-radius:10px;
+}
+
+/* BOTÕES */
+.btn{
+  background:var(--azul);
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+  margin-top:12px;
+}
+
+.btn:hover{
+  background:var(--azul-claro);
+}
+
+.btn-alt{
+  background:var(--dourado);
+  color:black;
+}
+
+.resumoFinal{
+  background:white;
+  margin:20px;
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+</style>
+</head>
+
+<body>
+
+<header>Cotações de Romaneios</header>
+
+<!-- =============================================== -->
+<!-- IDENTIFICAÇÃO DA SUA EMPRESA (FIXO EM CÓDIGO) -->
+<!-- =============================================== -->
+<div id="empresaBox">
+  <img src="SUA_LOGO_AQUI.png">
+  <h2 style="margin:0; color:var(--azul);">EMPRESA MODELO LTDA</h2>
+  <p style="margin:4px 0;">
+    <b>Nome Fantasia:</b> Mercatto Delícia<br>
+    <b>CNPJ:</b> 00.000.000/0001-00<br>
+    <b>Razão Social:</b> EMPRESA MODELO LTDA<br>
+  </p>
+</div>
+
+<!-- LISTA DE ROMANEIOS -->
+<div class="section">
+  <h2 style="color:var(--azul);">Romaneios Aguardando Cotação</h2>
+  <div id="listaRomaneios"></div>
+</div>
+
+<!-- POPUP DE COTAÇÃO -->
+<div id="popup">
+  <div class="popupBox">
+    <h2>Cotar Romaneio</h2>
+
+    <div id="romaneioInfo"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>TR</th>
+          <th>Item</th>
+          <th>Qtd</th>
+          <th>Valor (R$)</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyCotacao"></tbody>
+    </table>
+
+    <button class="btn-alt" onclick="adicionarFornecedor()">Adicionar Cotação Alternativa</button>
+
+    <button class="btn" onclick="salvarCotacao()">Salvar Cotação</button>
+    <button class="btn" style="background:#444" onclick="fecharPopup()">Fechar</button>
+  </div>
+</div>
+
+<!-- RESUMO FINAL -->
+<div class="resumoFinal">
+  <h2 style="color:var(--azul); margin-top:0;">Resumo Geral</h2>
+  <div id="resultadoFinal"></div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbwqnCnU8gwWObXZfMHs_ti1ZVintZOC6Uvcy0S6TgzKSDx00P2D-22941lnOvB6lQfj/exec"; // <<< VOCÊ TROCA AQUI
+
+let romaneios = [];
+let romaneioSelecionado = null;
+let cotacoes = [];
+
+/* ================================
+   CARREGAR ROMANEIOS
+================================ */
+async function carregarRomaneios(){
+  romaneios = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
+
+  let html = "";
+  romaneios.forEach(r=>{
+    html += `
+      <div class="cardRom" onclick="abrirCotacao('${r.romaneioID}')">
+        <h3>Romaneio ${r.romaneioID}</h3>
+        <small><b>Empresa:</b> ${r.empresa}</small>
+        <small><b>Total:</b> R$ ${Number(r.total).toLocaleString("pt-BR",{minimumFractionDigits:2})}</small>
+      </div>
+    `;
+  });
+
+  listaRomaneios.innerHTML = html;
+}
+carregarRomaneios();
+
+/* ================================
+   ABRIR POPUP
+================================ */
+function abrirCotacao(id){
+  romaneioSelecionado = romaneios.find(x => x.romaneioID === id);
+
+  const js = JSON.parse(romaneioSelecionado.json);
+
+  romaneioInfo.innerHTML = `
+    <p>
+      <b>Romaneio:</b> ${js.romaneioID}<br>
+      <b>Empresa:</b> ${js.empresa}<br>
+      <b>CNPJ:</b> ${js.cnpj}<br>
+      <b>Total:</b> R$ ${js.total.toLocaleString("pt-BR",{minimumFractionDigits:2})}
+    </p>
+  `;
+
+  cotacoes = js.itens.map(it => ({
+    itemTR: it.itemTR,
+    descricao: it.especificacao,
+    quantidade: it.quant,
+    valor: 0
+  }));
+
+  montarTabela();
+
+  popup.style.display = "flex";
+}
+
+function montarTabela(){
+  let html = "";
+  cotacoes.forEach((c,i)=>{
+    html += `
+      <tr>
+        <td>${c.itemTR}</td>
+        <td>${c.descricao.substring(0,40)}</td>
+        <td>${c.quantidade}</td>
+        <td><input type="number" min="0" step="0.01" oninput="cotacoes[${i}].valor=Number(this.value)"></td>
+      </tr>
+    `;
+  });
+  tbodyCotacao.innerHTML = html;
+}
+
+function fecharPopup(){
+  popup.style.display = "none";
+}
+
+/* ================================
+   ADICIONAR OUTRO FORNECEDOR
+================================ */
+function adicionarFornecedor(){
+  alert("Função preparada. No GAS, vou salvar cada fornecedor como um bloco independente.");
+}
+
+/* ================================
+   SALVAR COTAÇÃO
+================================ */
+async function salvarCotacao(){
+  const dados = {
+    romaneioID: romaneioSelecionado.romaneioID,
+    empresa: romaneioSelecionado.empresa,
+    cnpj: romaneioSelecionado.cnpj,
+    cotacoes: cotacoes
+  };
+
+  await fetch(`${API}?action=salvarCotacao&data=${encodeURIComponent(JSON.stringify(dados))}`);
+
+  fecharPopup();
+  alert("Cotação salva com sucesso!");
+}
+
+/* ================================
+   RESUMO FINAL
+================================ */
+function gerarResumoFinal(){
+  resultadoFinal.innerHTML = `
+    <p>Aqui aparecerá o fornecedor mais barato, os totais comparados, e um ranking completo.</p>
+    <p>Quando me enviar o GAS, conecto 100% tudo.</p>
+  `;
+}
+gerarResumoFinal();
+
+</script>
+
+</body>
+</html>
