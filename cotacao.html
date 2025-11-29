@@ -229,7 +229,8 @@ function gerarLink(){
   const rom = document.getElementById("romSel").value;
   const forn = document.getElementById("fornSel").value;
 
-  const link = `${API}?action=fornecedorCotacao&romaneioID=${rom}&fornecedor=${forn}`;
+  // LINK CORRETO (fornecedor.html)
+  const link = `fornecedor.html?romaneioID=${rom}&fornecedor=${forn}`;
 
   popupContent.innerHTML = `
     <h3 style="color:var(--azul);">Link Gerado</h3>
@@ -239,6 +240,7 @@ function gerarLink(){
     <button class="btn" style="background:#666;color:white" onclick="fechar()">Fechar</button>
   `;
 }
+
 
 function copiar(){
   const c = document.getElementById("copy");
