@@ -43,7 +43,7 @@ body{
 
 /* ===== TELA INICIAL ===== */
 #telaInicial{
-  padding:30px 30px 40px 90px; /* espaço para sidebar */
+  padding:30px 30px 40px 90px;
 }
 
 #telaInicial h1{
@@ -80,9 +80,7 @@ body{
   transition:.25s;
   text-align:center;
 }
-.card:hover{
-  transform:translateY(-6px);
-}
+.card:hover{ transform:translateY(-6px); }
 .card h2{
   margin:0;
   font-size:22px;
@@ -98,11 +96,10 @@ body{
 #telaEmpresa{
   display:none;
   min-height:100vh;
-  padding-left:90px; /* espaço do menu lateral */
+  padding-left:90px;
   background:#fff;
 }
 
-/* topo */
 .topoEmpresa{
   background:var(--azul);
   color:white;
@@ -121,7 +118,6 @@ body{
   font-size:26px;
 }
 
-/* box empresa */
 .boxEmpresa{
   background:white;
   padding:22px;
@@ -130,7 +126,7 @@ body{
   box-shadow:var(--shadow);
 }
 
-/* tabela */
+/* ===== TABELA ===== */
 .boxItens{
   padding:20px;
 }
@@ -154,7 +150,7 @@ th{
   color:white;
 }
 
-/* botões */
+/* ===== BOTÕES ===== */
 .btn{
   margin-top:10px;
   background:var(--dourado);
@@ -167,7 +163,7 @@ th{
 }
 .btn:hover{ background:#b4904f; }
 
-/* popup */
+/* ===== POPUP ===== */
 #popup{
   position:fixed;
   inset:0;
@@ -258,14 +254,14 @@ th{
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwHHW6Q9MEDz4f7HW1qotvuw9L8MrZ_hRCvBgNhDPFzyiKGelekv6hIorPOwrxFWrr_/exec";
+const API = "https://script.google.com/macros/s/AKfycbyhUU3SIrQkaGMN40pWZKISzwJRRNoFqlqi_xpYVwN3OyNt6hvoXmO1XIuCE0AXjgLc/exec";
 
 let codigoSelecionado = "";
 let itensList = [];
 let fornecedores = [];
 let remessas = [];
 
-/* FORMATADOR */
+/* MONEY */
 function money(v){
   return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2});
 }
@@ -299,14 +295,14 @@ async function abrirEmpresa(cod){
 
   overlayProcessando.style.display = "flex";
 
-  const emp = await fetch(`${API}?action=getEmpresa&codigo=${cod}`).then(r=>r.json());
+  const emp = await fetch(`${API}?action=getEmpresa&codigo=${cod}`).then(r=>r.json()).catch(()=>null);
 
-  nomeTopo.innerText = emp.nome;
+  nomeTopo.innerText = emp?.nome || "Empresa";
 
   boxEmpresa.innerHTML = `
-    <b>Instituição:</b> ${emp.instituicao}<br>
-    <b>CNPJ:</b> ${emp.cnpj}<br>
-    <b>UF:</b> ${emp.uf}<br>
+    <b>Instituição:</b> ${emp.instituicao || ""}<br>
+    <b>CNPJ:</b> ${emp.cnpj || ""}<br>
+    <b>UF:</b> ${emp.uf || ""}<br>
   `;
 
   await carregarItens(cod);
@@ -347,6 +343,7 @@ async function carregarItens(cod){
   montarTabela();
 }
 
+/* ================== CÁLCULO DE ENVIADOS ================== */
 function calcularEnviados(cod, tr){
   let tot = 0;
   remessas.forEach(r=>{
@@ -362,12 +359,13 @@ function calcularEnviados(cod, tr){
   return tot;
 }
 
+/* ================== MONTAR TABELA ================== */
 function montarTabela(){
   let html="";
   itensList.forEach((it,i)=>{
 
     let fornecedoresHTML = fornecedores
-      .map(f=>`<option>${f.nome}</option>`)
+      .map(f=>`<option value="${f.nome}">${f.nome}</option>`)
       .join("");
 
     html += `
@@ -434,7 +432,17 @@ async function confirmar(){
   const dados = {
     data: new Date().toISOString().slice(0,10),
     codigoLicitacao: codigoSelecionado,
-    itens: itensList.filter(i=>i.qtd>0)
+    itens: itensList
+      .filter(i=>i.qtd>0)
+      .map(i=>({
+        itemTR: i.itemTR,
+        especificacao: i.especificacao,
+        marca: i.marca,
+        valorUnit: i.valorUnit,
+        qtd: i.qtd,
+        fornecedor: i.fornecedor,
+        subtotal: i.subtotal
+      }))
   };
 
   await fetch(`${API}?action=registrarRomaneio&data=${encodeURIComponent(JSON.stringify(dados))}`);
