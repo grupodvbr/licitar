@@ -2,99 +2,270 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Resultados de Cotações</title>
+<title>Resultados das Cotações • LICITAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --azul:#0b1e39;
-  --bg:#f4f5f7;
-  --card:#fff;
-  --shadow:0 8px 22px rgba(0,0,0,.1);
+  --dourado:#c9a86c;
+  --bg:#eef2f7;
+  --card:#ffffff;
   --radius:18px;
+  --shadow:0 8px 25px rgba(0,0,0,.12);
+  --green:#22c55e;
+  --red:#e11d48;
 }
 
+/* BASE */
 body{
-  background:var(--bg);
-  font-family:'Inter',sans-serif;
   margin:0;
-  padding:20px;
+  background:var(--bg);
+  font-family:'Inter', sans-serif;
 }
 
-h1{
+/* HEADER */
+header{
+  background:var(--azul);
+  color:white;
   text-align:center;
+  padding:22px;
+  font-size:26px;
+  font-weight:800;
+}
+
+/* OVERLAY */
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(5px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  font-size:26px;
+  font-weight:700;
   color:var(--azul);
+  display:none;
+}
+
+/* TABELAS */
+.container{
+  padding:25px;
 }
 
 table{
   width:100%;
-  margin-top:25px;
   border-collapse:collapse;
   background:white;
-  box-shadow:var(--shadow);
   border-radius:var(--radius);
   overflow:hidden;
+  box-shadow:var(--shadow);
+  margin-bottom:35px;
 }
 
 th,td{
   padding:12px;
-  border-bottom:1px solid #ddd;
-  font-size:15px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+  text-align:center;
 }
 
 th{
   background:var(--azul);
   color:white;
+  font-weight:700;
 }
 
-tr:hover{
-  background:#f1f1f1;
+.melhor{
+  background:#d1fadf !important;
+  color:#14532d;
+  font-weight:700;
+}
+
+/* INPUT INLINE */
+input.editBox{
+  width:90px;
+  padding:6px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  text-align:center;
+}
+
+select.selFornecedor{
+  padding:6px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.resumoBox{
+  background:white;
+  padding:22px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.resumoBox h2{
+  color:var(--azul);
+  margin-top:0;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Resultados de Cotações</h1>
+<div id="overlay">Processando...</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Empresa</th>
-      <th>Fornecedor</th>
-      <th>Data Cotação</th>
-      <th>TR</th>
-      <th>Descrição</th>
-      <th>Qtd</th>
-      <th>Valor</th>
-      <th>Total Item</th>
-    </tr>
-  </thead>
-  <tbody id="tbody"></tbody>
-</table>
+<header>Resultados das Cotações</header>
+
+<div class="container">
+  <h2 style="color:var(--azul);margin-bottom:15px;">Tabela Comparativa</h2>
+
+  <div id="tabelaResultados"></div>
+
+  <div class="resumoBox">
+    <h2>Resumo dos Melhores Preços</h2>
+    <div id="resumoFinal"></div>
+  </div>
+</div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyoSbuesMQvVUH_U4wAUR-o8_tJC9XNiUjt1K-0_U18rRA5OI9Zu_7CT7oKqYNx1KfY6A/exec";
+const API = "https://script.google.com/macros/s/AKfycbw8JOwQNLrJEGT4tA5c08iT2qPAVsvoiYookpJ3qV9LROXKlXAMSRjKRSsimHYplf_ALQ/exec"; // TROCAR
 
-async function carregar(){
-  const dados = await fetch(`${API}?action=listarCotacoesResumo`).then(r=>r.json());
+let cotacoes = [];
+let fornecedores = [];
 
-  tbody.innerHTML = dados.map(r=>`
-    <tr>
-      <td>${r.empresa}</td>
-      <td>${r.fornecedor}</td>
-      <td>${r.dataCotacao}</td>
-      <td>${r.itemTR}</td>
-      <td>${r.descricao.substring(0,40)}...</td>
-      <td>${r.quantidade}</td>
-      <td>R$ ${Number(r.valorUnit).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-      <td>R$ ${Number(r.totalItem).toLocaleString("pt-BR",{minimumFractionDigits:2})}</td>
-    </tr>
-  `).join("");
+/* INIT */
+async function init(){
+  overlay.style.display = "flex";
+
+  fornecedores = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
+  cotacoes = await fetch(`${API}?action=listarCotacoesRecebidas`).then(r=>r.json());
+
+  montarTabela();
+
+  overlay.style.display = "none";
 }
-carregar();
+init();
+
+/* MONTA A TABELA DINÂMICA */
+function montarTabela(){
+
+  if(cotacoes.length === 0){
+    tabelaResultados.innerHTML = "<p>Nenhuma cotação recebida ainda.</p>";
+    return;
+  }
+
+  // 1. Mapear itens e fornecedores
+  const listaFornecedores = [...new Set(cotacoes.map(c => c.fornecedor))];
+  const itens = [...new Set(cotacoes.map(c => c.itemTR))];
+
+  const estrutura = {};
+  itens.forEach(i => estrutura[i] = {});
+
+  cotacoes.forEach(c => {
+    estrutura[c.itemTR][c.fornecedor] = {
+      valor: Number(c.valorUnit || 0),
+      id: c.cotacaoID,
+      fornecedorCNPJ: c.fornecedorCNPJ
+    };
+  });
+
+  let html = "<table><thead><tr><th>Item</th>";
+
+  listaFornecedores.forEach(f => html += `<th>${f}</th>`);
+  html += "</tr></thead><tbody>";
+
+  const melhores = {};
+
+  itens.forEach(item => {
+
+    html += `<tr><td><b>${item}</b></td>`;
+
+    const valores = listaFornecedores.map(f => estrutura[item][f]?.valor || 0);
+    const menor = Math.min(...valores.filter(v => v > 0));
+
+    listaFornecedores.forEach((f, idx) => {
+
+      const registro = estrutura[item][f];
+      const valor = registro?.valor || 0;
+      const classe = (valor === menor && valor > 0) ? "melhor" : "";
+
+      const fornecedoresHTML = fornecedores
+        .map(x => `<option ${x.nome===f?"selected":""} value="${x.nome}">${x.nome}</option>`)
+        .join("");
+
+      html += `
+        <td class="${classe}">
+          <input class="editBox" value="${valor.toFixed(2)}" 
+            onchange="editarValor('${registro?.id}','${item}','${f}',this.value)">
+          <br>
+          <select class="selFornecedor" onchange="editarFornecedor('${registro?.id}','${item}',this.value)">
+            ${fornecedoresHTML}
+          </select>
+        </td>`;
+      
+      if(classe === "melhor"){
+        if(!melhores[f]) melhores[f] = 0;
+        melhores[f]++;
+      }
+    });
+
+    html += "</tr>";
+  });
+
+  html += "</tbody></table>";
+  tabelaResultados.innerHTML = html;
+
+  montarResumo(melhores);
+}
+
+/* RESUMO FINAL */
+function montarResumo(m){
+  if(Object.keys(m).length === 0){
+    resumoFinal.innerHTML = "<p>Nenhum melhor preço encontrado.</p>";
+    return;
+  }
+
+  let html = "<ul style='line-height:1.8'>";
+
+  Object.keys(m).forEach(f=>{
+    html += `<li><b>${f}</b>: ${m[f]} item(ns) com menor preço.</li>`;
+  });
+
+  html += "</ul>";
+
+  resumoFinal.innerHTML = html;
+}
+
+/* EDITAR VALOR */
+async function editarValor(id,item,fornecedor,novoValor){
+
+  overlay.style.display = "flex";
+
+  await fetch(`${API}?action=atualizarValorCotacao&id=${id}&item=${item}&fornecedor=${fornecedor}&valor=${novoValor}`);
+
+  cotacoes = await fetch(`${API}?action=listarCotacoesRecebidas`).then(r=>r.json());
+  montarTabela();
+
+  overlay.style.display = "none";
+}
+
+/* EDITAR FORNECEDOR */
+async function editarFornecedor(id,item,novoFornecedor){
+
+  overlay.style.display = "flex";
+
+  await fetch(`${API}?action=atualizarFornecedorCotacao&id=${id}&item=${item}&fornecedor=${novoFornecedor}`);
+
+  cotacoes = await fetch(`${API}?action=listarCotacoesRecebidas`).then(r=>r.json());
+  montarTabela();
+
+  overlay.style.display = "none";
+}
 </script>
 
 </body>
