@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Romaneios • LICITAR</title>
+<title>Registro de Preços • LICITAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -14,9 +14,8 @@
   --dourado:#c9a86c;
   --bg:#eef2f7;
   --card:#ffffff;
-  --radius:20px;
-  --shadow:0 12px 30px rgba(0,0,0,.15);
-  --shadow-sm:0 6px 18px rgba(0,0,0,.10);
+  --radius:18px;
+  --shadow:0 12px 30px rgba(0,0,0,.12);
 }
 
 body{
@@ -26,15 +25,13 @@ body{
   color:#111;
 }
 
-/* HEADER */
 header{
   background:var(--azul);
   color:white;
   text-align:center;
-  padding:22px;
+  padding:25px;
   font-size:26px;
   font-weight:800;
-  letter-spacing:.5px;
   box-shadow:var(--shadow);
 }
 
@@ -43,97 +40,78 @@ header{
   position:fixed;
   inset:0;
   background:rgba(255,255,255,.8);
-  backdrop-filter:blur(5px);
+  backdrop-filter:blur(4px);
   display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:99999;
-}
-.spin{
-  width:45px;
-  height:45px;
-  border:5px solid #cfd3d8;
-  border-top-color:var(--azul);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{ to{ transform:rotate(360deg);} }
-
-/* CARDS */
-.section{
-  padding:24px;
-}
-.card{
-  background:white;
-  padding:20px;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow-sm);
-  margin-bottom:18px;
-  cursor:pointer;
-  transition:.2s;
-}
-.card:hover{
-  transform:translateY(-5px);
-  box-shadow:var(--shadow);
-}
-.card h3{
-  margin:0;
-  font-size:20px;
-  font-weight:800;
-  color:var(--azul);
-}
-.card small{
-  display:block;
-  margin-top:4px;
-  color:#444;
-}
-
-/* POPUP */
-#popup{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:none;
   justify-content:center;
   align-items:center;
   z-index:9999;
 }
-.popupBox{
-  background:white;
-  padding:25px;
-  width:90%;
-  max-width:460px;
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  text-align:center;
+.spin{
+  width:45px;
+  height:45px;
+  border:5px solid #ccc;
+  border-top-color:var(--azul);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
 }
+@keyframes spin{ to{transform:rotate(360deg);} }
+
+/* CARD */
+.card{
+  background:white;
+  padding:20px;
+  margin:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+input, select, textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-top:8px;
+  font-size:16px;
+}
+
 .btn{
   background:var(--dourado);
   border:none;
-  padding:10px 16px;
+  padding:14px 20px;
   border-radius:12px;
-  cursor:pointer;
   font-weight:700;
-  margin-top:12px;
-  transition:.2s;
-}
-.btn:hover{ background:#b08b47; }
-
-.selectList{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  margin-top:12px;
-  font-size:16px;
-}
-.copyBox{
-  width:100%;
-  padding:14px;
-  border-radius:10px;
-  border:1px solid #ccc;
+  cursor:pointer;
   margin-top:15px;
+  width:100%;
 }
+.btn:hover{
+  background:#b08b47;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+th{
+  background:var(--azul);
+  color:white;
+  padding:12px;
+  text-align:left;
+}
+td{
+  padding:10px;
+  background:#fff;
+  border-bottom:1px solid #ddd;
+}
+
+.valorInput{
+  text-align:right;
+}
+
+/* ocultar tabela até validar CNPJ */
+#tabelaArea{ display:none; }
+
 </style>
 </head>
 
@@ -141,116 +119,172 @@ header{
 
 <div id="overlay"><div class="spin"></div></div>
 
-<header>Painel de Romaneios</header>
+<header>Registro de Preços</header>
 
-<div class="section">
-  <h2 style="color:var(--azul);font-size:22px;">Empresas com Romaneios</h2>
-  <div id="listaEmpresas"></div>
+<div class="card">
+  <h2 style="color:var(--azul)">Iniciar Cotação</h2>
+  <p>Informe seu CNPJ para carregar os itens pendentes:</p>
+  <input id="cnpjInput" placeholder="Digite seu CNPJ..." maxlength="18">
+
+  <button class="btn" onclick="validarCNPJ()">Carregar Itens</button>
 </div>
 
-<!-- POPUP SELEÇÃO DO ROMANEIO -->
-<div id="popup">
-  <div class="popupBox" id="popupContent"></div>
+<div id="tabelaArea" class="card">
+  <h2 style="color:var(--azul)">Itens Pendentes</h2>
+  <table id="tabelaItens"></table>
+
+  <button class="btn" onclick="enviarCotacao()">Enviar Cotação</button>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbz4bNXkwvJCsVAOG111baPF4qCLD-6F9rHt-tkGDLUWR9-cBMqSEzKfQlXCCgOaYHeK/exec";  // ALTERAR
+const API = "https://script.google.com/macros/s/AKfycbxFa5TaM6W4ydrZnYbOPk4GF_MFtvXNYXYQ2ew11AM-7dtFJcM5GdFzbjLEpPs3837Q/exec"; // TROCAR
+let fornecedor = null;
+let itensPendentes = [];
 
-let empresas = [];
-let romaneios = [];
+document.getElementById("overlay").style.display = "none";
 
-/* ======================== INIT ======================== */
-async function init(){
-  const r = await fetch(`${API}?action=listarRemessas`);
-  romaneios = await r.json();
+/* =========================
+   VALIDAR CNPJ
+========================= */
+async function validarCNPJ(){
 
-  montarEmpresas();
-  overlay.style.display="none";
-}
-init();
+  const cnpj = document.getElementById("cnpjInput").value.trim();
 
-/* ======================== LISTAGEM DE EMPRESAS ======================== */
-function montarEmpresas(){
+  if(cnpj.length < 11){
+    alert("Digite um CNPJ válido");
+    return;
+  }
 
-  const lista = {};
-
-  romaneios.forEach(r => {
-    if (!lista[r.empresa]) lista[r.empresa] = [];
-    lista[r.empresa].push(r);
-  });
-
-  let html = "";
-
-  Object.keys(lista).forEach(emp => {
-    html += `
-      <div class="card" onclick="abrirEmpresa('${emp}')">
-        <h3>${emp}</h3>
-        <small>${lista[emp].length} romaneio(s)</small>
-      </div>
-    `;
-  });
-
-  listaEmpresas.innerHTML = html || "<p style='color:#666'>Nenhuma empresa com romaneios.</p>";
-}
-
-/* ======================== POPUP DA EMPRESA ======================== */
-async function abrirEmpresa(empresa){
+  overlay.style.display="flex";
 
   const fornecedores = await fetch(`${API}?action=getFornecedores`).then(r=>r.json());
 
-  const meusR = romaneios.filter(r => r.empresa === empresa);
+  fornecedor = fornecedores.find(f => f.cnpj == cnpj);
 
-  let romOps = meusR.map(r =>
-    `<option value="${r.romaneioID}">${r.romaneioID} — Total R$ ${Number(r.total).toLocaleString("pt-BR",{minimumFractionDigits:2})}</option>`
-  ).join("");
+  if(!fornecedor){
+    overlay.style.display="none";
+    alert("CNPJ não encontrado no cadastro de fornecedores.");
+    return;
+  }
 
-  let fornOps = fornecedores.map(f =>
-    `<option value="${f.codigo}">${f.nome} — ${f.cnpj}</option>`
-  ).join("");
+  await carregarItens();
+}
 
-  popupContent.innerHTML = `
-    <h3 style="color:var(--azul);">Gerar Cotação</h3>
+/* =========================
+   CARREGAR ITENS PENDENTES
+========================= */
+async function carregarItens(){
 
-    <label>Selecione o Romaneio:</label>
-    <select id="romSel" class="selectList">${romOps}</select>
+  const roms = await fetch(`${API}?action=listarRemessas`).then(r=>r.json());
 
-    <label style="margin-top:14px; display:block;">Selecione o Fornecedor:</label>
-    <select id="fornSel" class="selectList">${fornOps}</select>
+  const pendentes = roms.filter(r => r.status === "PENDENTE" || !r.status);
 
-    <button class="btn" onclick="gerarLink()">Gerar Link</button>
-    <button class="btn" style="background:#666;color:white" onclick="fechar()">Fechar</button>
+  let tabela = `
+    <tr>
+      <th>Item TR</th>
+      <th>Descrição</th>
+      <th>Qtd</th>
+      <th>Marca</th>
+      <th>Valor Unitário</th>
+      <th>Observação</th>
+    </tr>
   `;
 
-  popup.style.display="flex";
+  itensPendentes = [];
+
+  pendentes.forEach(r => {
+
+    const json = JSON.parse(r.json);
+
+    json.itens.forEach(it => {
+
+      itensPendentes.push({
+        romaneioID: r.romaneioID,
+        itemTR: it.itemTR,
+        especificacao: it.especificacao,
+        quantidade: it.quant,
+        marca: it.marca || "",
+      });
+
+      tabela += `
+        <tr>
+          <td>${it.itemTR}</td>
+          <td>${it.especificacao}</td>
+          <td>${it.quant}</td>
+          <td>${it.marca || "-"}</td>
+
+          <td>
+            <input class="valorInput" id="valor_${r.romaneioID}_${it.itemTR}" placeholder="R$ 0,00"
+              oninput="mascaraValor(this)">
+          </td>
+
+          <td>
+            <textarea id="obs_${r.romaneioID}_${it.itemTR}" placeholder="Observação..."></textarea>
+          </td>
+        </tr>
+      `;
+    });
+
+  });
+
+  tabelaItens.innerHTML = tabela;
+  tabelaArea.style.display = "block";
+
+  overlay.style.display="none";
 }
 
-/* ======================== GERAR LINK ======================== */
-function gerarLink(){
-  const rom = document.getElementById("romSel").value;
-  const forn = document.getElementById("fornSel").value;
-
-  // LINK CORRETO (fornecedor.html)
-  const link = `fornecedor.html?romaneioID=${rom}&fornecedor=${forn}`;
-
-  popupContent.innerHTML = `
-    <h3 style="color:var(--azul);">Link Gerado</h3>
-    <input class="copyBox" id="copy" readonly value="${link}">
-
-    <button class="btn" onclick="copiar()">Copiar</button>
-    <button class="btn" style="background:#666;color:white" onclick="fechar()">Fechar</button>
-  `;
+/* =========================
+   MÁSCARA DE VALOR
+========================= */
+function mascaraValor(el){
+  let v = el.value.replace(/\D/g,"");
+  v = (v/100).toFixed(2) + "";
+  v = v.replace(".", ",");
+  el.value = "R$ " + v.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+/* =========================
+   ENVIAR COTAÇÃO
+========================= */
+async function enviarCotacao(){
 
-function copiar(){
-  const c = document.getElementById("copy");
-  c.select();
-  document.execCommand("copy");
-  alert("Copiado!");
-}
+  overlay.style.display="flex";
 
-function fechar(){
-  popup.style.display="none";
+  const cot = itensPendentes.map(i => {
+
+    const campoValor = document.getElementById(`valor_${i.romaneioID}_${i.itemTR}`).value.replace("R$","").trim().replace(".","").replace(",",".");
+    const campoObs   = document.getElementById(`obs_${i.romaneioID}_${i.itemTR}`).value;
+
+    return {
+      romaneioID: i.romaneioID,
+      itemTR: i.itemTR,
+      especificacao: i.especificacao,
+      quantidade: i.quantidade,
+      marca: i.marca,
+      valor: Number(campoValor) || 0,
+      observacao: campoObs
+    };
+  });
+
+  const payload = {
+    fornecedorCNPJ: fornecedor.cnpj,
+    fornecedorNome: fornecedor.nome,
+    data: new Date(),
+    itens: cot
+  };
+
+  await fetch(API, {
+    method:"POST",
+    body: JSON.stringify({
+      action:"salvarCotacaoRecebida",
+      data: payload
+    })
+  });
+
+  overlay.style.display="none";
+
+  alert("Cotação enviada com sucesso!");
+  location.reload();
 }
 </script>
 
