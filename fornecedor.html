@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cotação • LICITAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --azul:#0b1e39;
+  --dourado:#c9a86c;
+  --bg:#f3f4f7;
+  --radius:20px;
+  --shadow:0 8px 25px rgba(0,0,0,.10);
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+}
+
+header{
+  background:var(--azul);
+  color:white;
+  padding:25px;
+  text-align:center;
+  font-size:24px;
+  font-weight:900;
+}
+
+.card{
+  background:white;
+  margin:20px;
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+}
+
+th{
+  background:var(--azul);
+  color:white;
+}
+
+input{
+  width:100%;
+  padding:8px;
+  border-radius:12px;
+  border:1px solid #ccc;
+}
+
+.btn{
+  background:var(--dourado);
+  border:none;
+  padding:14px 20px;
+  font-size:17px;
+  border-radius:14px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:20px;
+  width:100%;
+}
+
+.btn:hover{
+  background:#b89350;
+}
+</style>
+</head>
+
+<body>
+
+<header>Formulário de Cotação</header>
+
+<div class="card" id="info"></div>
+
+<div class="card">
+  <h2 style="color:var(--azul)">Itens para Cotar</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>TR</th>
+        <th>Descrição</th>
+        <th>Qtd</th>
+        <th>Valor (R$)</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <button class="btn" onclick="enviar()">ENVIAR COTAÇÃO</button>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbyoSbuesMQvVUH_U4wAUR-o8_tJC9XNiUjt1K-0_U18rRA5OI9Zu_7CT7oKqYNx1KfY6A/exec";
+
+const url = new URL(window.location.href);
+const romaneioID = url.searchParams.get("romaneioID");
+const fornecedor  = url.searchParams.get("fornecedor");
+
+let dados = null;
+let valores = [];
+
+async function carregar(){
+  dados = await fetch(`${API}?action=fornecedorCotacao&romaneioID=${romaneioID}&fornecedor=${fornecedor}`)
+           .then(r=>r.json());
+
+  info.innerHTML = `
+    <h3>Romaneio: ${dados.romaneioID}</h3>
+    <p><b>Empresa:</b> ${dados.empresa}</p>
+    <p><b>CNPJ:</b> ${dados.cnpj}</p>
+    <p><b>Fornecedor:</b> ${dados.fornecedor.nome}</p>
+    <p><b>CNPJ Fornecedor:</b> ${dados.fornecedor.cnpj}</p>
+  `;
+
+  valores = dados.itens.map(i => ({
+    itemTR: i.itemTR,
+    descricao: i.especificacao,
+    quantidade: i.quant,
+    valor: i.valorExistente || 0
+  }));
+
+  montarTabela();
+}
+carregar();
+
+function montarTabela(){
+  tbody.innerHTML = valores.map((v,i)=>`
+    <tr>
+      <td>${v.itemTR}</td>
+      <td>${v.descricao.substring(0,50)}...</td>
+      <td>${v.quantidade}</td>
+      <td>
+        <input type="number" min="0" step="0.01" value="${v.valor}" 
+              oninput="valores[${i}].valor=this.value">
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function enviar(){
+  const payload = {
+    romaneioID,
+    fornecedor,
+    cotacoes: valores
+  };
+
+  await fetch(`${API}?action=salvarCotacaoFornecedor&data=${encodeURIComponent(JSON.stringify(payload))}`);
+  alert("Cotação registrada com sucesso!");
+  window.location.reload();
+}
+</script>
+
+</body>
+</html>
