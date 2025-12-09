@@ -26,9 +26,7 @@
   --radius:16px;
 }
 
-/* ============================ */
-/*           RESET              */
-/* ============================ */
+/* RESET */
 *{
   margin:0;
   padding:0;
@@ -36,9 +34,6 @@
   font-family:'Inter',sans-serif;
 }
 
-/* ============================ */
-/* LAYOUT BASE DO SISTEMA */
-/* ============================ */
 body{
   background:var(--bg);
   display:flex;
@@ -47,7 +42,7 @@ body{
 }
 
 /* ============================ */
-/*       LOGIN POPUP            */
+/*        LOGIN POPUP           */
 /* ============================ */
 #loginOverlay{
   position:fixed;
@@ -86,7 +81,6 @@ body{
   color:white;
   font-size:38px;
   font-weight:700;
-  padding:20px;
 }
 
 #loginRight{
@@ -123,10 +117,6 @@ body{
   margin-top:10px;
 }
 
-.btn-login:hover{
-  opacity:.9;
-}
-
 small{
   display:block;
   text-align:center;
@@ -137,7 +127,7 @@ small{
 }
 
 /* ============================ */
-/* SIDEBAR & MENU */
+/* SIDEBAR */
 /* ============================ */
 .sidebar{
   width:260px;
@@ -148,9 +138,7 @@ small{
   transition:.25s;
 }
 
-.sidebar.min{
-  width:85px;
-}
+.sidebar.min{ width:85px; }
 
 .sidebar-header{
   font-size:22px;
@@ -169,11 +157,10 @@ small{
 .nav-item{
   padding:14px 25px;
   display:flex;
-  align-items:center;
-  cursor:pointer;
   gap:14px;
-  transition:.2s;
+  cursor:pointer;
 }
+
 .nav-item:hover{
   background:rgba(255,255,255,0.15);
 }
@@ -181,6 +168,7 @@ small{
 .nav-text{
   transition:.2s;
 }
+
 .sidebar.min .nav-text{
   opacity:0;
   pointer-events:none;
@@ -191,30 +179,25 @@ small{
   padding-left:55px;
   flex-direction:column;
 }
-
-.submenu.open{
-  display:flex;
-}
+.submenu.open{ display:flex; }
 
 .submenu div{
   padding:10px 0;
   opacity:.85;
-  cursor:pointer;
-  transition:0.2s;
 }
 
 .submenu div:hover{ opacity:1; }
 
 /* ============================ */
-/*           TOPBAR             */
+/* TOPBAR */
 /* ============================ */
 .topbar{
   height:65px;
   background:white;
   display:flex;
+  justify-content:space-between;
   align-items:center;
   padding:0 25px;
-  justify-content:space-between;
   box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
@@ -246,49 +229,15 @@ small{
   border-radius:12px;
   box-shadow:0 12px 30px rgba(0,0,0,.15);
   display:none;
-  z-index:999;
-}
-
-#userMenu p{
-  margin-bottom:12px;
-  color:var(--azul);
-  font-weight:600;
-}
-
-#userMenu button{
-  padding:10px 16px;
-  border:none;
-  background:#e11d48;
-  color:white;
-  border-radius:10px;
-  cursor:pointer;
-  width:100%;
 }
 
 /* ============================ */
-/*         CONTEÚDO             */
+/* CONTEÚDO */
 /* ============================ */
 .content{
   flex:1;
   overflow-y:auto;
 }
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:22px;
-  padding:35px;
-}
-
-.card{
-  background:white;
-  border-radius:var(--radius);
-  padding:22px;
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
-  cursor:pointer;
-}
-
-.card:hover{ transform:translateY(-4px); }
 
 #iframePage{
   width:100%;
@@ -301,12 +250,11 @@ small{
 
 <body>
 
+<!-- LOGIN -->
 <div id="loginOverlay">
   <div id="loginBox">
 
-    <div id="loginLeft">
-      LICITAR
-    </div>
+    <div id="loginLeft">LICITAR</div>
 
     <div id="loginRight">
       <div class="login-title">Acessar sistema</div>
@@ -322,33 +270,23 @@ small{
   </div>
 </div>
 
-<!-- ============================ -->
-<!--      SIDEBAR                 -->
-<!-- ============================ -->
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 
   <div class="sidebar-header">LICITAR</div>
 
   <div class="nav-section-title">Menu</div>
 
-  <div class="nav-item" onclick="openHome()">
-    🏠 <span class="nav-text">Home</span>
-  </div>
+  <div class="nav-item" onclick="openHome()">🏠 <span class="nav-text">Home</span></div>
 
-  <!-- ENCONTRAR -->
-  <div class="nav-item" onclick="toggleSub('sub1')">
-    🔍 <span class="nav-text">Encontrar</span>
-  </div>
+  <div class="nav-item" onclick="toggleSub('sub1')">🔍 <span class="nav-text">Encontrar</span></div>
   <div id="sub1" class="submenu">
     <div onclick="loadPage('avisos.html')">Meus Avisos</div>
     <div onclick="loadPage('banco.html')">Banco de Licitações</div>
     <div onclick="loadPage('dashboard.html')">Dashboard</div>
   </div>
 
-  <!-- CADASTRAR -->
-  <div class="nav-item" onclick="toggleSub('sub2')">
-    📄 <span class="nav-text">Cadastrar</span>
-  </div>
+  <div class="nav-item" onclick="toggleSub('sub2')">📄 <span class="nav-text">Cadastrar</span></div>
   <div id="sub2" class="submenu">
     <div onclick="loadPage('produtos.html')">Produtos</div>
     <div onclick="loadPage('licitacoes.html')">Licitações</div>
@@ -356,34 +294,14 @@ small{
     <div onclick="loadPage('documentos.html')">Documentos</div>
   </div>
 
-  <!-- DISPUTAR -->
-  <div class="nav-item" onclick="toggleSub('sub3')">
-    🏆 <span class="nav-text">Disputar</span>
-  </div>
-  <div id="sub3" class="submenu">
-    <div onclick="loadPage('automacao.html')">Automação</div>
-    <div onclick="loadPage('historico-disputa.html')">Histórico</div>
-  </div>
-
-  <!-- MONITORAR -->
-  <div class="nav-item" onclick="toggleSub('sub4')">
-    🖥️ <span class="nav-text">Monitorar</span>
-  </div>
-  <div id="sub4" class="submenu">
-    <div onclick="loadPage('mensagens.html')">Mensagens</div>
-    <div onclick="loadPage('diligencias.html')">Diligências</div>
-  </div>
-
 </div>
 
-<!-- ============================ -->
-<!--         ÁREA PRINCIPAL      -->
-<!-- ============================ -->
+<!-- CONTENT -->
 <div class="content">
 
   <div class="topbar">
     <button class="btn-toggle" onclick="toggleSidebar()">☰</button>
-    
+
     <div id="userArea" onclick="toggleUserMenu()">
       <div class="avatar" id="avatar"></div>
       <span id="userEmail"></span>
@@ -395,31 +313,8 @@ small{
     <button onclick="logout()">Sair</button>
   </div>
 
-  <!-- HOME -->
   <div id="home">
     <h1 style="padding:35px;">Bem-vindo ao painel LICITAR</h1>
-
-    <div class="cards">
-      <div class="card" onclick="loadPage('cotacao.html')">
-        <h3>Resposta de Fornecedores</h3>
-        <p>Analise valores enviados via link.</p>
-      </div>
-
-      <div class="card" onclick="loadPage('estoque.html')">
-        <h3>Estoque</h3>
-        <p>Controle de itens disponíveis.</p>
-      </div>
-
-      <div class="card" onclick="loadPage('agenda.html')">
-        <h3>Agenda</h3>
-        <p>Próximos envios e licitações.</p>
-      </div>
-
-      <div class="card" onclick="loadPage('andamento.html')">
-        <h3>Andamento</h3>
-        <p>Status das licitações cadastradas.</p>
-      </div>
-    </div>
   </div>
 
   <iframe id="iframePage"></iframe>
@@ -428,86 +323,86 @@ small{
 
 <script>
 /* ============================ */
-/* SUPABASE CLIENT */
+/* SUPABASE CLIENT              */
 /* ============================ */
-
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
+const SUPABASE_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
 
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true }
+});
 
 /* ============================ */
-/* LOGIN */
+/* LOGIN                        */
 /* ============================ */
-
-async function login(){
+async function login() {
   let email = document.getElementById("email").value.trim();
   let senha = document.getElementById("senha").value.trim();
 
   if(!email || !senha){
-    alert("Preencha todos os campos.");
+    alert("Preencha os campos.");
     return;
   }
 
-  const { data, error } = await sb.auth.signInWithPassword({
-    email: email,
-    password: senha
-  });
+  const { error } = await sb.auth.signInWithPassword({ email, password: senha });
 
   if(error){
     alert("Erro: " + error.message);
     return;
   }
 
+  localStorage.setItem("usuarioEmail", email);
+
   carregarPerfil();
 }
 
+/* LOGIN DIRETORIA */
 function diretoriaLogin(){
   let senha = prompt("Senha da Diretoria:");
 
   if(senha === "grupodv2025"){
-    carregarPerfil("diretoria@grupodv.com");
+    localStorage.setItem("usuarioEmail", "diretoria@grupodv.com");
+    carregarPerfil();
   } else {
     alert("Senha incorreta!");
   }
 }
 
 /* ============================ */
-/* CARREGAR PERFIL */
+/* CARREGAR PERFIL              */
 /* ============================ */
-async function carregarPerfil(forceEmail=null){
+async function carregarPerfil(){
+  let email = localStorage.getItem("usuarioEmail");
 
-  let session = await sb.auth.getSession();
+  if(!email){
+    // tenta pegar Supabase
+    const session = await sb.auth.getSession();
+    if(session.data.session){
+      email = session.data.session.user.email;
+      localStorage.setItem("usuarioEmail", email);
+    }
+  }
 
-  let email = forceEmail 
-      ? forceEmail 
-      : session.data.session.user.email;
+  if(!email) return;
 
+  document.getElementById("avatar").innerText = email.charAt(0).toUpperCase();
   document.getElementById("userEmail").innerText = email;
   document.getElementById("menuEmail").innerText = email;
-  document.getElementById("avatar").innerText = email.charAt(0).toUpperCase();
 
-  document.getElementById("loginOverlay").style.display="none";
+  document.getElementById("loginOverlay").style.display = "none";
 }
 
 /* ============================ */
-/* MENU DO USUÁRIO */
-/* ============================ */
-function toggleUserMenu(){
-  let m = document.getElementById("userMenu");
-  m.style.display = m.style.display==="block" ? "none" : "block";
-}
-
-/* ============================ */
-/* LOGOUT */
+/* LOGOUT                       */
 /* ============================ */
 async function logout(){
   await sb.auth.signOut();
+  localStorage.removeItem("usuarioEmail");
   location.reload();
 }
 
 /* ============================ */
-/* PAGINAS */
+/* CONTROLES                    */
 /* ============================ */
 function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("min");
@@ -515,6 +410,11 @@ function toggleSidebar(){
 
 function toggleSub(id){
   document.getElementById(id).classList.toggle("open");
+}
+
+function toggleUserMenu(){
+  let m = document.getElementById("userMenu");
+  m.style.display = m.style.display==="block" ? "none" : "block";
 }
 
 function loadPage(url){
@@ -529,15 +429,19 @@ function openHome(){
 }
 
 /* ============================ */
-/* BLOQUEAR ACESSO SEM LOGIN */
+/* BOOTSTRAP DO SISTEMA        */
 /* ============================ */
 (async ()=>{
-  let session = await sb.auth.getSession();
+  let email = localStorage.getItem("usuarioEmail");
+  const session = await sb.auth.getSession();
 
-  if(!session.data.session){
-    document.getElementById("loginOverlay").style.display="flex";
-  } else {
+  if(email || session.data.session){
+    if(session.data.session && !email){
+      localStorage.setItem("usuarioEmail", session.data.session.user.email);
+    }
     carregarPerfil();
+  } else {
+    document.getElementById("loginOverlay").style.display="flex";
   }
 })();
 </script>
