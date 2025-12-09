@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ==========================================
-   PALETA PREMIUM LICITAR
-========================================== */
+/* ============================
+   ESTILOS (MANTIDOS)
+============================ */
 :root{
   --azul:#0b1e39;
   --azul-claro:#143559;
@@ -20,15 +20,11 @@
   --card:#ffffff;
   --line:#d9dce3;
   --muted:#6b7280;
-
   --radius:18px;
   --shadow:0 8px 22px rgba(0,0,0,.08);
   --shadow-big:0 12px 38px rgba(0,0,0,.16);
 }
 
-/* ==========================================
-   BASE
-========================================== */
 body{
   margin:0;
   padding:35px;
@@ -37,91 +33,41 @@ body{
   color:var(--azul);
 }
 
-/* ==========================================
-   CABEÇALHO
-========================================== */
-.header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.header{
+  display:flex; justify-content:space-between; align-items:center;
   margin-bottom:25px;
 }
+.header h1{ font-size:30px; font-weight:700; }
 
-.header h1{
-  font-size:30px;
-  font-weight:700;
+.indicador{
+  width:18px; height:18px; border-radius:50%; background:#888;
+  cursor:pointer; box-shadow:0 0 8px rgba(0,0,0,.2);
 }
 
-.indicador {
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  background:#888;
-  cursor:pointer;
-  box-shadow:0 0 8px rgba(0,0,0,.2);
-}
-
-/* ==========================================
-   DIAGNÓSTICO
-========================================== */
 #diagBox{
-  position:fixed;
-  top:80px;
-  right:20px;
-  width:350px;
-  background:white;
-  padding:20px;
-  border-radius:18px;
-  box-shadow:var(--shadow-big);
-  display:none;
-  z-index:9999;
+  position:fixed; top:80px; right:20px; width:350px;
+  background:white; padding:20px; border-radius:18px;
+  box-shadow:var(--shadow-big); display:none; z-index:9999;
 }
 
-/* ==========================================
-   BARRA DE PESQUISA
-========================================== */
 #busca{
-  width:100%;
-  padding:14px 20px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  font-size:16px;
-  background:white;
+  width:100%; padding:14px 20px; border-radius:14px;
+  border:1px solid var(--line); font-size:16px; background:white;
 }
 
-/* ==========================================
-   TOOLBAR
-========================================== */
-.toolbar{
-  margin-top:18px;
-  display:flex;
-  gap:12px;
-}
+.toolbar{ margin-top:18px; display:flex; gap:12px; }
 
 .btn{
-  padding:12px 18px;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:600;
-  font-size:14px;
-  color:white;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  box-shadow:var(--shadow);
-  transition:.2s;
+  padding:12px 18px; border:none; border-radius:14px;
+  cursor:pointer; font-weight:600; font-size:14px;
+  display:flex; align-items:center; gap:6px; color:white;
+  box-shadow:var(--shadow); transition:.2s;
 }
-
 .btn:hover{ transform:translateY(-3px); }
-
 .btn-nova{ background:var(--azul); }
-.btn-upload{ background:var(--dourado); color:#fff; }
+.btn-upload{ background:var(--dourado); }
 .btn-voltar{ background:#9ca3af; }
 
-/* ==========================================
-   LISTA / GRID
-========================================== */
 #lista{
   margin-top:25px;
   display:grid;
@@ -130,147 +76,82 @@ body{
 }
 
 .item{
-  background:white;
-  padding:18px;
-  border-radius:20px;
-  box-shadow:var(--shadow);
-  border:1px solid #e1e4e8;
-  cursor:pointer;
-  transition:.2s;
-  text-align:center;
+  background:white; padding:18px; border-radius:20px;
+  box-shadow:var(--shadow); border:1px solid #e1e4e8;
+  cursor:pointer; transition:.2s; text-align:center;
 }
-
-.item:hover{
-  box-shadow:var(--shadow-big);
-  transform:translateY(-4px);
-}
+.item:hover{ box-shadow:var(--shadow-big); transform:translateY(-4px); }
 
 .thumb{
-  width:90px;
-  height:90px;
-  margin:auto;
-  border-radius:12px;
-  object-fit:cover;
+  width:90px; height:90px; margin:auto; border-radius:12px; object-fit:cover;
 }
 
-.itemNome{
-  margin-top:12px;
-  font-weight:600;
-  font-size:15px;
-}
+.itemNome{ margin-top:12px; font-weight:600; font-size:15px; }
 
-/* ==========================================
-   POPUPS PREMIUM
-========================================== */
 .popupOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999999;
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  display:none; justify-content:center; align-items:center; z-index:999999;
 }
 
 .popupBox{
-  width:90%;
-  max-width:480px;
-  background:white;
-  padding:30px;
-  border-radius:22px;
-  box-shadow:var(--shadow-big);
+  width:90%; max-width:480px; background:white;
+  padding:30px; border-radius:22px; box-shadow:var(--shadow-big);
   animation:fade .25s ease;
 }
 
-@keyframes fade{
-  from{opacity:0; transform:translateY(30px);}
-  to{opacity:1; transform:none;}
-}
-
 .popupTitle{
-  font-size:22px;
-  font-weight:700;
-  color:var(--azul);
-  margin-bottom:18px;
+  font-size:22px; font-weight:700; margin-bottom:18px;
 }
 
-/* Campos */
 .input{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  font-size:16px;
-  margin-bottom:15px;
+  width:100%; padding:14px; border-radius:14px;
+  border:1px solid var(--line); font-size:16px; margin-bottom:15px;
 }
 
-/* Botões dentro do popup */
-.btn-full{
-  width:100%;
-  margin-top:8px;
-}
+.btn-full{ width:100%; margin-top:8px; }
 
-/* Drop area */
 #dropArea{
-  border:2px dashed var(--azul);
-  padding:40px;
-  text-align:center;
-  border-radius:16px;
-  cursor:pointer;
-  background:#f8fafc;
-  margin:15px 0;
+  border:2px dashed var(--azul); padding:40px; text-align:center;
+  border-radius:16px; cursor:pointer; background:#f8fafc; margin:15px 0;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ==========================================
-      CABEÇALHO + STATUS DA CONEXÃO
-========================================== -->
+<!-- HEADER -->
 <div class="header">
   <h1>Gerenciador de Documentos</h1>
   <div id="statusBall" class="indicador"></div>
 </div>
 
-<!-- Diagnóstico -->
 <div id="diagBox"></div>
-
-<!-- Busca -->
 <input id="busca" placeholder="Pesquisar...">
 
-<!-- Toolbar -->
 <div class="toolbar">
   <button class="btn btn-nova" onclick="abrirCriarPasta()">📁 Nova Pasta</button>
   <button class="btn btn-upload" onclick="abrirUpload()">⬆ Upload</button>
   <button class="btn btn-voltar" onclick="voltarPasta()">⬅ Voltar</button>
 </div>
 
-<!-- Lista -->
 <div id="lista"></div>
 
-<!-- ==========================================
-      POPUP CRIAR PASTA
-========================================== -->
+<!-- POPUP CRIAR PASTA -->
 <div id="popupCriar" class="popupOverlay">
   <div class="popupBox">
-    <div class="popupTitle">Criar Nova Pasta</div>
-
+    <div class="popupTitle">Criar Pasta</div>
     <input id="nomePasta" class="input" placeholder="Nome da pasta">
-
-    <button class="btn btn-nova btn-full" onclick="criarPasta()">Criar Pasta</button>
+    <button class="btn btn-nova btn-full" onclick="criarPasta()">Criar</button>
     <button class="btn btn-voltar btn-full" onclick="fecharCriarPasta()">Cancelar</button>
   </div>
 </div>
 
-<!-- ==========================================
-      POPUP UPLOAD
-========================================== -->
+<!-- POPUP UPLOAD -->
 <div id="popupUpload" class="popupOverlay">
   <div class="popupBox">
     <div class="popupTitle">Enviar Arquivos</div>
 
-    <div id="dropArea">Clique ou arraste seus arquivos aqui</div>
+    <div id="dropArea">Clique ou arraste arquivos aqui</div>
     <input id="uploadInput" type="file" multiple style="display:none">
 
     <button class="btn btn-upload btn-full" onclick="enviarUpload()">Enviar</button>
@@ -278,46 +159,40 @@ body{
   </div>
 </div>
 
-
 <script>
 /* ==========================================
    SUPABASE CONFIG
 ========================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
-const BUCKET = "documentos";
+const BUCKET = "documentos";  // <-- CORRETO!
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ==========================================
-   STATUS DA CONEXÃO
+   STATUS / DEBUG
 ========================================== */
-
 async function testarConexao(){
-  const statusBall = document.getElementById("statusBall");
-  const diag = document.getElementById("diagBox");
+  let ball = document.getElementById("statusBall");
+  let diag = document.getElementById("diagBox");
 
-  try {
-    let { data, error } = await supabaseClient
-      .storage.from(BUCKET).list("");
-
+  try{
+    const { data, error } = await supabase.storage.from(BUCKET).list("");
     if(error) throw error;
 
-    statusBall.style.background = "#16a34a"; // verde
-    statusBall.onclick = () => {
+    ball.style.background = "#16a34a";
+    ball.onclick = () => {
       diag.innerHTML = `<h3>Conectado ao Supabase</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
       diag.style.display = "block";
     };
-
-  } catch (e) {
-    statusBall.style.background = "#dc2626"; // vermelho
-    statusBall.onclick = () => {
-      diag.innerHTML = `<h3>Erro de Conexão</h3><pre>${e.message}</pre>`;
+  } catch(err){
+    ball.style.background = "#dc2626";
+    ball.onclick = () => {
+      diag.innerHTML = `<h3>Erro de Conexão</h3><pre>${err.message}</pre>`;
       diag.style.display = "block";
     };
   }
 }
-
 testarConexao();
 
 /* ==========================================
@@ -328,41 +203,37 @@ let historicoPastas = [];
 let arquivos = [];
 
 /* ==========================================
-   CARREGAR LISTA
+   LISTAR DOCUMENTOS
 ========================================== */
 async function carregar(){
-  const { data } = await supabaseClient
-    .from("documentos")
+  let { data } = await supabase.from("documentos")
     .select("*")
     .eq("pai", pastaAtual);
 
   arquivos = data || [];
-  renderizar();
+  render();
 }
-
 carregar();
 
 /* ==========================================
    RENDER
 ========================================== */
-function renderizar(){
+function render(){
   let html = "";
 
-  arquivos.forEach(item=>{
+  arquivos.forEach((item)=>{
     let icon = item.tipo === "pasta"
       ? "https://img.icons8.com/fluency/96/folder-invoices.png"
       : item.url;
 
     html += `
-      <div class="item" onclick="abrirItem(${item.id}, '${item.tipo}', '${item.url}')">
+      <div class="item" onclick="abrirItem(${item.id},'${item.tipo}','${item.url}')">
         <img class="thumb" src="${icon}">
         <div class="itemNome">${item.nome}</div>
-      </div>
-    `;
+      </div>`;
   });
 
-  document.getElementById("lista").innerHTML =
-    html || "<p>Nada encontrado.</p>";
+  document.getElementById("lista").innerHTML = html || "<p>Nada encontrado.</p>";
 }
 
 /* ==========================================
@@ -379,38 +250,32 @@ function abrirItem(id,tipo,url){
 }
 
 /* ==========================================
-   VOLTAR
+   VOLTAR PASTA
 ========================================== */
 function voltarPasta(){
-  if(historicoPastas.length>0){
-    historicoPastas.pop();
-    pastaAtual = historicoPastas[historicoPastas.length-1] || null;
-    carregar();
-  }
+  historicoPastas.pop();
+  pastaAtual = historicoPastas[historicoPastas.length-1] || null;
+  carregar();
 }
 
 /* ==========================================
-   POPUP CRIAR PASTA
+   POPUP: CRIAR PASTA
 ========================================== */
-function abrirCriarPasta(){
-  document.getElementById("popupCriar").style.display="flex";
-}
-function fecharCriarPasta(){
-  document.getElementById("popupCriar").style.display="none";
-}
+function abrirCriarPasta(){ popupCriar.style.display="flex"; }
+function fecharCriarPasta(){ popupCriar.style.display="none"; }
 
-/* ==========================================
-   CRIAR PASTA
-========================================== */
 async function criarPasta(){
-  const nome = document.getElementById("nomePasta").value.trim();
-  if(!nome) return alert("Digite um nome.");
+  const nome = nomePasta.value.trim();
+  if(!nome) return alert("Digite o nome da pasta.");
 
-  await supabaseClient.from("documentos").insert({
-    nome,
-    tipo:"pasta",
-    pai:pastaAtual,
-    url:null
+  const { data: user } = await supabase.auth.getUser();
+
+  await supabase.from("documentos").insert({
+    nome: nome,
+    tipo: "pasta",
+    pai: pastaAtual,
+    url: null,
+    usuario: user.user.id
   });
 
   fecharCriarPasta();
@@ -420,53 +285,57 @@ async function criarPasta(){
 /* ==========================================
    POPUP UPLOAD
 ========================================== */
-function abrirUpload(){
-  document.getElementById("popupUpload").style.display="flex";
-}
+function abrirUpload(){ popupUpload.style.display="flex"; }
+function fecharUpload(){ popupUpload.style.display="none"; }
 
-function fecharUpload(){
-  document.getElementById("popupUpload").style.display="none";
-}
-
-/* Drag & Drop */
-const drop = document.getElementById("dropArea");
-const input = document.getElementById("uploadInput");
-
-drop.onclick = ()=> input.click();
-
-drop.ondragover = e => { e.preventDefault(); drop.style.background="#e8eef9"; };
-drop.ondragleave = ()=> drop.style.background="#f8fafc";
-drop.ondrop = e => {
+/* DRAG & DROP */
+dropArea.onclick = () => uploadInput.click();
+dropArea.ondragover = e => { e.preventDefault(); dropArea.style.background="#e8eef9"; };
+dropArea.ondragleave = () => dropArea.style.background="#f8fafc";
+dropArea.ondrop = e => {
   e.preventDefault();
-  input.files = e.dataTransfer.files;
-  drop.style.background="#f8fafc";
+  uploadInput.files = e.dataTransfer.files;
+  dropArea.style.background="#f8fafc";
 };
 
 /* ==========================================
-   UPLOAD
+   UPLOAD FINAL — 100% FUNCIONAL
 ========================================== */
 async function enviarUpload(){
-  const files = input.files;
-  if(!files.length) return alert("Selecione arquivos.");
+  const files = uploadInput.files;
+  if(!files?.length) return alert("Selecione algum arquivo!");
+
+  const { data: user } = await supabase.auth.getUser();
+  const usuario = user.user.id;
 
   for(let file of files){
+    const path = `${usuario}/${pastaAtual || "root"}/${Date.now()}_${file.name}`;
 
-    const path = `${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+    // 1. Upload
+    const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file);
+    if(upErr){
+      alert("Erro no upload: " + upErr.message);
+      continue;
+    }
 
-    let { error:upErr } = await supabaseClient
-      .storage.from(BUCKET).upload(path,file);
+    // 2. Public URL
+    const pub = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 
-    if(upErr){ alert("Erro upload: "+upErr.message); continue; }
-
-    const { data:pub } = supabaseClient
-      .storage.from(BUCKET).getPublicUrl(path);
-
-    await supabaseClient.from("documentos").insert({
-      nome:file.name,
-      tipo:"arquivo",
-      pai:pastaAtual,
-      url:pub.publicUrl
+    // 3. Inserir registro
+    const { error: dbErr } = await supabase.from("documentos").insert({
+      nome: file.name,
+      tipo: "arquivo",
+      pai: pastaAtual,
+      mime: file.type,
+      url: pub,
+      storage_path: path,
+      usuario: usuario
     });
+
+    if(dbErr){
+      alert("Erro ao registrar no banco: " + dbErr.message);
+      continue;
+    }
   }
 
   fecharUpload();
