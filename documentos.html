@@ -9,348 +9,203 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --azul:#0b1e39;
-  --dourado:#c9a86c;
-  --bg:#f4f6f9;
-  --line:#d9dce3;
-  --shadow:0 8px 22px rgba(0,0,0,.08);
-  --shadow-big:0 12px 38px rgba(0,0,0,.16);
-}
-
 body{
-  margin:0; padding:35px; background:var(--bg);
-  font-family:'Inter',sans-serif; color:var(--azul);
+  margin:0; padding:30px;
+  background:#f4f6f9;
+  font-family:'Inter',sans-serif;
+  color:#0b1e39;
 }
 
-/* HEADER */
-.header{
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:25px;
-}
-.header h1{ font-size:30px; font-weight:700; }
-
-.indicador{
-  width:18px; height:18px; border-radius:50%;
-  background:#999; cursor:pointer;
-  box-shadow:0 0 8px rgba(0,0,0,.2);
-}
-
-#diagBox{
-  position:fixed; top:80px; right:20px; width:350px;
-  background:white; padding:20px; border-radius:18px; display:none;
-  box-shadow:var(--shadow-big); z-index:999;
-}
-
-/* BUSCA */
-#busca{
-  width:100%; padding:14px; border-radius:14px;
-  border:1px solid var(--line);
-  font-size:16px; background:white;
-}
-
-/* BOTÕES */
-.toolbar{ margin-top:18px; display:flex; gap:12px; }
-
-.btn{
-  padding:12px 18px; border:none; border-radius:14px;
-  cursor:pointer; font-weight:600; font-size:14px; color:white;
-  display:flex; align-items:center; gap:6px;
-  box-shadow:var(--shadow); transition:.25s;
-}
-.btn:hover{ transform:translateY(-3px); }
-
-.btn-nova{ background:var(--azul); }
-.btn-upload{ background:var(--dourado); color:white; }
-.btn-voltar{ background:#9ca3af; }
-
-/* LISTA */
 #lista{
   margin-top:25px;
   display:grid; gap:22px;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
 }
 
 .item{
-  background:white; padding:18px; border-radius:20px;
-  box-shadow:var(--shadow); text-align:center;
-  border:1px solid #e1e4e8; cursor:pointer; transition:.25s;
+  background:white; padding:18px;
+  border-radius:18px;
+  text-align:center;
+  border:1px solid #dfe3e8;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.1);
 }
-.item:hover{ box-shadow:var(--shadow-big); transform:scale(1.03); }
 
-.thumb{ width:90px; height:90px; object-fit:cover; margin:auto; border-radius:12px; }
-.itemNome{ margin-top:12px; font-weight:600; }
-
-/* POPUP */
-.popupOverlay{
-  position:fixed; inset:0; display:none;
-  background:rgba(0,0,0,.55); z-index:9999;
-  justify-content:center; align-items:center;
-}
-.popupBox{
-  width:90%; max-width:480px; background:white;
-  padding:30px; border-radius:22px; box-shadow:var(--shadow-big);
-}
-.popupTitle{ font-size:22px; font-weight:700; margin-bottom:18px; }
-
-.input{
-  width:100%; padding:14px; border-radius:14px;
-  border:1px solid var(--line); font-size:16px;
-  margin-bottom:15px;
-}
-.btn-full{ width:100%; margin-top:8px; }
-
-#dropArea{
-  border:2px dashed var(--azul);
-  padding:40px; background:#f8fafc;
-  border-radius:16px; text-align:center;
-  cursor:pointer; margin:15px 0;
+.thumb{
+  width:80px; height:80px; border-radius:12px;
+  object-fit:cover;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>Gerenciador de Documentos</h1>
-  <div id="statusBall" class="indicador"></div>
-</div>
+<h1>Gerenciador de Documentos</h1>
 
-<div id="diagBox"></div>
+<input id="busca" placeholder="Pesquisar..." style="
+ width:100%; padding:14px; margin-top:10px; border-radius:14px; border:1px solid #ccc;
+" oninput="filtrar()">
 
-<input id="busca" placeholder="Pesquisar..." oninput="filtrar()">
-
-<div class="toolbar">
-  <button class="btn btn-nova" onclick="abrirCriarPasta()">📁 Nova Pasta</button>
-  <button class="btn btn-upload" onclick="abrirUpload()">⬆ Upload</button>
-  <button class="btn btn-voltar" onclick="voltarPasta()">⬅ Voltar</button>
+<div style="display:flex; gap:10px; margin-top:20px;">
+  <button onclick="abrirCriarPasta()">📁 Nova Pasta</button>
+  <button onclick="abrirUpload()">⬆ Upload</button>
+  <button onclick="voltarPasta()">⬅ Voltar</button>
 </div>
 
 <div id="lista"></div>
 
+
 <!-- POPUP NOVA PASTA -->
-<div id="popupCriar" class="popupOverlay">
-  <div class="popupBox">
-    <div class="popupTitle">Criar Pasta</div>
-    <input id="nomePasta" class="input" placeholder="Nome da pasta">
-    <button class="btn btn-nova btn-full" onclick="criarPasta()">Criar</button>
-    <button class="btn btn-voltar btn-full" onclick="fecharCriarPasta()">Cancelar</button>
+<div id="popupCriar" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); align-items:center; justify-content:center;">
+  <div style="background:white; padding:25px; width:90%; max-width:400px; border-radius:20px;">
+    <h2>Criar Pasta</h2>
+    <input id="nomePasta" placeholder="Nome da pasta" style="width:100%; padding:12px; border-radius:12px; border:1px solid #ccc;">
+    <button onclick="criarPasta()" style="margin-top:14px;">Criar</button>
+    <button onclick="fecharCriarPasta()">Cancelar</button>
   </div>
 </div>
 
 <!-- POPUP UPLOAD -->
-<div id="popupUpload" class="popupOverlay">
-  <div class="popupBox">
-    <div class="popupTitle">Enviar Arquivos</div>
+<div id="popupUpload" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); align-items:center; justify-content:center;">
+  <div style="background:white; padding:25px; width:90%; max-width:400px; border-radius:20px;">
+    <h2>Enviar Arquivos</h2>
+    <div id="dropArea" style="
+      border:2px dashed #0b1e39; padding:30px; border-radius:12px; background:#eef2f7;
+      text-align:center; margin-bottom:20px;
+    ">Clique ou arraste arquivos aqui</div>
 
-    <div id="dropArea">Clique ou arraste arquivos aqui</div>
     <input id="uploadInput" type="file" multiple style="display:none">
 
-    <button class="btn btn-upload btn-full" onclick="enviarUpload()">Enviar</button>
-    <button class="btn btn-voltar btn-full" onclick="fecharUpload()">Cancelar</button>
+    <button onclick="enviarUpload()">Enviar</button>
+    <button onclick="fecharUpload()">Cancelar</button>
   </div>
 </div>
 
 <script>
-/* ===========================================================
-   CONFIG SUPABASE
-=========================================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
-const BUCKET = "documentos";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ===========================================================
-   VERIFICAR LOGIN
-=========================================================== */
-let usuarioEmail = localStorage.getItem("usuarioEmail");
-
-if(!usuarioEmail){
-  alert("Acesso restrito. Faça login.");
-  window.top.location.href = "index.html";
-}
-
-/* ===========================================================
-   TESTE DE CONEXÃO
-=========================================================== */
-async function testarConexao(){
-  const ball = document.getElementById("statusBall");
-  const diag = document.getElementById("diagBox");
-
-  try{
-    const { data } = await sb.storage.getBucket(BUCKET);
-
-    ball.style.background = "#16a34a"; // verde
-    ball.onclick = () => {
-      diag.innerHTML = "<h3>Conectado ao Supabase</h3>";
-      diag.style.display = "block";
-    };
-
-  }catch(e){
-    ball.style.background = "#dc2626"; // vermelho
-    ball.onclick = () => {
-      diag.innerHTML = "<h3>Erro</h3><p>"+e.message+"</p>";
-      diag.style.display="block";
-    };
-  }
-}
-testarConexao();
-
-/* ===========================================================
-   VARIÁVEIS
-=========================================================== */
+let user;
 let pastaAtual = null;
 let historico = [];
-let listaItens = [];
 
-/* ===========================================================
+/* ================================
+   LOGIN AUTOMÁTICO
+================================ */
+(async () => {
+  const session = await sb.auth.getSession();
+  if(!session.data.session){
+    alert("Faça login");
+    window.location.href = "login.html";
+    return;
+  }
+  user = session.data.session.user;
+  carregar();
+})();
+
+/* ================================
    CARREGAR ITENS
-=========================================================== */
+================================ */
 async function carregar(){
   const { data, error } = await sb
     .from("documentos")
     .select("*")
     .eq("pai", pastaAtual)
-    .eq("usuario_email", usuarioEmail)
     .order("nome");
 
-  if(error){
-    alert("Erro ao carregar: "+error.message);
-    return;
-  }
-
-  listaItens = data || [];
-  render();
+  if(error){ alert(error.message); return; }
+  render(data);
 }
-carregar();
 
-/* ===========================================================
-   RENDERIZAR
-=========================================================== */
-function render(){
-  let html="";
+function render(lista){
+  const div = document.getElementById("lista");
+  div.innerHTML = "";
 
-  listaItens.forEach(it=>{
+  lista.forEach(it=>{
     const icon = it.tipo === "pasta"
       ? "https://img.icons8.com/fluency/96/folder-invoices.png"
       : it.url;
 
-    html += `
+    div.innerHTML += `
       <div class="item" onclick="abrirItem('${it.id}','${it.tipo}','${it.url}')">
-        <img class="thumb" src="${icon}">
-        <div class="itemNome">${it.nome}</div>
+        <img src="${icon}" class="thumb">
+        <div>${it.nome}</div>
       </div>
     `;
   });
-
-  lista.innerHTML = html || "<p>Nenhum item encontrado.</p>";
 }
 
-/* ===========================================================
-   FILTRAR
-=========================================================== */
-function filtrar(){
-  const q = busca.value.toLowerCase();
-  document.querySelectorAll(".item").forEach(el=>{
-    const nome = el.innerText.toLowerCase();
-    el.style.display = nome.includes(q) ? "block" : "none";
-  });
-}
-
-/* ===========================================================
-   ABRIR ITEM
-=========================================================== */
 function abrirItem(id,tipo,url){
   if(tipo==="pasta"){
     historico.push(pastaAtual);
     pastaAtual = id;
     carregar();
-  }else{
-    window.open(url,"_blank");
-  }
+  } else window.open(url,"_blank");
 }
 
-/* ===========================================================
-   VOLTAR PASTA
-=========================================================== */
 function voltarPasta(){
   pastaAtual = historico.pop() || null;
   carregar();
 }
 
-/* ===========================================================
+/* ================================
    POPUPS
-=========================================================== */
+================================ */
 function abrirCriarPasta(){ popupCriar.style.display="flex"; }
 function fecharCriarPasta(){ popupCriar.style.display="none"; }
 
 function abrirUpload(){ popupUpload.style.display="flex"; }
 function fecharUpload(){ popupUpload.style.display="none"; }
 
-/* ===========================================================
+/* ================================
    CRIAR PASTA
-=========================================================== */
+================================ */
 async function criarPasta(){
   const nome = nomePasta.value.trim();
-
-  if(!nome){
-    alert("Digite um nome.");
-    return;
-  }
+  if(!nome){ alert("Digite um nome"); return; }
 
   const { error } = await sb.from("documentos").insert({
     nome,
     tipo:"pasta",
     pai:pastaAtual,
-    usuario_email:usuarioEmail
+    usuario_email:user.email
   });
 
-  if(error){
-    alert("Erro: "+error.message);
-    return;
-  }
+  if(error){ alert(error.message); return; }
 
-  nomePasta.value="";
   fecharCriarPasta();
   carregar();
 }
 
-/* ===========================================================
-   UPLOAD ARQUIVOS
-=========================================================== */
+/* ================================
+   UPLOAD
+================================ */
 dropArea.onclick = ()=> uploadInput.click();
-dropArea.ondragover = e => { e.preventDefault(); dropArea.style.background="#e8eef9"; };
-dropArea.ondragleave = ()=> dropArea.style.background="#f8fafc";
-dropArea.ondrop = e => {
+dropArea.ondrop = e=>{
   e.preventDefault();
   uploadInput.files = e.dataTransfer.files;
 };
 
 async function enviarUpload(){
   const files = uploadInput.files;
-  if(!files.length){ alert("Nenhum arquivo."); return; }
+  if(!files.length) return alert("Nenhum arquivo");
 
   for(const file of files){
+    const dir = `${user.email}/${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+    const up = await sb.storage.from("documentos").upload(dir, file);
+    if(up.error){ alert(up.error.message); continue; }
 
-    const path = `${usuarioEmail}/${pastaAtual || "root"}/${Date.now()}_${file.name}`;
-
-    const up = await sb.storage.from(BUCKET).upload(path, file);
-
-    if(up.error){
-      alert("Erro: "+up.error.message);
-      continue;
-    }
-
-    const publicURL = sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    const url = sb.storage.from("documentos").getPublicUrl(dir).data.publicUrl;
 
     await sb.from("documentos").insert({
       nome:file.name,
       tipo:"arquivo",
       pai:pastaAtual,
-      url:publicURL,
-      storage_path:path,
-      usuario_email:usuarioEmail
+      url,
+      storage_path:dir,
+      usuario_email:user.email
     });
   }
 
