@@ -10,284 +10,148 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ==========================================
-   PALETA LICITAR — COMPATÍVEL COM O INDEX
-========================================== */
+
 :root{
   --azul:#0b1e39;
-  --azul-claro:#1d3c63;
-  --azul-light:#dbe7ff;
-
   --dourado:#c9a86c;
   --bg:#f4f6f9;
-  --card:#ffffff;
-  --line:#e3e7ef;
-
   --text:#0f172a;
-  --muted:#6b7280;
-
-  --radius:18px;
-  --shadow:0 8px 22px rgba(0,0,0,.08);
-  --shadow-hover:0 12px 30px rgba(0,0,0,.13);
+  --line:#d8dde6;
 }
 
-/* ==========================================
-   BASE
-========================================== */
+/* TOP STATUS */
+#statusBubble{
+  position:fixed;
+  top:18px;
+  right:22px;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  cursor:pointer;
+  z-index:9999;
+  box-shadow:0 0 12px rgba(0,0,0,.2);
+}
+
+/* Caixa de diagnóstico */
+#diagBox{
+  position:fixed;
+  top:55px;
+  right:22px;
+  width:320px;
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+  display:none;
+  z-index:99999;
+  font-family:Inter, sans-serif;
+}
+
+#diagBox h3{
+  margin-top:0;
+  font-size:18px;
+  color:var(--azul);
+}
+
+#diagBox pre{
+  background:#f1f1f1;
+  padding:10px;
+  border-radius:8px;
+  overflow:auto;
+  max-height:180px;
+}
+
 body{
   margin:0;
-  padding:25px 35px;
+  padding:28px 35px;
   background:var(--bg);
-  color:var(--text);
   font-family:'Inter',sans-serif;
+  color:var(--text);
 }
 
-/* ==========================================
-   TÍTULO / HEADER DA PÁGINA
-========================================== */
 .top-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:30px;
 }
 
 .top-header h1{
-  font-size:30px;
-  font-weight:700;
+  font-size:28px;
   color:var(--azul);
+  font-weight:700;
 }
 
-.view-modes{
-  display:flex;
-  gap:10px;
-}
-
-.view-btn{
-  background:white;
-  border:1px solid var(--line);
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:15px;
-  transition:.2s;
-}
-
-.view-btn.active,
-.view-btn:hover{
-  background:var(--azul);
-  color:white;
-}
-
-/* ==========================================
-   BARRA DE PESQUISA
-========================================== */
-#busca{
-  width:100%;
-  padding:14px 20px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:white;
-  margin-bottom:20px;
-  font-size:16px;
-}
-
-#busca:focus{
-  outline:none;
-  border-color:var(--azul);
-  box-shadow:0 0 0 3px #0b1e3933;
-}
-
-/* ==========================================
-   BREADCRUMB
-========================================== */
-#breadcrumbs{
-  font-size:15px;
-  color:var(--muted);
-  margin-bottom:18px;
-}
-
-/* ==========================================
-   TOOLBAR
-========================================== */
-.toolbar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:25px;
-}
-
+/* Botões */
 .btn{
   padding:12px 18px;
+  border-radius:10px;
   border:none;
-  border-radius:14px;
-  font-size:15px;
   cursor:pointer;
   font-weight:600;
   color:white;
-  box-shadow:var(--shadow);
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-3px);
+  margin-right:10px;
 }
 
 .btn-nova{ background:var(--azul); }
-.btn-upload{ background:var(--dourado); color:#fff; }
+.btn-upload{ background:var(--dourado); }
 .btn-voltar{ background:#9ca3af; }
 
-/* ==========================================
-   GRID DE DOCUMENTOS
-========================================== */
+/* Lista */
 #lista{
+  margin-top:25px;
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:25px;
-  transition:.25s;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:22px;
 }
 
 .item{
   background:white;
-  border-radius:var(--radius);
-  padding:20px;
-  box-shadow:var(--shadow);
+  padding:18px;
+  border-radius:16px;
+  border:1px solid #e2e2e2;
   cursor:pointer;
-  transition:.25s;
-  border:1px solid var(--line);
-}
-
-.item:hover{
-  transform:translateY(-6px);
-  box-shadow:var(--shadow-hover);
-}
-
-.item.list-mode{
-  display:flex;
-  align-items:center;
-  gap:18px;
-  height:85px;
+  transition:.25s ease;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
 }
 
 .thumb{
-  width:95px;
-  height:95px;
-  border-radius:14px;
+  width:100%;
+  height:140px;
+  border-radius:10px;
   object-fit:cover;
-  background:#e5e7eb;
-  margin:auto;
-}
-
-.item.list-mode .thumb{
-  width:70px;
-  height:70px;
-  margin:0;
+  background:#eee;
 }
 
 .itemNome{
   margin-top:12px;
-  font-weight:600;
   text-align:center;
-  font-size:15px;
-  overflow:hidden;
+  font-weight:600;
 }
 
-/* Texto no modo lista */
-.item.list-mode .itemNome{
-  text-align:left;
-  white-space:nowrap;
-  flex:1;
-}
-
-/* ==========================================
-   POPUPS
-========================================== */
-.popupOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999999;
-}
-
-.popupBox{
-  background:white;
-  padding:30px;
-  width:90%;
-  max-width:480px;
-  border-radius:18px;
-  animation:fade .25s ease;
-}
-
-@keyframes fade{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:none;}
-}
-
-/* ==========================================
-   MODAL PREVIEW
-========================================== */
-#modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999999;
-}
-
-#modalBox{
-  background:white;
-  padding:30px;
-  width:90%;
-  max-width:900px;
-  border-radius:22px;
-}
-
-#modalPreview{
-  width:100%;
-  height:520px;
-  background:#f1f1f1;
-  border-radius:14px;
-  border:none;
-  margin-top:10px;
-}
-
-/* Skeleton */
-.skeleton{
-  height:180px;
-  background:#e6e6e6;
-  border-radius:var(--radius);
-}
 </style>
 </head>
-
 <body>
 
-<!-- ==========================================
-       HEADER SUPERIOR
-========================================== -->
+<!-- Status Bubble -->
+<div id="statusBubble" style="background:red;" onclick="toggleDiag()"></div>
+
+<!-- Diagnostic Box -->
+<div id="diagBox">
+  <h3>Diagnóstico da Conexão</h3>
+  <div id="diagStatus"></div>
+  <pre id="diagInfo"></pre>
+</div>
+
+<!-- HEADER -->
 <div class="top-header">
   <h1>Gerenciador de Documentos</h1>
-
-  <div class="view-modes">
-    <div class="view-btn active" onclick="setView('grid')">🔳 Grade</div>
-    <div class="view-btn" onclick="setView('list')">📑 Lista</div>
-    <div class="view-btn" onclick="setView('big')">🗂 Grande</div>
-  </div>
 </div>
 
 <!-- Busca -->
-<input id="busca" placeholder="Pesquisar..." onkeyup="pesquisar()">
-
-<!-- Breadcrumb -->
-<div id="breadcrumbs">📁 Raiz</div>
+<input id="busca" placeholder="Pesquisar..." style="padding:14px;width:100%;border-radius:12px;border:1px solid var(--line);margin-top:15px;">
 
 <!-- Toolbar -->
-<div class="toolbar">
+<div style="margin-top:20px;">
   <button class="btn btn-nova" onclick="abrirPopupCriar()">📁 Nova Pasta</button>
   <button class="btn btn-upload" onclick="abrirUpload()">⬆ Upload</button>
   <button class="btn btn-voltar" onclick="voltarPasta()">⬅ Voltar</button>
@@ -296,268 +160,68 @@ body{
 <!-- Lista -->
 <div id="lista"></div>
 
-<!-- ==========================================
-      POPUPS (CRIAR + UPLOAD)
-========================================== -->
-<div id="popupCriar" class="popupOverlay">
-  <div class="popupBox">
-
-    <h3>Criar Pasta</h3>
-
-    <label>Nome da pasta:</label>
-    <input id="nomePasta"
-      style="width:100%;padding:14px;margin-top:10px;border-radius:12px;border:1px solid #ddd;">
-
-    <p style="margin-top:15px;">Cor da pasta:</p>
-
-    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;" id="coresPasta"></div>
-
-    <button class="btn btn-nova" onclick="criarPasta()" style="margin-top:25px;width:100%;">Criar</button>
-    <button onclick="fecharPopupCriar()"
-      style="margin-top:10px;width:100%;padding:12px;border:none;border-radius:12px;background:#e5e5e5;">Cancelar</button>
-
-  </div>
-</div>
-
-<div id="popupUpload" class="popupOverlay">
-  <div class="popupBox">
-
-    <h3>Upload de Arquivo</h3>
-
-    <label>Destino</label>
-    <select id="uploadDestino"
-      style="width:100%;padding:12px;margin-top:8px;border:1px solid #ccc;border-radius:10px;"></select>
-
-    <div id="dropArea" style="border:2px dashed #bbb;padding:45px;text-align:center;border-radius:14px;margin-top:20px;cursor:pointer;">
-      Arraste arquivos aqui ou clique
-    </div>
-    <input id="uploadInput" type="file" multiple style="display:none">
-
-    <button class="btn btn-upload" style="width:100%;margin-top:20px;" onclick="enviarUpload()">Enviar</button>
-    <button onclick="fecharUpload()" style="margin-top:10px;width:100%;padding:12px;border:none;border-radius:12px;background:#e5e5e5;">Cancelar</button>
-
-  </div>
-</div>
-
-<!-- ==========================================
-      MODAL DE ARQUIVO
-========================================== -->
-<div id="modal">
-  <div id="modalBox">
-    <button class="btn btn-voltar" onclick="fecharModal()" style="float:right;">Fechar</button>
-
-    <h2 id="modalTitulo"></h2>
-    <iframe id="modalPreview"></iframe>
-
-    <button onclick="baixarArquivo()" class="btn btn-upload" style="margin-top:15px;">⬇ Download</button>
-    <button onclick="excluirArquivo()" class="btn" style="background:#dc2626;margin-left:10px;">🗑 Excluir</button>
-    <button onclick="navigator.clipboard.writeText(linkAtual)" class="btn btn-nova" style="margin-left:10px;">🔗 Copiar Link</button>
-  </div>
-</div>
-
 <script>
-/* =====================================================
-      CONFIGURAÇÃO SUPABASE — CORRIGIDO
-===================================================== */
+
+/* =====================================
+   SUPABASE CONFIG
+===================================== */
 
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let lastError = null;
 
-const BUCKET = "licitardocs";
+let sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let dados = [];
-let pastaAtual = null;
-let historicoPastas = [];
+/* ======================================================
+   DIAGNOSTIC SYSTEM — BOLINHA VERDE / VERMELHA
+====================================================== */
 
-/* =====================================================
-      INICIALIZAÇÃO
-===================================================== */
+async function testConnection(){
+
+  let statusBubble = document.getElementById("statusBubble");
+  let diagStatus = document.getElementById("diagStatus");
+  let diagInfo = document.getElementById("diagInfo");
+
+  try {
+    const { data, error } = await sb.from("documentos").select("*").limit(1);
+
+    if(error){
+      lastError = error;
+      statusBubble.style.background = "red";
+      diagStatus.innerHTML = "<b style='color:red;'>Erro ao conectar ao Supabase</b>";
+      diagInfo.innerText = JSON.stringify(error, null, 2);
+      return false;
+    }
+
+    statusBubble.style.background = "green";
+    diagStatus.innerHTML = "<b style='color:green;'>Conectado ao Supabase</b>";
+
+    diagInfo.innerText = JSON.stringify({
+      url: SUPABASE_URL,
+      bucket: "licitardocs",
+      rowsFetched: data?.length || 0
+    }, null, 2);
+
+    return true;
+
+  } catch(err){
+    lastError = err;
+    statusBubble.style.background = "red";
+    diagStatus.innerHTML = "<b style='color:red;'>Erro crítico</b>";
+    diagInfo.innerText = err.toString();
+    return false;
+  }
+}
+
+function toggleDiag(){
+  let box = document.getElementById("diagBox");
+  box.style.display = box.style.display === "block" ? "none" : "block";
+}
 
 window.onload = () => {
-  renderSkeleton();
-  carregarPasta(null);
+  testConnection();   // testa assim que abrir
 };
-
-/* =====================================================
-      FUNÇÃO GLOBAL DE ERRO
-===================================================== */
-
-function erro(msg, detalhe = null) {
-  console.error("❌ ERRO:", msg, detalhe || "");
-  alert("❌ ERRO: " + msg + "\n\nVeja detalhes no console.");
-}
-
-/* =====================================================
-      LISTAR PASTA
-===================================================== */
-
-async function carregarPasta(pai) {
-  try {
-    pastaAtual = pai;
-    historicoPastas.push(pai);
-
-    const { data, error } = await client
-      .from("documentos")
-      .select("*")
-      .eq("pai", pai);
-
-    if (error) return erro("Falha ao carregar documentos.", error);
-
-    dados = data || [];
-    renderLista();
-    atualizarBreadcrumb();
-
-  } catch (e) {
-    erro("Exceção ao carregar pasta.", e);
-  }
-}
-
-/* =====================================================
-      BREADCRUMB
-===================================================== */
-
-async function atualizarBreadcrumb() {
-  try {
-    if (!pastaAtual) {
-      breadcrumbs.innerHTML = "📁 Raiz";
-      return;
-    }
-
-    const { data, error } = await client
-      .from("documentos")
-      .select("nome")
-      .eq("id", pastaAtual)
-      .single();
-
-    if (error) return erro("Erro carregando breadcrumb.", error);
-
-    breadcrumbs.innerHTML = "📁 " + (data?.nome || "Raiz");
-
-  } catch (e) {
-    erro("Exceção no breadcrumb.", e);
-  }
-}
-
-/* =====================================================
-      CRIAR PASTA
-===================================================== */
-
-async function criarPasta() {
-  try {
-    const nome = nomePasta.value.trim();
-    if (!nome || !corEscolhida) return erro("Preencha nome e cor.");
-
-    const { error } = await client
-      .from("documentos")
-      .insert({
-        nome,
-        tipo: "pasta",
-        pai: pastaAtual,
-        cor: corEscolhida,
-        mime: null,
-        url: null,
-        storage_path: null
-      });
-
-    if (error) return erro("Erro ao criar pasta.", error);
-
-    fecharPopupCriar();
-    carregarPasta(pastaAtual);
-
-  } catch (e) {
-    erro("Exceção ao criar pasta.", e);
-  }
-}
-
-/* =====================================================
-      UPLOAD DE ARQUIVOS
-===================================================== */
-
-async function enviarArquivos(files) {
-  for (let file of files) {
-
-    try {
-      const path = `${pastaAtual || "root"}/${Date.now()}_${file.name}`;
-
-      // UPLOAD
-      let { data: upload, error: uploadErr } = await client
-        .storage
-        .from(BUCKET)
-        .upload(path, file);
-
-      if (uploadErr) return erro("Erro no upload.", uploadErr);
-
-      // URL pública
-      const { data: pub } = client.storage
-        .from(BUCKET)
-        .getPublicUrl(path);
-
-      const url = pub.publicUrl;
-
-      // Registrar no banco
-      const { error: insertErr } = await client
-        .from("documentos")
-        .insert({
-          nome: file.name,
-          tipo: "arquivo",
-          pai: pastaAtual,
-          mime: file.type,
-          url,
-          storage_path: path
-        });
-
-      if (insertErr) return erro("Erro ao registrar arquivo.", insertErr);
-
-    } catch (e) {
-      erro("Exceção ao enviar arquivo.", e);
-    }
-  }
-
-  fecharUpload();
-  carregarPasta(pastaAtual);
-}
-
-/* =====================================================
-      EXCLUIR
-===================================================== */
-
-async function excluirArquivo() {
-  try {
-    if (!confirm("Excluir este arquivo?")) return;
-
-    const { data, error } = await client
-      .from("documentos")
-      .select("storage_path")
-      .eq("url", linkAtual)
-      .single();
-
-    if (error) return erro("Erro ao buscar storage_path.", error);
-
-    if (data?.storage_path) {
-      const { error: delErr } = await client
-        .storage
-        .from(BUCKET)
-        .remove([data.storage_path]);
-
-      if (delErr) return erro("Erro ao apagar arquivo do bucket.", delErr);
-    }
-
-    const { error: dbErr } = await client
-      .from("documentos")
-      .delete()
-      .eq("url", linkAtual);
-
-    if (dbErr) return erro("Erro ao remover do banco.", dbErr);
-
-    fecharModal();
-    carregarPasta(pastaAtual);
-
-  } catch (e) {
-    erro("Exceção ao excluir arquivo.", e);
-  }
-}
 
 </script>
 
