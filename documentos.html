@@ -356,260 +356,207 @@ body{
 </div>
 
 <script>
-/* ==========================================
-      CONFIGURAÇÃO SUPABASE
-========================================== */
+/* =====================================================
+      CONFIGURAÇÃO SUPABASE — CORRIGIDO
+===================================================== */
 
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const BUCKET = "licitardocs"; // o bucket criado
+const BUCKET = "licitardocs";
 
 let dados = [];
 let pastaAtual = null;
 let historicoPastas = [];
 
-/* ==========================================
+/* =====================================================
       INICIALIZAÇÃO
-========================================== */
+===================================================== */
 
 window.onload = () => {
   renderSkeleton();
-  carregarPasta(null); // raiz
+  carregarPasta(null);
 };
 
-/* ==========================================
+/* =====================================================
+      FUNÇÃO GLOBAL DE ERRO
+===================================================== */
+
+function erro(msg, detalhe = null) {
+  console.error("❌ ERRO:", msg, detalhe || "");
+  alert("❌ ERRO: " + msg + "\n\nVeja detalhes no console.");
+}
+
+/* =====================================================
       LISTAR PASTA
-========================================== */
+===================================================== */
 
 async function carregarPasta(pai) {
-  pastaAtual = pai;
-  historicoPastas.push(pai);
+  try {
+    pastaAtual = pai;
+    historicoPastas.push(pai);
 
-  const { data, error } = await supabase
-    .from("documentos")
-    .select("*")
-    .eq("pai", pai);
+    const { data, error } = await client
+      .from("documentos")
+      .select("*")
+      .eq("pai", pai);
 
-  dados = data || [];
+    if (error) return erro("Falha ao carregar documentos.", error);
 
-  renderLista();
-  atualizarBreadcrumb();
+    dados = data || [];
+    renderLista();
+    atualizarBreadcrumb();
+
+  } catch (e) {
+    erro("Exceção ao carregar pasta.", e);
+  }
 }
 
-/* ==========================================
-      RENDER LISTA
-========================================== */
-
-function renderLista() {
-  let html = "";
-
-  dados.forEach(item => {
-    const thumb = item.tipo === "pasta"
-      ? gerarThumbPasta(item)
-      : gerarThumbArquivo(item);
-
-    html += `
-      <div class="item ${currentView}">
-        ${thumb}
-        <div class="itemNome">${item.nome}</div>
-      </div>
-    `;
-  });
-
-  lista.innerHTML = html || "<p style='padding:10px;'>Nenhum arquivo encontrado.</p>";
-
-  document.querySelectorAll(".item").forEach((el, i) => {
-    const item = dados[i];
-    el.onclick = () => {
-      if (item.tipo === "pasta") carregarPasta(item.id);
-      else abrirArquivo(item.nome, item.url);
-    };
-  });
-}
-
-/* ==========================================
+/* =====================================================
       BREADCRUMB
-========================================== */
+===================================================== */
 
 async function atualizarBreadcrumb() {
-  if (!pastaAtual) {
-    breadcrumbs.innerHTML = "📁 Raiz";
-    return;
-  }
+  try {
+    if (!pastaAtual) {
+      breadcrumbs.innerHTML = "📁 Raiz";
+      return;
+    }
 
-  const { data } = await supabase
-    .from("documentos")
-    .select("nome")
-    .eq("id", pastaAtual)
-    .single();
+    const { data, error } = await client
+      .from("documentos")
+      .select("nome")
+      .eq("id", pastaAtual)
+      .single();
 
-  breadcrumbs.innerHTML = "📁 " + (data?.nome || "Raiz");
-}
+    if (error) return erro("Erro carregando breadcrumb.", error);
 
-/* ==========================================
-      VOLTAR PASTA
-========================================== */
+    breadcrumbs.innerHTML = "📁 " + (data?.nome || "Raiz");
 
-async function voltarPasta() {
-  if (historicoPastas.length > 1) {
-    historicoPastas.pop();
-    carregarPasta(historicoPastas[historicoPastas.length - 1]);
+  } catch (e) {
+    erro("Exceção no breadcrumb.", e);
   }
 }
 
-/* ==========================================
-      THUMBNAILS
-========================================== */
-
-function gerarThumbPasta(item) {
-  const cores = {
-    azul:"#4F8CF1", verde:"#60D364", amarelo:"#F8D441",
-    laranja:"#F7A654", vermelho:"#F55D5D", roxo:"#BF6AF7",
-    cinza:"#A5A5A5", preto:"#000", rosa:"#E76BAF", marrom:"#A67C52"
-  };
-
-  const cor = cores[item.cor] || "#4F8CF1";
-  const hex = cor.replace("#","");
-
-  return `
-    <img class="thumb"
-    src="https://img.icons8.com/fluency-systems-filled/96/${hex}/folder-invoices.png">
-  `;
-}
-
-function gerarThumbArquivo(item) {
-  return `<img class="thumb" src="${item.url}">`;
-}
-
-/* ==========================================
+/* =====================================================
       CRIAR PASTA
-========================================== */
+===================================================== */
 
 async function criarPasta() {
-  const nome = nomePasta.value.trim();
-  if (!nome || !corEscolhida) return alert("Preencha tudo.");
+  try {
+    const nome = nomePasta.value.trim();
+    if (!nome || !corEscolhida) return erro("Preencha nome e cor.");
 
-  const { error } = await supabase
-    .from("documentos")
-    .insert({
-      nome,
-      tipo: "pasta",
-      pai: pastaAtual,
-      cor: corEscolhida,
-      mime: null,
-      url: null,
-      storage_path: null
-    });
+    const { error } = await client
+      .from("documentos")
+      .insert({
+        nome,
+        tipo: "pasta",
+        pai: pastaAtual,
+        cor: corEscolhida,
+        mime: null,
+        url: null,
+        storage_path: null
+      });
 
-  fecharPopupCriar();
-  carregarPasta(pastaAtual);
+    if (error) return erro("Erro ao criar pasta.", error);
+
+    fecharPopupCriar();
+    carregarPasta(pastaAtual);
+
+  } catch (e) {
+    erro("Exceção ao criar pasta.", e);
+  }
 }
 
-/* ==========================================
+/* =====================================================
       UPLOAD DE ARQUIVOS
-========================================== */
+===================================================== */
 
 async function enviarArquivos(files) {
   for (let file of files) {
 
-    const path = `${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+    try {
+      const path = `${pastaAtual || "root"}/${Date.now()}_${file.name}`;
 
-    // 1 — Upload pro bucket
-    let { data: upload, error: uploadErr } = await supabase
-      .storage
-      .from(BUCKET)
-      .upload(path, file);
+      // UPLOAD
+      let { data: upload, error: uploadErr } = await client
+        .storage
+        .from(BUCKET)
+        .upload(path, file);
 
-    if (uploadErr) {
-      console.log(uploadErr);
-      alert("Erro ao enviar arquivo.");
-      continue;
+      if (uploadErr) return erro("Erro no upload.", uploadErr);
+
+      // URL pública
+      const { data: pub } = client.storage
+        .from(BUCKET)
+        .getPublicUrl(path);
+
+      const url = pub.publicUrl;
+
+      // Registrar no banco
+      const { error: insertErr } = await client
+        .from("documentos")
+        .insert({
+          nome: file.name,
+          tipo: "arquivo",
+          pai: pastaAtual,
+          mime: file.type,
+          url,
+          storage_path: path
+        });
+
+      if (insertErr) return erro("Erro ao registrar arquivo.", insertErr);
+
+    } catch (e) {
+      erro("Exceção ao enviar arquivo.", e);
     }
-
-    // 2 — URL pública
-    const { data: pub } = supabase
-      .storage
-      .from(BUCKET)
-      .getPublicUrl(path);
-
-    const url = pub.publicUrl;
-
-    // 3 — Registrar na tabela
-    await supabase.from("documentos").insert({
-      nome: file.name,
-      tipo: "arquivo",
-      pai: pastaAtual,
-      mime: file.type,
-      url,
-      storage_path: path
-    });
   }
 
   fecharUpload();
   carregarPasta(pastaAtual);
 }
 
-/* ==========================================
-      EXIBIR / EXCLUIR ARQUIVO
-========================================== */
-
-function abrirArquivo(nome, url) {
-  modalTitulo.innerText = nome;
-  modalPreview.src = url;
-  linkAtual = url;
-
-  modal.style.display = "flex";
-}
+/* =====================================================
+      EXCLUIR
+===================================================== */
 
 async function excluirArquivo() {
-  if (!confirm("Excluir este arquivo?")) return;
+  try {
+    if (!confirm("Excluir este arquivo?")) return;
 
-  const { data } = await supabase
-    .from("documentos")
-    .select("storage_path")
-    .eq("url", linkAtual)
-    .single();
+    const { data, error } = await client
+      .from("documentos")
+      .select("storage_path")
+      .eq("url", linkAtual)
+      .single();
 
-  if (data?.storage_path) {
-    await supabase.storage.from(BUCKET).remove([data.storage_path]);
+    if (error) return erro("Erro ao buscar storage_path.", error);
+
+    if (data?.storage_path) {
+      const { error: delErr } = await client
+        .storage
+        .from(BUCKET)
+        .remove([data.storage_path]);
+
+      if (delErr) return erro("Erro ao apagar arquivo do bucket.", delErr);
+    }
+
+    const { error: dbErr } = await client
+      .from("documentos")
+      .delete()
+      .eq("url", linkAtual);
+
+    if (dbErr) return erro("Erro ao remover do banco.", dbErr);
+
+    fecharModal();
+    carregarPasta(pastaAtual);
+
+  } catch (e) {
+    erro("Exceção ao excluir arquivo.", e);
   }
-
-  await supabase
-    .from("documentos")
-    .delete()
-    .eq("url", linkAtual);
-
-  fecharModal();
-  carregarPasta(pastaAtual);
-}
-
-/* ==========================================
-      MODO DE EXIBIÇÃO
-========================================== */
-
-let currentView = "";
-
-function setView(mode) {
-  document.querySelectorAll(".view-btn").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
-
-  if (mode === "grid") {
-    currentView = "";
-    lista.style.gridTemplateColumns = "repeat(auto-fill,minmax(220px,1fr))";
-  }
-  if (mode === "list") {
-    currentView = "list-mode";
-    lista.style.gridTemplateColumns = "1fr";
-  }
-  if (mode === "big") {
-    currentView = "";
-    lista.style.gridTemplateColumns = "repeat(auto-fill,minmax(300px,1fr))";
-  }
-
-  renderLista();
 }
 
 </script>
