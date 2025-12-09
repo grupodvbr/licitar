@@ -194,27 +194,44 @@ await validarLogin();
 
 
 /* =======================================
-      TESTAR CONEXÃO
+      TESTE DE CONEXÃO REAL E FUNCIONAL
 ======================================= */
 async function testarConexao(){
   const ball = document.getElementById("statusBall");
   const diag = document.getElementById("diagBox");
 
   try{
-    await sb.storage.getBucket(BUCKET);
+    // Tenta listar a raiz do bucket
+    const { data, error } = await sb.storage.from(BUCKET).list("", { limit: 1 });
 
-    ball.style.background = "#16a34a";
+    if(error) throw error;
 
+    // Se chegou aqui → CONECTADO
+    ball.style.background = "#16a34a"; // VERDE
     ball.onclick = () => {
       diag.style.display = "block";
       diag.innerHTML = `
         <h3 style="color:#16a34a">Conectado ao Supabase</h3>
-        <p>Bucket: <b>${BUCKET}</b></p>
+        <small>Bucket: <b>${BUCKET}</b></small>
+        <pre style="background:#eef;padding:10px;border-radius:10px;margin-top:10px;">
+${JSON.stringify(data, null, 2)}
+        </pre>
       `;
     };
 
-  } catch(err){
-    ball.style.background = "#dc2626";
+  } catch(err) {
+
+    // ERRO → bucket inacessível ou sem permissão
+    ball.style.background = "#dc2626"; // VERMELHO
+    ball.onclick = () => {
+      diag.style.display = "block";
+      diag.innerHTML = `
+        <h3 style="color:#dc2626">Erro ao conectar</h3>
+        <pre style="background:#fee;padding:10px;border-radius:10px;margin-top:10px;">
+${err.message}
+        </pre>
+      `;
+    };
   }
 }
 
