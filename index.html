@@ -329,11 +329,15 @@ const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true }
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
 });
 
 /* ============================ */
-/* LOGIN                        */
+/* LOGIN NORMAL                 */
 /* ============================ */
 async function login() {
   let email = document.getElementById("email").value.trim();
@@ -344,50 +348,60 @@ async function login() {
     return;
   }
 
-  const { error } = await sb.auth.signInWithPassword({ email, password: senha });
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: email,
+    password: senha
+  });
 
   if(error){
     alert("Erro: " + error.message);
     return;
   }
 
+  // sessão já salva internamente pelo Supabase
   localStorage.setItem("usuarioEmail", email);
 
-  carregarPerfil();
+  await carregarPerfil();
 }
 
-/* LOGIN DIRETORIA */
-function diretoriaLogin(){
+/* ============================ */
+/* LOGIN DIRETORIA              */
+/* ============================ */
+async function diretoriaLogin() {
   let senha = prompt("Senha da Diretoria:");
-
-  if(senha === "grupodv2025"){
-    localStorage.setItem("usuarioEmail", "diretoria@grupodv.com");
-    carregarPerfil();
-  } else {
+  if(senha !== "grupodv2025"){
     alert("Senha incorreta!");
+    return;
   }
+
+  // salva apenas localmente (não usa supabase)
+  localStorage.setItem("usuarioEmail", "diretoria@grupodv.com");
+
+  await carregarPerfil();
 }
 
 /* ============================ */
 /* CARREGAR PERFIL              */
 /* ============================ */
 async function carregarPerfil(){
-  let email = localStorage.getItem("usuarioEmail");
 
-  if(!email){
-    // tenta pegar Supabase
-    const session = await sb.auth.getSession();
-    if(session.data.session){
-      email = session.data.session.user.email;
-      localStorage.setItem("usuarioEmail", email);
-    }
+  let savedEmail = localStorage.getItem("usuarioEmail");
+
+  // tenta pegar sessão do supabase
+  let session = await sb.auth.getSession();
+  let supaUser = session.data.session?.user?.email;
+
+  let finalEmail = savedEmail || supaUser;
+
+  if(!finalEmail){
+    document.getElementById("loginOverlay").style.display = "flex";
+    return;
   }
 
-  if(!email) return;
-
-  document.getElementById("avatar").innerText = email.charAt(0).toUpperCase();
-  document.getElementById("userEmail").innerText = email;
-  document.getElementById("menuEmail").innerText = email;
+  // exibir perfil
+  document.getElementById("avatar").innerText = finalEmail.charAt(0).toUpperCase();
+  document.getElementById("userEmail").innerText = finalEmail;
+  document.getElementById("menuEmail").innerText = finalEmail;
 
   document.getElementById("loginOverlay").style.display = "none";
 }
@@ -402,7 +416,7 @@ async function logout(){
 }
 
 /* ============================ */
-/* CONTROLES                    */
+/* SIDEBAR / MENUS              */
 /* ============================ */
 function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("min");
@@ -418,32 +432,29 @@ function toggleUserMenu(){
 }
 
 function loadPage(url){
-  document.getElementById("iframePage").style.display="block";
-  document.getElementById("home").style.display="none";
-  document.getElementById("iframePage").src = url;
+  iframePage.style.display="block";
+  home.style.display="none";
+  iframePage.src = url;
 }
 
 function openHome(){
-  document.getElementById("iframePage").style.display="none";
-  document.getElementById("home").style.display="block";
+  iframePage.style.display="none";
+  home.style.display="block";
 }
 
 /* ============================ */
-/* BOOTSTRAP DO SISTEMA        */
+/* BOOTSTRAP NA ABERTURA       */
 /* ============================ */
-(async ()=>{
-  let email = localStorage.getItem("usuarioEmail");
-  const session = await sb.auth.getSession();
+window.onload = async () => {
+  let savedEmail = localStorage.getItem("usuarioEmail");
+  let session = await sb.auth.getSession();
 
-  if(email || session.data.session){
-    if(session.data.session && !email){
-      localStorage.setItem("usuarioEmail", session.data.session.user.email);
-    }
+  if(savedEmail || session.data.session){
     carregarPerfil();
   } else {
     document.getElementById("loginOverlay").style.display="flex";
   }
-})();
+};
 </script>
 
 </body>
