@@ -5,12 +5,14 @@
 <title>LICITAR • Sistema</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ============================
-   VARIÁVEIS DO TEMA
-============================ */
+/* ============================ */
+/*        VARIÁVEIS DO TEMA     */
+/* ============================ */
 :root{
   --azul:#0b1e39;
   --azul2:#15345c;
@@ -24,9 +26,9 @@
   --radius:16px;
 }
 
-/* ============================
-   RESET
-============================ */
+/* ============================ */
+/*           RESET              */
+/* ============================ */
 *{
   margin:0;
   padding:0;
@@ -34,9 +36,9 @@
   font-family:'Inter',sans-serif;
 }
 
-/* ============================
-   LAYOUT BASE
-============================ */
+/* ============================ */
+/* LAYOUT BASE DO SISTEMA */
+/* ============================ */
 body{
   background:var(--bg);
   display:flex;
@@ -44,9 +46,99 @@ body{
   overflow:hidden;
 }
 
-/* ============================
-   SIDEBAR
-============================ */
+/* ============================ */
+/*       LOGIN POPUP            */
+/* ============================ */
+#loginOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999999;
+  backdrop-filter:blur(8px);
+}
+
+#loginBox{
+  width:90%;
+  max-width:850px;
+  height:450px;
+  background:white;
+  border-radius:22px;
+  display:flex;
+  overflow:hidden;
+  box-shadow:0 15px 60px rgba(0,0,0,.3);
+  animation:fade .3s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(40px);}
+  to{opacity:1;}
+}
+
+#loginLeft{
+  width:45%;
+  background:var(--azul);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  font-size:38px;
+  font-weight:700;
+  padding:20px;
+}
+
+#loginRight{
+  width:55%;
+  padding:45px;
+}
+
+.login-title{
+  font-size:28px;
+  font-weight:700;
+  color:var(--azul);
+  margin-bottom:22px;
+}
+
+.input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  margin-bottom:15px;
+  font-size:16px;
+}
+
+.btn-login{
+  width:100%;
+  padding:14px;
+  background:var(--azul);
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-size:17px;
+  cursor:pointer;
+  font-weight:600;
+  margin-top:10px;
+}
+
+.btn-login:hover{
+  opacity:.9;
+}
+
+small{
+  display:block;
+  text-align:center;
+  margin-top:14px;
+  font-weight:600;
+  color:var(--dourado);
+  cursor:pointer;
+}
+
+/* ============================ */
+/* SIDEBAR & MENU */
+/* ============================ */
 .sidebar{
   width:260px;
   background:var(--azul);
@@ -82,26 +174,19 @@ body{
   gap:14px;
   transition:.2s;
 }
-
 .nav-item:hover{
-  background:rgba(255,255,255,0.12);
-}
-
-.nav-item i{
-  font-size:20px;
+  background:rgba(255,255,255,0.15);
 }
 
 .nav-text{
   transition:.2s;
 }
-
 .sidebar.min .nav-text{
   opacity:0;
   pointer-events:none;
 }
 
 .submenu{
-  background:rgba(255,255,255,0.08);
   display:none;
   padding-left:55px;
   flex-direction:column;
@@ -113,64 +198,86 @@ body{
 
 .submenu div{
   padding:10px 0;
-  cursor:pointer;
   opacity:.85;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.submenu div:hover{
-  opacity:1;
-}
+.submenu div:hover{ opacity:1; }
 
-/* ============================
-   TOPBAR
-============================ */
+/* ============================ */
+/*           TOPBAR             */
+/* ============================ */
 .topbar{
   height:65px;
   background:white;
-  box-shadow:0 1px 4px rgba(0,0,0,.08);
   display:flex;
   align-items:center;
   padding:0 25px;
   justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:50;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-.btn-toggle{
-  background:none;
-  border:none;
-  font-size:24px;
+#userArea{
+  display:flex;
+  align-items:center;
+  gap:10px;
   cursor:pointer;
-  color:var(--azul);
 }
 
-/* ============================
-   CONTEÚDO
-============================ */
+.avatar{
+  width:38px;
+  height:38px;
+  background:var(--azul);
+  color:white;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:600;
+}
+
+#userMenu{
+  position:absolute;
+  top:75px;
+  right:25px;
+  background:white;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
+  display:none;
+  z-index:999;
+}
+
+#userMenu p{
+  margin-bottom:12px;
+  color:var(--azul);
+  font-weight:600;
+}
+
+#userMenu button{
+  padding:10px 16px;
+  border:none;
+  background:#e11d48;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+  width:100%;
+}
+
+/* ============================ */
+/*         CONTEÚDO             */
+/* ============================ */
 .content{
   flex:1;
   overflow-y:auto;
-  position:relative;
 }
 
-#home{
-  padding:35px;
-}
-
-h1{
-  font-size:32px;
-  color:var(--text);
-  margin-bottom:20px;
-}
-
-/* ============================
-   CARDS INICIAIS
-============================ */
 .cards{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:22px;
+  padding:35px;
 }
 
 .card{
@@ -179,27 +286,10 @@ h1{
   padding:22px;
   box-shadow:0 8px 25px rgba(0,0,0,.08);
   cursor:pointer;
-  transition:.2s;
 }
 
-.card:hover{
-  transform:translateY(-4px);
-}
+.card:hover{ transform:translateY(-4px); }
 
-.card h3{
-  font-size:20px;
-  margin-bottom:6px;
-  color:var(--text);
-}
-
-.card p{
-  font-size:14px;
-  color:var(--muted);
-}
-
-/* ============================
-   IFRAME INTERNO
-============================ */
 #iframePage{
   width:100%;
   height:calc(100vh - 65px);
@@ -207,97 +297,109 @@ h1{
   display:none;
 }
 </style>
-
 </head>
+
 <body>
 
-<!-- ============================
-     SIDEBAR
-============================ -->
+<div id="loginOverlay">
+  <div id="loginBox">
+
+    <div id="loginLeft">
+      LICITAR
+    </div>
+
+    <div id="loginRight">
+      <div class="login-title">Acessar sistema</div>
+
+      <input id="email" class="input" placeholder="Email">
+      <input id="senha" class="input" type="password" placeholder="Senha">
+
+      <button class="btn-login" onclick="login()">Entrar</button>
+
+      <small onclick="diretoriaLogin()">Diretoria Grupo DV</small>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================ -->
+<!--      SIDEBAR                 -->
+<!-- ============================ -->
 <div class="sidebar" id="sidebar">
 
   <div class="sidebar-header">LICITAR</div>
 
   <div class="nav-section-title">Menu</div>
 
-  <!-- HOME -->
   <div class="nav-item" onclick="openHome()">
-    <i>🏠</i>
-    <span class="nav-text">Home</span>
+    🏠 <span class="nav-text">Home</span>
   </div>
 
-<!-- ENCONTRAR -->
-<div class="nav-item" onclick="toggleSub('sub1')">
-  <i>🔍</i>
-  <span class="nav-text">Encontrar</span>
-</div>
-<div id="sub1" class="submenu">
-  <div onclick="loadPage('avisos.html')">Meus Avisos</div>
-  <div onclick="loadPage('banco.html')">Banco de Licitações</div>
-  <div onclick="loadPage('dashboard.html')">Dashboard</div>
-</div>
+  <!-- ENCONTRAR -->
+  <div class="nav-item" onclick="toggleSub('sub1')">
+    🔍 <span class="nav-text">Encontrar</span>
+  </div>
+  <div id="sub1" class="submenu">
+    <div onclick="loadPage('avisos.html')">Meus Avisos</div>
+    <div onclick="loadPage('banco.html')">Banco de Licitações</div>
+    <div onclick="loadPage('dashboard.html')">Dashboard</div>
+  </div>
 
-<!-- CADASTRAR -->
-<div class="nav-item" onclick="toggleSub('sub2')">
-  <i>📄</i>
-  <span class="nav-text">Cadastrar</span>
-</div>
-<div id="sub2" class="submenu">
-  <div onclick="loadPage('produtos.html')">Produtos</div>
-  <div onclick="loadPage('licitacoes.html')">Licitações</div>
-  <div onclick="loadPage('fornecedores.html')">Fornecedores</div>
-  <div onclick="loadPage('documentos.html')">Documentos</div>
-</div>
+  <!-- CADASTRAR -->
+  <div class="nav-item" onclick="toggleSub('sub2')">
+    📄 <span class="nav-text">Cadastrar</span>
+  </div>
+  <div id="sub2" class="submenu">
+    <div onclick="loadPage('produtos.html')">Produtos</div>
+    <div onclick="loadPage('licitacoes.html')">Licitações</div>
+    <div onclick="loadPage('fornecedores.html')">Fornecedores</div>
+    <div onclick="loadPage('documentos.html')">Documentos</div>
+  </div>
 
-<!-- DISPUTAR -->
-<div class="nav-item" onclick="toggleSub('sub3')">
-  <i>🏆</i>
-  <span class="nav-text">Disputar</span>
-</div>
-<div id="sub3" class="submenu">
-  <div onclick="loadPage('automacao.html')">Automação</div>
-  <div onclick="loadPage('historico-disputa.html')">Histórico</div>
-</div>
+  <!-- DISPUTAR -->
+  <div class="nav-item" onclick="toggleSub('sub3')">
+    🏆 <span class="nav-text">Disputar</span>
+  </div>
+  <div id="sub3" class="submenu">
+    <div onclick="loadPage('automacao.html')">Automação</div>
+    <div onclick="loadPage('historico-disputa.html')">Histórico</div>
+  </div>
 
-<!-- MONITORAR -->
-<div class="nav-item" onclick="toggleSub('sub4')">
-  <i>🖥️</i>
-  <span class="nav-text">Monitorar</span>
-</div>
-<div id="sub4" class="submenu">
-  <div onclick="loadPage('mensagens.html')">Mensagens</div>
-  <div onclick="loadPage('diligencias.html')">Diligências</div>
-</div>
-
-<!-- VISÃO DE DADOS -->
-<div class="nav-item" onclick="toggleSub('sub5')">
-  <i>📊</i>
-  <span class="nav-text">Visão de Dados</span>
-</div>
-<div id="sub5" class="submenu">
-  <div onclick="loadPage('resumo.html')">Resumo</div>
-  <div onclick="loadPage('relatorios.html')">Relatórios</div>
-</div>
+  <!-- MONITORAR -->
+  <div class="nav-item" onclick="toggleSub('sub4')">
+    🖥️ <span class="nav-text">Monitorar</span>
+  </div>
+  <div id="sub4" class="submenu">
+    <div onclick="loadPage('mensagens.html')">Mensagens</div>
+    <div onclick="loadPage('diligencias.html')">Diligências</div>
+  </div>
 
 </div>
 
-<!-- ============================
-     ÁREA PRINCIPAL
-============================ -->
+<!-- ============================ -->
+<!--         ÁREA PRINCIPAL      -->
+<!-- ============================ -->
 <div class="content">
 
   <div class="topbar">
     <button class="btn-toggle" onclick="toggleSidebar()">☰</button>
-    <div style="font-weight:600;color:var(--azul)">Sistema de Licitações</div>
+    
+    <div id="userArea" onclick="toggleUserMenu()">
+      <div class="avatar" id="avatar"></div>
+      <span id="userEmail"></span>
+    </div>
+  </div>
+
+  <div id="userMenu">
+    <p id="menuEmail"></p>
+    <button onclick="logout()">Sair</button>
   </div>
 
   <!-- HOME -->
   <div id="home">
-
-    <h1>Bem-vindo ao painel LICITAR</h1>
+    <h1 style="padding:35px;">Bem-vindo ao painel LICITAR</h1>
 
     <div class="cards">
-
       <div class="card" onclick="loadPage('cotacao.html')">
         <h3>Resposta de Fornecedores</h3>
         <p>Analise valores enviados via link.</p>
@@ -317,17 +419,96 @@ h1{
         <h3>Andamento</h3>
         <p>Status das licitações cadastradas.</p>
       </div>
-
     </div>
-
   </div>
 
-  <!-- IFRAME -->
   <iframe id="iframePage"></iframe>
 
 </div>
 
 <script>
+/* ============================ */
+/* SUPABASE CLIENT */
+/* ============================ */
+
+const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ============================ */
+/* LOGIN */
+/* ============================ */
+
+async function login(){
+  let email = document.getElementById("email").value.trim();
+  let senha = document.getElementById("senha").value.trim();
+
+  if(!email || !senha){
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: email,
+    password: senha
+  });
+
+  if(error){
+    alert("Erro: " + error.message);
+    return;
+  }
+
+  carregarPerfil();
+}
+
+function diretoriaLogin(){
+  let senha = prompt("Senha da Diretoria:");
+
+  if(senha === "grupodv2025"){
+    carregarPerfil("diretoria@grupodv.com");
+  } else {
+    alert("Senha incorreta!");
+  }
+}
+
+/* ============================ */
+/* CARREGAR PERFIL */
+/* ============================ */
+async function carregarPerfil(forceEmail=null){
+
+  let session = await sb.auth.getSession();
+
+  let email = forceEmail 
+      ? forceEmail 
+      : session.data.session.user.email;
+
+  document.getElementById("userEmail").innerText = email;
+  document.getElementById("menuEmail").innerText = email;
+  document.getElementById("avatar").innerText = email.charAt(0).toUpperCase();
+
+  document.getElementById("loginOverlay").style.display="none";
+}
+
+/* ============================ */
+/* MENU DO USUÁRIO */
+/* ============================ */
+function toggleUserMenu(){
+  let m = document.getElementById("userMenu");
+  m.style.display = m.style.display==="block" ? "none" : "block";
+}
+
+/* ============================ */
+/* LOGOUT */
+/* ============================ */
+async function logout(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+/* ============================ */
+/* PAGINAS */
+/* ============================ */
 function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("min");
 }
@@ -346,6 +527,19 @@ function openHome(){
   document.getElementById("iframePage").style.display="none";
   document.getElementById("home").style.display="block";
 }
+
+/* ============================ */
+/* BLOQUEAR ACESSO SEM LOGIN */
+/* ============================ */
+(async ()=>{
+  let session = await sb.auth.getSession();
+
+  if(!session.data.session){
+    document.getElementById("loginOverlay").style.display="flex";
+  } else {
+    carregarPerfil();
+  }
+})();
 </script>
 
 </body>
