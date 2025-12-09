@@ -6,153 +6,242 @@
 <title>Documentos • LICITAR</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-
+/* ==========================================
+   PALETA PREMIUM LICITAR
+========================================== */
 :root{
   --azul:#0b1e39;
+  --azul-claro:#143559;
   --dourado:#c9a86c;
   --bg:#f4f6f9;
-  --text:#0f172a;
-  --line:#d8dde6;
+  --card:#ffffff;
+  --line:#d9dce3;
+  --muted:#6b7280;
+
+  --radius:18px;
+  --shadow:0 8px 22px rgba(0,0,0,.08);
+  --shadow-big:0 12px 38px rgba(0,0,0,.16);
 }
 
-/* TOP STATUS */
-#statusBubble{
-  position:fixed;
-  top:18px;
-  right:22px;
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  cursor:pointer;
-  z-index:9999;
-  box-shadow:0 0 12px rgba(0,0,0,.2);
-}
-
-/* Caixa de diagnóstico */
-#diagBox{
-  position:fixed;
-  top:55px;
-  right:22px;
-  width:320px;
-  background:white;
-  padding:18px;
-  border-radius:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,.18);
-  display:none;
-  z-index:99999;
-  font-family:Inter, sans-serif;
-}
-
-#diagBox h3{
-  margin-top:0;
-  font-size:18px;
+/* ==========================================
+   BASE
+========================================== */
+body{
+  margin:0;
+  padding:35px;
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
   color:var(--azul);
 }
 
-#diagBox pre{
-  background:#f1f1f1;
-  padding:10px;
-  border-radius:8px;
-  overflow:auto;
-  max-height:180px;
-}
-
-body{
-  margin:0;
-  padding:28px 35px;
-  background:var(--bg);
-  font-family:'Inter',sans-serif;
-  color:var(--text);
-}
-
-.top-header{
+/* ==========================================
+   CABEÇALHO
+========================================== */
+.header {
   display:flex;
   justify-content:space-between;
   align-items:center;
+  margin-bottom:25px;
 }
 
-.top-header h1{
-  font-size:28px;
-  color:var(--azul);
+.header h1{
+  font-size:30px;
   font-weight:700;
 }
 
-/* Botões */
-.btn{
-  padding:12px 18px;
-  border-radius:10px;
-  border:none;
+.indicador {
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#888;
   cursor:pointer;
-  font-weight:600;
-  color:white;
-  margin-right:10px;
+  box-shadow:0 0 8px rgba(0,0,0,.2);
 }
 
+/* ==========================================
+   DIAGNÓSTICO
+========================================== */
+#diagBox{
+  position:fixed;
+  top:80px;
+  right:20px;
+  width:350px;
+  background:white;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:var(--shadow-big);
+  display:none;
+  z-index:9999;
+}
+
+/* ==========================================
+   BARRA DE PESQUISA
+========================================== */
+#busca{
+  width:100%;
+  padding:14px 20px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  font-size:16px;
+  background:white;
+}
+
+/* ==========================================
+   TOOLBAR
+========================================== */
+.toolbar{
+  margin-top:18px;
+  display:flex;
+  gap:12px;
+}
+
+.btn{
+  padding:12px 18px;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:14px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:var(--shadow);
+  transition:.2s;
+}
+
+.btn:hover{ transform:translateY(-3px); }
+
 .btn-nova{ background:var(--azul); }
-.btn-upload{ background:var(--dourado); }
+.btn-upload{ background:var(--dourado); color:#fff; }
 .btn-voltar{ background:#9ca3af; }
 
-/* Lista */
+/* ==========================================
+   LISTA / GRID
+========================================== */
 #lista{
   margin-top:25px;
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
   gap:22px;
 }
 
 .item{
   background:white;
   padding:18px;
-  border-radius:16px;
-  border:1px solid #e2e2e2;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  border:1px solid #e1e4e8;
   cursor:pointer;
-  transition:.25s ease;
-  box-shadow:0 4px 12px rgba(0,0,0,.05);
+  transition:.2s;
+  text-align:center;
+}
+
+.item:hover{
+  box-shadow:var(--shadow-big);
+  transform:translateY(-4px);
 }
 
 .thumb{
-  width:100%;
-  height:140px;
-  border-radius:10px;
+  width:90px;
+  height:90px;
+  margin:auto;
+  border-radius:12px;
   object-fit:cover;
-  background:#eee;
 }
 
 .itemNome{
   margin-top:12px;
-  text-align:center;
   font-weight:600;
+  font-size:15px;
 }
 
+/* ==========================================
+   POPUPS PREMIUM
+========================================== */
+.popupOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999999;
+}
+
+.popupBox{
+  width:90%;
+  max-width:480px;
+  background:white;
+  padding:30px;
+  border-radius:22px;
+  box-shadow:var(--shadow-big);
+  animation:fade .25s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(30px);}
+  to{opacity:1; transform:none;}
+}
+
+.popupTitle{
+  font-size:22px;
+  font-weight:700;
+  color:var(--azul);
+  margin-bottom:18px;
+}
+
+/* Campos */
+.input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  font-size:16px;
+  margin-bottom:15px;
+}
+
+/* Botões dentro do popup */
+.btn-full{
+  width:100%;
+  margin-top:8px;
+}
+
+/* Drop area */
+#dropArea{
+  border:2px dashed var(--azul);
+  padding:40px;
+  text-align:center;
+  border-radius:16px;
+  cursor:pointer;
+  background:#f8fafc;
+  margin:15px 0;
+}
 </style>
 </head>
+
 <body>
 
-<!-- Status Bubble -->
-<div id="statusBubble" style="background:red;" onclick="toggleDiag()"></div>
-
-<!-- Diagnostic Box -->
-<div id="diagBox">
-  <h3>Diagnóstico da Conexão</h3>
-  <div id="diagStatus"></div>
-  <pre id="diagInfo"></pre>
-</div>
-
-<!-- HEADER -->
-<div class="top-header">
+<!-- ==========================================
+      CABEÇALHO + STATUS DA CONEXÃO
+========================================== -->
+<div class="header">
   <h1>Gerenciador de Documentos</h1>
+  <div id="statusBall" class="indicador"></div>
 </div>
+
+<!-- Diagnóstico -->
+<div id="diagBox"></div>
 
 <!-- Busca -->
-<input id="busca" placeholder="Pesquisar..." style="padding:14px;width:100%;border-radius:12px;border:1px solid var(--line);margin-top:15px;">
+<input id="busca" placeholder="Pesquisar...">
 
 <!-- Toolbar -->
-<div style="margin-top:20px;">
-  <button class="btn btn-nova" onclick="abrirPopupCriar()">📁 Nova Pasta</button>
+<div class="toolbar">
+  <button class="btn btn-nova" onclick="abrirCriarPasta()">📁 Nova Pasta</button>
   <button class="btn btn-upload" onclick="abrirUpload()">⬆ Upload</button>
   <button class="btn btn-voltar" onclick="voltarPasta()">⬅ Voltar</button>
 </div>
@@ -160,69 +249,229 @@ body{
 <!-- Lista -->
 <div id="lista"></div>
 
+<!-- ==========================================
+      POPUP CRIAR PASTA
+========================================== -->
+<div id="popupCriar" class="popupOverlay">
+  <div class="popupBox">
+    <div class="popupTitle">Criar Nova Pasta</div>
+
+    <input id="nomePasta" class="input" placeholder="Nome da pasta">
+
+    <button class="btn btn-nova btn-full" onclick="criarPasta()">Criar Pasta</button>
+    <button class="btn btn-voltar btn-full" onclick="fecharCriarPasta()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ==========================================
+      POPUP UPLOAD
+========================================== -->
+<div id="popupUpload" class="popupOverlay">
+  <div class="popupBox">
+    <div class="popupTitle">Enviar Arquivos</div>
+
+    <div id="dropArea">Clique ou arraste seus arquivos aqui</div>
+    <input id="uploadInput" type="file" multiple style="display:none">
+
+    <button class="btn btn-upload btn-full" onclick="enviarUpload()">Enviar</button>
+    <button class="btn btn-voltar btn-full" onclick="fecharUpload()">Cancelar</button>
+  </div>
+</div>
+
+
 <script>
-
-/* =====================================
+/* ==========================================
    SUPABASE CONFIG
-===================================== */
-
+========================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
+const BUCKET = "documentos";
 
-let lastError = null;
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* ==========================================
+   STATUS DA CONEXÃO
+========================================== */
 
-/* ======================================================
-   DIAGNOSTIC SYSTEM — BOLINHA VERDE / VERMELHA
-====================================================== */
-
-async function testConnection(){
-
-  let statusBubble = document.getElementById("statusBubble");
-  let diagStatus = document.getElementById("diagStatus");
-  let diagInfo = document.getElementById("diagInfo");
+async function testarConexao(){
+  const statusBall = document.getElementById("statusBall");
+  const diag = document.getElementById("diagBox");
 
   try {
-    const { data, error } = await sb.from("documentos").select("*").limit(1);
+    let { data, error } = await supabaseClient
+      .storage.from(BUCKET).list("");
 
-    if(error){
-      lastError = error;
-      statusBubble.style.background = "red";
-      diagStatus.innerHTML = "<b style='color:red;'>Erro ao conectar ao Supabase</b>";
-      diagInfo.innerText = JSON.stringify(error, null, 2);
-      return false;
-    }
+    if(error) throw error;
 
-    statusBubble.style.background = "green";
-    diagStatus.innerHTML = "<b style='color:green;'>Conectado ao Supabase</b>";
+    statusBall.style.background = "#16a34a"; // verde
+    statusBall.onclick = () => {
+      diag.innerHTML = `<h3>Conectado ao Supabase</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
+      diag.style.display = "block";
+    };
 
-    diagInfo.innerText = JSON.stringify({
-      url: SUPABASE_URL,
-      bucket: "licitardocs",
-      rowsFetched: data?.length || 0
-    }, null, 2);
-
-    return true;
-
-  } catch(err){
-    lastError = err;
-    statusBubble.style.background = "red";
-    diagStatus.innerHTML = "<b style='color:red;'>Erro crítico</b>";
-    diagInfo.innerText = err.toString();
-    return false;
+  } catch (e) {
+    statusBall.style.background = "#dc2626"; // vermelho
+    statusBall.onclick = () => {
+      diag.innerHTML = `<h3>Erro de Conexão</h3><pre>${e.message}</pre>`;
+      diag.style.display = "block";
+    };
   }
 }
 
-function toggleDiag(){
-  let box = document.getElementById("diagBox");
-  box.style.display = box.style.display === "block" ? "none" : "block";
+testarConexao();
+
+/* ==========================================
+   VARIÁVEIS
+========================================== */
+let pastaAtual = null;
+let historicoPastas = [];
+let arquivos = [];
+
+/* ==========================================
+   CARREGAR LISTA
+========================================== */
+async function carregar(){
+  const { data } = await supabaseClient
+    .from("documentos")
+    .select("*")
+    .eq("pai", pastaAtual);
+
+  arquivos = data || [];
+  renderizar();
 }
 
-window.onload = () => {
-  testConnection();   // testa assim que abrir
+carregar();
+
+/* ==========================================
+   RENDER
+========================================== */
+function renderizar(){
+  let html = "";
+
+  arquivos.forEach(item=>{
+    let icon = item.tipo === "pasta"
+      ? "https://img.icons8.com/fluency/96/folder-invoices.png"
+      : item.url;
+
+    html += `
+      <div class="item" onclick="abrirItem(${item.id}, '${item.tipo}', '${item.url}')">
+        <img class="thumb" src="${icon}">
+        <div class="itemNome">${item.nome}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("lista").innerHTML =
+    html || "<p>Nada encontrado.</p>";
+}
+
+/* ==========================================
+   ABRIR ITEM
+========================================== */
+function abrirItem(id,tipo,url){
+  if(tipo === "pasta"){
+    pastaAtual = id;
+    historicoPastas.push(id);
+    carregar();
+  } else {
+    window.open(url,"_blank");
+  }
+}
+
+/* ==========================================
+   VOLTAR
+========================================== */
+function voltarPasta(){
+  if(historicoPastas.length>0){
+    historicoPastas.pop();
+    pastaAtual = historicoPastas[historicoPastas.length-1] || null;
+    carregar();
+  }
+}
+
+/* ==========================================
+   POPUP CRIAR PASTA
+========================================== */
+function abrirCriarPasta(){
+  document.getElementById("popupCriar").style.display="flex";
+}
+function fecharCriarPasta(){
+  document.getElementById("popupCriar").style.display="none";
+}
+
+/* ==========================================
+   CRIAR PASTA
+========================================== */
+async function criarPasta(){
+  const nome = document.getElementById("nomePasta").value.trim();
+  if(!nome) return alert("Digite um nome.");
+
+  await supabaseClient.from("documentos").insert({
+    nome,
+    tipo:"pasta",
+    pai:pastaAtual,
+    url:null
+  });
+
+  fecharCriarPasta();
+  carregar();
+}
+
+/* ==========================================
+   POPUP UPLOAD
+========================================== */
+function abrirUpload(){
+  document.getElementById("popupUpload").style.display="flex";
+}
+
+function fecharUpload(){
+  document.getElementById("popupUpload").style.display="none";
+}
+
+/* Drag & Drop */
+const drop = document.getElementById("dropArea");
+const input = document.getElementById("uploadInput");
+
+drop.onclick = ()=> input.click();
+
+drop.ondragover = e => { e.preventDefault(); drop.style.background="#e8eef9"; };
+drop.ondragleave = ()=> drop.style.background="#f8fafc";
+drop.ondrop = e => {
+  e.preventDefault();
+  input.files = e.dataTransfer.files;
+  drop.style.background="#f8fafc";
 };
 
+/* ==========================================
+   UPLOAD
+========================================== */
+async function enviarUpload(){
+  const files = input.files;
+  if(!files.length) return alert("Selecione arquivos.");
+
+  for(let file of files){
+
+    const path = `${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+
+    let { error:upErr } = await supabaseClient
+      .storage.from(BUCKET).upload(path,file);
+
+    if(upErr){ alert("Erro upload: "+upErr.message); continue; }
+
+    const { data:pub } = supabaseClient
+      .storage.from(BUCKET).getPublicUrl(path);
+
+    await supabaseClient.from("documentos").insert({
+      nome:file.name,
+      tipo:"arquivo",
+      pai:pastaAtual,
+      url:pub.publicUrl
+    });
+  }
+
+  fecharUpload();
+  carregar();
+}
 </script>
 
 </body>
