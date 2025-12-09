@@ -9,9 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ======================================
-   ESTILO PREMIUM LICITAR
-====================================== */
 :root{
   --azul:#0b1e39;
   --azul-claro:#143559;
@@ -27,11 +24,14 @@ body{
   font-family:'Inter',sans-serif; color:var(--azul);
 }
 
+/* HEADER */
 .header{
   display:flex; justify-content:space-between; align-items:center;
   margin-bottom:25px;
 }
-.header h1{ font-size:30px; font-weight:700; }
+.header h1{
+  font-size:30px; font-weight:700;
+}
 
 .indicador{
   width:18px; height:18px; border-radius:50%;
@@ -45,12 +45,16 @@ body{
   display:none; box-shadow:var(--shadow-big); z-index:999;
 }
 
+/* BUSCA */
 #busca{
   width:100%; padding:14px; border-radius:14px;
   border:1px solid var(--line); font-size:16px; background:white;
 }
 
-.toolbar{ margin-top:18px; display:flex; gap:12px; }
+/* BOTÕES */
+.toolbar{
+  margin-top:18px; display:flex; gap:12px;
+}
 
 .btn{
   padding:12px 18px; border:none; border-radius:14px;
@@ -58,12 +62,14 @@ body{
   display:flex; align-items:center; gap:6px;
   box-shadow:var(--shadow); transition:.2s;
 }
-.btn:hover{ transform:translateY(-3px); }
-
+.btn:hover{
+  transform:translateY(-3px);
+}
 .btn-nova{ background:var(--azul); }
 .btn-upload{ background:var(--dourado); }
 .btn-voltar{ background:#9ca3af; }
 
+/* LISTA */
 #lista{
   margin-top:25px;
   display:grid; gap:22px;
@@ -75,28 +81,46 @@ body{
   box-shadow:var(--shadow); text-align:center;
   border:1px solid #e1e4e8; cursor:pointer; transition:.2s;
 }
-.item:hover{ box-shadow:var(--shadow-big); transform:translateY(-4px); }
+.item:hover{
+  box-shadow:var(--shadow-big); transform:translateY(-4px);
+}
 
-.thumb{ width:90px; height:90px; object-fit:cover; margin:auto; border-radius:12px; }
-.itemNome{ margin-top:12px; font-weight:600; }
+.thumb{
+  width:90px; height:90px; object-fit:cover;
+  margin:auto; border-radius:12px;
+}
 
+.itemNome{
+  margin-top:12px; font-weight:600;
+}
+
+/* POPUPS */
 .popupOverlay{
   position:fixed; inset:0; display:none;
   background:rgba(0,0,0,.55); z-index:9999;
   justify-content:center; align-items:center;
 }
+
 .popupBox{
   width:90%; max-width:480px; background:white;
-  padding:30px; border-radius:22px; box-shadow:var(--shadow-big);
+  padding:30px; border-radius:22px;
+  box-shadow:var(--shadow-big);
 }
-.popupTitle{ font-size:22px; font-weight:700; margin-bottom:18px; }
+
+.popupTitle{
+  font-size:22px; font-weight:700;
+  margin-bottom:18px;
+}
 
 .input{
   width:100%; padding:14px; border-radius:14px;
   border:1px solid var(--line); font-size:16px;
   margin-bottom:15px;
 }
-.btn-full{ width:100%; margin-top:8px; }
+
+.btn-full{
+  width:100%; margin-top:8px;
+}
 
 #dropArea{
   border:2px dashed var(--azul);
@@ -127,7 +151,7 @@ body{
 
 <div id="lista"></div>
 
-<!-- POPUP PASTA -->
+<!-- POPUP: NOVA PASTA -->
 <div id="popupCriar" class="popupOverlay">
   <div class="popupBox">
     <div class="popupTitle">Criar Pasta</div>
@@ -137,7 +161,7 @@ body{
   </div>
 </div>
 
-<!-- POPUP UPLOAD -->
+<!-- POPUP: UPLOAD -->
 <div id="popupUpload" class="popupOverlay">
   <div class="popupBox">
     <div class="popupTitle">Enviar Arquivos</div>
@@ -151,22 +175,22 @@ body{
 </div>
 
 <script>
-/* =======================================
-      CONFIG SUPABASE
-======================================= */
+/* ===========================================================
+      CONFIG SUPABASE + LOGIN LOCAL
+=========================================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
-const BUCKET = "documentos";   // 🔥 AJUSTADO CORRETAMENTE
+const BUCKET = "documentos"; // CORRETO
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
-/* =======================================
-      LOGIN
-======================================= */
 let usuario = null;
 
+/* ===========================================================
+      VALIDAR LOGIN
+=========================================================== */
 async function validarLogin(){
+
   let saved = localStorage.getItem("licitarUser");
 
   if(saved){
@@ -176,7 +200,7 @@ async function validarLogin(){
 
   const { data } = await sb.auth.getSession();
 
-  if(data.session){
+  if(data?.session){
     usuario = {
       id: data.session.user.id,
       email: data.session.user.email
@@ -186,188 +210,178 @@ async function validarLogin(){
   }
 
   alert("Acesso restrito. Faça login.");
-  window.location.href = "index.html";
+  window.top.location.href = "index.html";
   return false;
 }
 
 await validarLogin();
 
-
-/* =======================================
-      TESTE DE CONEXÃO REAL E FUNCIONAL
-======================================= */
+/* ===========================================================
+      TESTE DE CONEXÃO (AGORA FUNCIONA)
+=========================================================== */
 async function testarConexao(){
   const ball = document.getElementById("statusBall");
   const diag = document.getElementById("diagBox");
 
   try{
-    // Tenta listar a raiz do bucket
-    const { data, error } = await sb.storage.from(BUCKET).list("", { limit: 1 });
+    const { data, error } = await sb.storage.from(BUCKET).list("", { limit:1 });
 
     if(error) throw error;
 
-    // Se chegou aqui → CONECTADO
     ball.style.background = "#16a34a"; // VERDE
     ball.onclick = () => {
       diag.style.display = "block";
       diag.innerHTML = `
-        <h3 style="color:#16a34a">Conectado ao Supabase</h3>
-        <small>Bucket: <b>${BUCKET}</b></small>
-        <pre style="background:#eef;padding:10px;border-radius:10px;margin-top:10px;">
-${JSON.stringify(data, null, 2)}
-        </pre>
+        <h3 style="color:#16a34a">Conectado</h3>
+        <pre>${JSON.stringify(data,null,2)}</pre>
       `;
     };
 
-  } catch(err) {
-
-    // ERRO → bucket inacessível ou sem permissão
+  } catch(e){
     ball.style.background = "#dc2626"; // VERMELHO
     ball.onclick = () => {
       diag.style.display = "block";
       diag.innerHTML = `
-        <h3 style="color:#dc2626">Erro ao conectar</h3>
-        <pre style="background:#fee;padding:10px;border-radius:10px;margin-top:10px;">
-${err.message}
-        </pre>
+        <h3 style="color:#dc2626">Erro</h3>
+        <pre>${e.message}</pre>
       `;
     };
   }
 }
-
 testarConexao();
 
-
-/* =======================================
+/* ===========================================================
       VARIÁVEIS
-======================================= */
+=========================================================== */
 let pastaAtual = null;
 let historicoPastas = [];
+let listaItens = [];
 
-
-/* =======================================
-      CARREGAR ITENS DO USUÁRIO
-======================================= */
+/* ===========================================================
+      CARREGAR ITENS
+=========================================================== */
 async function carregar(){
   const { data } = await sb
     .from("documentos")
     .select("*")
     .eq("pai", pastaAtual)
-    .eq("usuario", usuario.id); // 🔥 usando coluna correta
+    .eq("usuario_email", usuario.email);
 
-  render(data || []);
+  listaItens = data || [];
+  render();
 }
-
 carregar();
 
-
-/* =======================================
-      RENDERIZAR
-======================================= */
-function render(lista){
+/* ===========================================================
+      RENDER
+=========================================================== */
+function render(){
   let html = "";
 
-  lista.forEach(it=>{
+  listaItens.forEach(it => {
     let icon = it.tipo === "pasta"
       ? "https://img.icons8.com/fluency/96/folder-invoices.png"
       : it.url;
 
     html += `
-      <div class="item" onclick="abrirItem('${it.id}','${it.tipo}','${it.url}')">
+      <div class="item" onclick="abrirItem(${it.id}, '${it.tipo}', '${it.url}')">
         <img class="thumb" src="${icon}">
         <div class="itemNome">${it.nome}</div>
       </div>
     `;
   });
 
-  listaItens = lista;
-  document.getElementById("lista").innerHTML = html || "<p>Nenhum item aqui.</p>";
+  lista.innerHTML = html || "<p>Nenhum item nesta pasta.</p>";
 }
 
-
-/* =======================================
+/* ===========================================================
       ABRIR ITEM
-======================================= */
+=========================================================== */
 function abrirItem(id,tipo,url){
-  if(tipo==="pasta"){
+  if(tipo === "pasta"){
     pastaAtual = id;
     historicoPastas.push(id);
     carregar();
   } else {
-    window.open(url,"_blank");
+    window.open(url, "_blank");
   }
 }
 
-
-/* =======================================
-      VOLTAR
-======================================= */
+/* ===========================================================
+      VOLTAR PASTA
+=========================================================== */
 function voltarPasta(){
   historicoPastas.pop();
   pastaAtual = historicoPastas[historicoPastas.length-1] || null;
   carregar();
 }
 
-
-/* =======================================
+/* ===========================================================
       CRIAR PASTA
-======================================= */
-function abrirCriarPasta(){ popupCriar.style.display="flex"; }
-function fecharCriarPasta(){ popupCriar.style.display="none"; }
+=========================================================== */
+function abrirCriarPasta(){ popupCriar.style.display = "flex"; }
+function fecharCriarPasta(){ popupCriar.style.display = "none"; }
 
 async function criarPasta(){
-  const nome = nomePasta.value.trim();
-  if(!nome) return alert("Digite o nome.");
+  let nome = nomePasta.value.trim();
+  if(!nome) return alert("Digite o nome da pasta.");
 
   await sb.from("documentos").insert({
     nome,
     tipo:"pasta",
     pai:pastaAtual,
-    usuario: usuario.id
+    url:null,
+    usuario_id:usuario.id,
+    usuario_email:usuario.email
   });
 
   fecharCriarPasta();
   carregar();
 }
 
-
-/* =======================================
+/* ===========================================================
       UPLOAD
-======================================= */
-function abrirUpload(){ popupUpload.style.display="flex"; }
-function fecharUpload(){ popupUpload.style.display="none"; }
+=========================================================== */
+function abrirUpload(){ popupUpload.style.display = "flex"; }
+function fecharUpload(){ popupUpload.style.display = "none"; }
 
 dropArea.onclick = ()=> uploadInput.click();
+dropArea.ondragover = e => { e.preventDefault(); dropArea.style.background="#e8eef9"; };
+dropArea.ondragleave = () => dropArea.style.background="#f8fafc";
+dropArea.ondrop = e => {
+  e.preventDefault();
+  uploadInput.files = e.dataTransfer.files;
+};
 
-
-/* =======================================
-      ENVIAR ARQUIVOS
-======================================= */
+/* ===========================================================
+      ENVIAR UPLOAD
+=========================================================== */
 async function enviarUpload(){
   const files = uploadInput.files;
-  if(!files.length) return alert("Selecione arquivos.");
+  if(!files.length) return alert("Selecione ao menos 1 arquivo.");
 
-  for(const file of files){
+  for(let file of files){
+    const path = `${usuario.email}/${pastaAtual||"root"}/${Date.now()}_${file.name}`;
 
-    const filePath = `${usuario.id}/${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+    const upload = await sb.storage.from(BUCKET).upload(path, file);
 
-    const up = await sb.storage.from(BUCKET).upload(filePath, file);
-
-    if(up.error){
-      alert("Erro: " + up.error.message);
+    if(upload.error){
+      alert("Erro ao enviar: " + upload.error.message);
       continue;
     }
 
-    const publicURL = sb.storage.from(BUCKET).getPublicUrl(filePath).data.publicUrl;
+    const publicURL = sb.storage.from(BUCKET)
+      .getPublicUrl(path).data.publicUrl;
 
     await sb.from("documentos").insert({
-      nome: file.name,
-      tipo: "arquivo",
-      pai: pastaAtual,
-      url: publicURL,
-      mime: file.type,
-      usuario: usuario.id,
-      caminho: filePath
+      nome:file.name,
+      tipo:"arquivo",
+      pai:pastaAtual,
+      mime:file.type,
+      url:publicURL,
+      storage_path:path,
+      usuario_id:usuario.id,
+      usuario_email:usuario.email
     });
   }
 
