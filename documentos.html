@@ -10,7 +10,7 @@
 
 <style>
 /* ======================================
-   ESTILO (mantemos seu visual premium)
+   ESTILO PREMIUM LICITAR
 ====================================== */
 :root{
   --azul:#0b1e39;
@@ -126,7 +126,7 @@ body{
 
 <div id="lista"></div>
 
-<!-- POPUP NOVA PASTA -->
+<!-- POPUP PASTA -->
 <div id="popupCriar" class="popupOverlay">
   <div class="popupBox">
     <div class="popupTitle">Criar Pasta</div>
@@ -151,21 +151,20 @@ body{
 
 <script>
 /* ===========================================================
-      CONFIG SUPABASE + LOCALSTORAGE
+      SUPABASE CONFIG
 =========================================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
-const BUCKET = "documentos";
+const BUCKET = "licitardocs";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ===========================================================
-      VERIFICAR LOGIN
+      LOGIN LOCAL
 =========================================================== */
 let usuario = null;
 
 async function validarLogin(){
-  // 1) verifica localStorage
   let saved = localStorage.getItem("licitarUser");
 
   if(saved){
@@ -173,8 +172,8 @@ async function validarLogin(){
     return true;
   }
 
-  // 2) verifica supabase auth
   const { data } = await sb.auth.getSession();
+
   if(data.session){
     usuario = {
       id: data.session.user.id,
@@ -184,57 +183,38 @@ async function validarLogin(){
     return true;
   }
 
-  // 3) sem login
-  alert("Acesso restrito. Faça login.");
+  alert("Acesso restrito. Faça login primeiro.");
   window.top.location.href = "index.html";
-  return false;
 }
 
 await validarLogin();
 
 /* ===========================================================
-      TESTE DE CONEXÃO
+      TESTE CONEXÃO — BOLINHA VERDE
 =========================================================== */
 async function testarConexao(){
   const ball = document.getElementById("statusBall");
   const diag = document.getElementById("diagBox");
 
   try{
-    // Teste real de conexão — SEM listar arquivos
     const { data: bucketInfo, error } = await sb.storage.getBucket(BUCKET);
-
     if(error) throw error;
 
-    // CONECTADO
     ball.style.background = "#16a34a";
-    ball.onclick = () => {
-      diag.style.display = "block";
+    ball.onclick = ()=>{
+      diag.style.display="block";
       diag.innerHTML = `
         <h3 style="color:#16a34a;margin-bottom:8px">Conectado ao Supabase</h3>
-        <small>Bucket: ${BUCKET}</small>
-        <pre style="background:#eef;padding:10px;border-radius:10px;margin-top:10px">
-${JSON.stringify(bucketInfo, null, 2)}
-        </pre>
+        <pre style="background:#eef;padding:10px;border-radius:10px">${JSON.stringify(bucketInfo,null,2)}</pre>
       `;
     };
   }
   catch(err){
-    // ERRO REAL
     ball.style.background = "#dc2626";
-    ball.onclick = () => {
-      diag.style.display = "block";
-      diag.innerHTML = `
-        <h3 style="color:#dc2626;margin-bottom:8px">Erro ao conectar</h3>
-        <pre style="background:#fee;padding:10px;border-radius:10px;margin-top:10px">
-${err.message}
-        </pre>
-      `;
-    };
   }
 }
 
 testarConexao();
-
 
 /* ===========================================================
       VARIÁVEIS
@@ -244,10 +224,10 @@ let historicoPastas = [];
 let listaItens = [];
 
 /* ===========================================================
-      CARREGAR LISTA (FILTRA POR USUÁRIO)
+      CARREGAR ITENS DO USUÁRIO
 =========================================================== */
 async function carregar(){
-  const { data, error } = await sb
+  const { data } = await sb
     .from("documentos")
     .select("*")
     .eq("pai", pastaAtual)
@@ -256,6 +236,7 @@ async function carregar(){
   listaItens = data || [];
   render();
 }
+
 carregar();
 
 /* ===========================================================
@@ -265,18 +246,18 @@ function render(){
   let html = "";
 
   listaItens.forEach(it=>{
-    let icon = it.tipo === "pasta"
+    let icon = it.tipo==="pasta"
       ? "https://img.icons8.com/fluency/96/folder-invoices.png"
       : it.url;
 
     html += `
-      <div class="item" onclick="abrirItem(${it.id}, '${it.tipo}', '${it.url}')">
+      <div class="item" onclick="abrirItem(${it.id},'${it.tipo}','${it.url}')">
         <img class="thumb" src="${icon}">
         <div class="itemNome">${it.nome}</div>
       </div>`;
   });
 
-  lista.innerHTML = html || "<p>Nenhum item aqui.</p>";
+  lista.innerHTML = html || "<p>Vazio.</p>";
 }
 
 /* ===========================================================
@@ -302,22 +283,22 @@ function voltarPasta(){
 }
 
 /* ===========================================================
-      CRIAR PASTA
+      PASTA
 =========================================================== */
 function abrirCriarPasta(){ popupCriar.style.display="flex"; }
 function fecharCriarPasta(){ popupCriar.style.display="none"; }
 
 async function criarPasta(){
   let nome = nomePasta.value.trim();
-  if(!nome) return alert("Digite o nome.");
+  if(!nome) return alert("Digite um nome.");
 
   await sb.from("documentos").insert({
     nome:nome,
     tipo:"pasta",
     pai:pastaAtual,
     url:null,
-    usuario_id: usuario.id,
-    usuario_email: usuario.email
+    usuario_id:usuario.id,
+    usuario_email:usuario.email
   });
 
   fecharCriarPasta();
@@ -333,22 +314,19 @@ function fecharUpload(){ popupUpload.style.display="none"; }
 dropArea.onclick = ()=> uploadInput.click();
 dropArea.ondragover = e => { e.preventDefault(); dropArea.style.background="#e8eef9"; };
 dropArea.ondragleave = ()=> dropArea.style.background="#f8fafc";
-dropArea.ondrop = e => {
+dropArea.ondrop = e =>{
   e.preventDefault();
   uploadInput.files = e.dataTransfer.files;
 };
 
-/* ===========================================================
-      ENVIAR ARQUIVOS
-=========================================================== */
 async function enviarUpload(){
   const files = uploadInput.files;
-  if(!files.length) return alert("Selecione algum arquivo.");
+  if(!files.length) return alert("Selecione arquivos.");
 
   for(let file of files){
     const path = `${usuario.email}/${pastaAtual||"root"}/${Date.now()}_${file.name}`;
 
-    const up = await sb.storage.from(BUCKET).upload(path, file);
+    const up = await sb.storage.from(BUCKET).upload(path,file);
     if(up.error){
       alert("Erro no upload: "+up.error.message);
       continue;
