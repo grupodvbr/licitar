@@ -165,9 +165,9 @@ body{
 ========================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
-const BUCKET = "documentos";  // <-- CORRETO!
+const BUCKET = "licitardocs";
 
-const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ==========================================
    STATUS / DEBUG
@@ -178,21 +178,33 @@ async function testarConexao(){
 
   try{
     const { data, error } = await supabase.storage.from(BUCKET).list("");
+
     if(error) throw error;
 
+    // Conectado
     ball.style.background = "#16a34a";
     ball.onclick = () => {
-      diag.innerHTML = `<h3>Conectado ao Supabase</h3><pre>${JSON.stringify(data,null,2)}</pre>`;
+      diag.innerHTML = `
+        <h3 style="margin:0 0 10px 0;color:#16a34a">Conectado ao Supabase</h3>
+        <small style="color:#555">Bucket: ${BUCKET}</small>
+        <pre style="margin-top:15px;background:#f1f5f9;padding:10px;border-radius:8px">${JSON.stringify(data,null,2)}</pre>
+      `;
       diag.style.display = "block";
     };
+
   } catch(err){
+    // Erro real
     ball.style.background = "#dc2626";
     ball.onclick = () => {
-      diag.innerHTML = `<h3>Erro de Conexão</h3><pre>${err.message}</pre>`;
+      diag.innerHTML = `
+        <h3 style="margin:0 0 10px 0;color:#dc2626">Erro de Conexão</h3>
+        <pre style="margin-top:15px;background:#fee2e2;padding:10px;border-radius:8px">${err.message}</pre>
+      `;
       diag.style.display = "block";
     };
   }
 }
+
 testarConexao();
 
 /* ==========================================
