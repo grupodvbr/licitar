@@ -58,6 +58,7 @@ body{
   box-shadow:var(--shadow); transition:.2s;
 }
 .btn:hover{ transform:translateY(-3px); }
+
 .btn-nova{ background:var(--azul); }
 .btn-upload{ background:var(--dourado); }
 .btn-voltar{ background:#9ca3af; }
@@ -150,24 +151,46 @@ body{
 
 <script>
 /* ===========================================================
-      CONFIG SUPABASE
+      CONFIG SUPABASE + LOCALSTORAGE
 =========================================================== */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
 const BUCKET = "licitardocs";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ===========================================================
-      BLOQUEAR ACESSO SEM LOGIN
+      VERIFICAR LOGIN
 =========================================================== */
-(async () => {
-  const { data } = await supabaseClient.auth.getSession();
-  if(!data.session){
-    alert("Acesso restrito. Faça login no sistema.");
-    window.top.location.href = "index.html";
+let usuario = null;
+
+async function validarLogin(){
+  // 1) verifica localStorage
+  let saved = localStorage.getItem("licitarUser");
+
+  if(saved){
+    usuario = JSON.parse(saved);
+    return true;
   }
-})();
+
+  // 2) verifica supabase auth
+  const { data } = await sb.auth.getSession();
+  if(data.session){
+    usuario = {
+      id: data.session.user.id,
+      email: data.session.user.email
+    };
+    localStorage.setItem("licitarUser", JSON.stringify(usuario));
+    return true;
+  }
+
+  // 3) sem login
+  alert("Acesso restrito. Faça login.");
+  window.top.location.href = "index.html";
+  return false;
+}
+
+await validarLogin();
 
 /* ===========================================================
       TESTE DE CONEXÃO
@@ -177,28 +200,15 @@ async function testarConexao(){
   const diag = document.getElementById("diagBox");
 
   try{
-    const { data, error } = await supabaseClient.storage.from(BUCKET).list("");
-    if(error) throw error;
-
-    ball.style.background = "#16a34a";
+    const { data } = await sb.storage.from(BUCKET).list("");
+    ball.style.background="#16a34a";
     ball.onclick = () => {
+      diag.innerHTML = "<h3>Conectado</h3>";
       diag.style.display="block";
-      diag.innerHTML = `
-        <h3 style='color:#16a34a;margin-bottom:8px'>Conectado</h3>
-        <small>Bucket: ${BUCKET}</small>
-        <pre style="background:#eef;padding:10px;border-radius:10px;margin-top:10px">${JSON.stringify(data,null,2)}</pre>
-      `;
     };
   }
-  catch(err){
-    ball.style.background = "#dc2626";
-    ball.onclick = () => {
-      diag.style.display="block";
-      diag.innerHTML = `
-        <h3 style='color:#dc2626;margin-bottom:8px'>Erro ao conectar</h3>
-        <pre style="background:#fee;padding:10px;border-radius:10px;margin-top:10px">${err.message}</pre>
-      `;
-    };
+  catch(e){
+    ball.style.background="#dc2626";
   }
 }
 testarConexao();
@@ -211,13 +221,14 @@ let historicoPastas = [];
 let listaItens = [];
 
 /* ===========================================================
-      CARREGAR LISTA
+      CARREGAR LISTA (FILTRA POR USUÁRIO)
 =========================================================== */
 async function carregar(){
-  const { data } = await supabaseClient
+  const { data, error } = await sb
     .from("documentos")
     .select("*")
-    .eq("pai", pastaAtual);
+    .eq("pai", pastaAtual)
+    .eq("usuario_email", usuario.email);
 
   listaItens = data || [];
   render();
@@ -225,12 +236,12 @@ async function carregar(){
 carregar();
 
 /* ===========================================================
-      RENDERIZAR ITENS
+      RENDER
 =========================================================== */
 function render(){
   let html = "";
 
-  listaItens.forEach(it => {
+  listaItens.forEach(it=>{
     let icon = it.tipo === "pasta"
       ? "https://img.icons8.com/fluency/96/folder-invoices.png"
       : it.url;
@@ -239,23 +250,23 @@ function render(){
       <div class="item" onclick="abrirItem(${it.id}, '${it.tipo}', '${it.url}')">
         <img class="thumb" src="${icon}">
         <div class="itemNome">${it.nome}</div>
-      </div>
-    `;
+      </div>`;
   });
 
-  lista.innerHTML = html || "<p>Vazio.</p>";
+  lista.innerHTML = html || "<p>Nenhum item aqui.</p>";
 }
 
 /* ===========================================================
       ABRIR ITEM
 =========================================================== */
 function abrirItem(id,tipo,url){
-  if(tipo === "pasta"){
-    pastaAtual = id;
+  if(tipo==="pasta"){
+    pastaAtual=id;
     historicoPastas.push(id);
     carregar();
+  } else {
+    window.open(url,"_blank");
   }
-  else window.open(url,"_blank");
 }
 
 /* ===========================================================
@@ -268,24 +279,22 @@ function voltarPasta(){
 }
 
 /* ===========================================================
-      POPUP NOVA PASTA
+      CRIAR PASTA
 =========================================================== */
 function abrirCriarPasta(){ popupCriar.style.display="flex"; }
 function fecharCriarPasta(){ popupCriar.style.display="none"; }
 
 async function criarPasta(){
   let nome = nomePasta.value.trim();
-  if(!nome) return alert("Digite um nome.");
+  if(!nome) return alert("Digite o nome.");
 
-  const { data } = await supabaseClient.auth.getUser();
-  const email = data?.user?.email;
-
-  await supabaseClient.from("documentos").insert({
-    nome,
+  await sb.from("documentos").insert({
+    nome:nome,
     tipo:"pasta",
     pai:pastaAtual,
     url:null,
-    usuario_email: email
+    usuario_id: usuario.id,
+    usuario_email: usuario.email
   });
 
   fecharCriarPasta();
@@ -293,7 +302,7 @@ async function criarPasta(){
 }
 
 /* ===========================================================
-      POPUP UPLOAD
+      UPLOAD
 =========================================================== */
 function abrirUpload(){ popupUpload.style.display="flex"; }
 function fecharUpload(){ popupUpload.style.display="none"; }
@@ -304,46 +313,42 @@ dropArea.ondragleave = ()=> dropArea.style.background="#f8fafc";
 dropArea.ondrop = e => {
   e.preventDefault();
   uploadInput.files = e.dataTransfer.files;
-  dropArea.style.background="#f8fafc";
 };
 
 /* ===========================================================
-      UPLOAD FINAL — 100% FUNCIONAL
+      ENVIAR ARQUIVOS
 =========================================================== */
 async function enviarUpload(){
   const files = uploadInput.files;
-  if(!files.length) return alert("Selecione arquivos.");
-
-  const { data } = await supabaseClient.auth.getUser();
-  const email = data?.user?.email;
+  if(!files.length) return alert("Selecione algum arquivo.");
 
   for(let file of files){
-    const path = `${email}/${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+    const path = `${usuario.email}/${pastaAtual||"root"}/${Date.now()}_${file.name}`;
 
-    const up = await supabaseClient.storage.from(BUCKET).upload(path, file);
+    const up = await sb.storage.from(BUCKET).upload(path, file);
     if(up.error){
       alert("Erro no upload: "+up.error.message);
       continue;
     }
 
-    let publicURL = supabaseClient.storage.from(BUCKET)
+    const publicURL = sb.storage.from(BUCKET)
       .getPublicUrl(path).data.publicUrl;
 
-    await supabaseClient.from("documentos").insert({
+    await sb.from("documentos").insert({
       nome:file.name,
       tipo:"arquivo",
       pai:pastaAtual,
       mime:file.type,
       url:publicURL,
       storage_path:path,
-      usuario_email:email
+      usuario_id:usuario.id,
+      usuario_email:usuario.email
     });
   }
 
   fecharUpload();
   carregar();
 }
-
 </script>
 
 </body>
