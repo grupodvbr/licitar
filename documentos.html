@@ -34,14 +34,15 @@ body{
 .header h1{ font-size:30px; font-weight:700; }
 
 .indicador{
-  width:18px; height:18px; border-radius:50%; background:#888;
-  cursor:pointer; box-shadow:0 0 8px rgba(0,0,0,.2);
+  width:18px; height:18px; border-radius:50%;
+  background:#888; cursor:pointer;
+  box-shadow:0 0 8px rgba(0,0,0,.2);
 }
 
 #diagBox{
   position:fixed; top:80px; right:20px; width:350px;
-  background:white; padding:20px; border-radius:18px; display:none;
-  box-shadow:var(--shadow-big); z-index:999;
+  background:white; padding:20px; border-radius:18px;
+  display:none; box-shadow:var(--shadow-big); z-index:999;
 }
 
 #busca{
@@ -150,18 +151,19 @@ body{
 </div>
 
 <script>
-/* ===========================================================
-      SUPABASE CONFIG
-=========================================================== */
+/* =======================================
+      CONFIG SUPABASE
+======================================= */
 const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
-const BUCKET = "documentos";
+const BUCKET = "documentos";   // 🔥 AJUSTADO CORRETAMENTE
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ===========================================================
-      LOGIN LOCAL
-=========================================================== */
+
+/* =======================================
+      LOGIN
+======================================= */
 let usuario = null;
 
 async function validarLogin(){
@@ -183,89 +185,95 @@ async function validarLogin(){
     return true;
   }
 
-  alert("Acesso restrito. Faça login primeiro.");
-  window.top.location.href = "index.html";
+  alert("Acesso restrito. Faça login.");
+  window.location.href = "index.html";
+  return false;
 }
 
 await validarLogin();
 
-/* ===========================================================
-      TESTE CONEXÃO — BOLINHA VERDE
-=========================================================== */
+
+/* =======================================
+      TESTAR CONEXÃO
+======================================= */
 async function testarConexao(){
   const ball = document.getElementById("statusBall");
   const diag = document.getElementById("diagBox");
 
   try{
-    const { data: bucketInfo, error } = await sb.storage.getBucket(BUCKET);
-    if(error) throw error;
+    await sb.storage.getBucket(BUCKET);
 
     ball.style.background = "#16a34a";
-    ball.onclick = ()=>{
-      diag.style.display="block";
+
+    ball.onclick = () => {
+      diag.style.display = "block";
       diag.innerHTML = `
-        <h3 style="color:#16a34a;margin-bottom:8px">Conectado ao Supabase</h3>
-        <pre style="background:#eef;padding:10px;border-radius:10px">${JSON.stringify(bucketInfo,null,2)}</pre>
+        <h3 style="color:#16a34a">Conectado ao Supabase</h3>
+        <p>Bucket: <b>${BUCKET}</b></p>
       `;
     };
-  }
-  catch(err){
+
+  } catch(err){
     ball.style.background = "#dc2626";
   }
 }
 
 testarConexao();
 
-/* ===========================================================
+
+/* =======================================
       VARIÁVEIS
-=========================================================== */
+======================================= */
 let pastaAtual = null;
 let historicoPastas = [];
-let listaItens = [];
 
-/* ===========================================================
+
+/* =======================================
       CARREGAR ITENS DO USUÁRIO
-=========================================================== */
+======================================= */
 async function carregar(){
   const { data } = await sb
     .from("documentos")
     .select("*")
     .eq("pai", pastaAtual)
-    .eq("usuario_email", usuario.email);
+    .eq("usuario", usuario.id); // 🔥 usando coluna correta
 
-  listaItens = data || [];
-  render();
+  render(data || []);
 }
 
 carregar();
 
-/* ===========================================================
-      RENDER
-=========================================================== */
-function render(){
+
+/* =======================================
+      RENDERIZAR
+======================================= */
+function render(lista){
   let html = "";
 
-  listaItens.forEach(it=>{
-    let icon = it.tipo==="pasta"
+  lista.forEach(it=>{
+    let icon = it.tipo === "pasta"
       ? "https://img.icons8.com/fluency/96/folder-invoices.png"
       : it.url;
 
     html += `
-      <div class="item" onclick="abrirItem(${it.id},'${it.tipo}','${it.url}')">
+      <div class="item" onclick="abrirItem('${it.id}','${it.tipo}','${it.url}')">
         <img class="thumb" src="${icon}">
         <div class="itemNome">${it.nome}</div>
-      </div>`;
+      </div>
+    `;
   });
 
-  lista.innerHTML = html || "<p>Vazio.</p>";
+  listaItens = lista;
+  document.getElementById("lista").innerHTML = html || "<p>Nenhum item aqui.</p>";
 }
 
-/* ===========================================================
+
+/* =======================================
       ABRIR ITEM
-=========================================================== */
+======================================= */
 function abrirItem(id,tipo,url){
   if(tipo==="pasta"){
-    pastaAtual=id;
+    pastaAtual = id;
     historicoPastas.push(id);
     carregar();
   } else {
@@ -273,77 +281,76 @@ function abrirItem(id,tipo,url){
   }
 }
 
-/* ===========================================================
+
+/* =======================================
       VOLTAR
-=========================================================== */
+======================================= */
 function voltarPasta(){
   historicoPastas.pop();
   pastaAtual = historicoPastas[historicoPastas.length-1] || null;
   carregar();
 }
 
-/* ===========================================================
-      PASTA
-=========================================================== */
+
+/* =======================================
+      CRIAR PASTA
+======================================= */
 function abrirCriarPasta(){ popupCriar.style.display="flex"; }
 function fecharCriarPasta(){ popupCriar.style.display="none"; }
 
 async function criarPasta(){
-  let nome = nomePasta.value.trim();
-  if(!nome) return alert("Digite um nome.");
+  const nome = nomePasta.value.trim();
+  if(!nome) return alert("Digite o nome.");
 
   await sb.from("documentos").insert({
-    nome:nome,
+    nome,
     tipo:"pasta",
     pai:pastaAtual,
-    url:null,
-    usuario_id:usuario.id,
-    usuario_email:usuario.email
+    usuario: usuario.id
   });
 
   fecharCriarPasta();
   carregar();
 }
 
-/* ===========================================================
+
+/* =======================================
       UPLOAD
-=========================================================== */
+======================================= */
 function abrirUpload(){ popupUpload.style.display="flex"; }
 function fecharUpload(){ popupUpload.style.display="none"; }
 
 dropArea.onclick = ()=> uploadInput.click();
-dropArea.ondragover = e => { e.preventDefault(); dropArea.style.background="#e8eef9"; };
-dropArea.ondragleave = ()=> dropArea.style.background="#f8fafc";
-dropArea.ondrop = e =>{
-  e.preventDefault();
-  uploadInput.files = e.dataTransfer.files;
-};
 
+
+/* =======================================
+      ENVIAR ARQUIVOS
+======================================= */
 async function enviarUpload(){
   const files = uploadInput.files;
   if(!files.length) return alert("Selecione arquivos.");
 
-  for(let file of files){
-    const path = `${usuario.email}/${pastaAtual||"root"}/${Date.now()}_${file.name}`;
+  for(const file of files){
 
-    const up = await sb.storage.from(BUCKET).upload(path,file);
+    const filePath = `${usuario.id}/${pastaAtual || "root"}/${Date.now()}_${file.name}`;
+
+    const up = await sb.storage.from(BUCKET).upload(filePath, file);
+
     if(up.error){
-      alert("Erro no upload: "+up.error.message);
+      alert("Erro: " + up.error.message);
       continue;
     }
 
-    const publicURL = sb.storage.from(BUCKET)
-      .getPublicUrl(path).data.publicUrl;
+    const publicURL = sb.storage.from(BUCKET).getPublicUrl(filePath).data.publicUrl;
 
     await sb.from("documentos").insert({
-      nome:file.name,
-      tipo:"arquivo",
-      pai:pastaAtual,
-      mime:file.type,
-      url:publicURL,
-      storage_path:path,
-      usuario_id:usuario.id,
-      usuario_email:usuario.email
+      nome: file.name,
+      tipo: "arquivo",
+      pai: pastaAtual,
+      url: publicURL,
+      mime: file.type,
+      usuario: usuario.id,
+      caminho: filePath
     });
   }
 
