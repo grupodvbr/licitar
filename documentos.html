@@ -200,18 +200,41 @@ async function testarConexao(){
   const diag = document.getElementById("diagBox");
 
   try{
-    const { data } = await sb.storage.from(BUCKET).list("");
-    ball.style.background="#16a34a";
+    // Teste real de conexão — SEM listar arquivos
+    const { data: bucketInfo, error } = await sb.storage.getBucket(BUCKET);
+
+    if(error) throw error;
+
+    // CONECTADO
+    ball.style.background = "#16a34a";
     ball.onclick = () => {
-      diag.innerHTML = "<h3>Conectado</h3>";
-      diag.style.display="block";
+      diag.style.display = "block";
+      diag.innerHTML = `
+        <h3 style="color:#16a34a;margin-bottom:8px">Conectado ao Supabase</h3>
+        <small>Bucket: ${BUCKET}</small>
+        <pre style="background:#eef;padding:10px;border-radius:10px;margin-top:10px">
+${JSON.stringify(bucketInfo, null, 2)}
+        </pre>
+      `;
     };
   }
-  catch(e){
-    ball.style.background="#dc2626";
+  catch(err){
+    // ERRO REAL
+    ball.style.background = "#dc2626";
+    ball.onclick = () => {
+      diag.style.display = "block";
+      diag.innerHTML = `
+        <h3 style="color:#dc2626;margin-bottom:8px">Erro ao conectar</h3>
+        <pre style="background:#fee;padding:10px;border-radius:10px;margin-top:10px">
+${err.message}
+        </pre>
+      `;
+    };
   }
 }
+
 testarConexao();
+
 
 /* ===========================================================
       VARIÁVEIS
