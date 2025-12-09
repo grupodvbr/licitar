@@ -329,39 +329,30 @@ const SUPABASE_URL = "https://mblvyircwsaxaslklzky.supabase.co";
 const SUPABASE_KEY = "sb_publishable_oN2CuBzXHaUF7NHYS_M7aw_tBqVeD-x";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
+  auth: { persistSession: true, autoRefreshToken: true }
 });
 
 /* ============================ */
 /* LOGIN NORMAL                 */
 /* ============================ */
 async function login() {
-  let email = document.getElementById("email").value.trim();
-  let senha = document.getElementById("senha").value.trim();
+  const email = emailInput.value.trim();
+  const senha = senhaInput.value.trim();
 
   if(!email || !senha){
-    alert("Preencha os campos.");
+    alert("Preencha todos os campos.");
     return;
   }
 
-  const { data, error } = await sb.auth.signInWithPassword({
-    email: email,
-    password: senha
-  });
+  const { error } = await sb.auth.signInWithPassword({ email, password: senha });
 
   if(error){
-    alert("Erro: " + error.message);
+    alert("Erro ao entrar: " + error.message);
     return;
   }
 
-  // sessão já salva internamente pelo Supabase
   localStorage.setItem("usuarioEmail", email);
-
-  await carregarPerfil();
+  carregarPerfil();
 }
 
 /* ============================ */
@@ -373,37 +364,31 @@ async function diretoriaLogin() {
     alert("Senha incorreta!");
     return;
   }
-
-  // salva apenas localmente (não usa supabase)
   localStorage.setItem("usuarioEmail", "diretoria@grupodv.com");
-
-  await carregarPerfil();
+  carregarPerfil();
 }
 
 /* ============================ */
 /* CARREGAR PERFIL              */
 /* ============================ */
 async function carregarPerfil(){
+  let saved = localStorage.getItem("usuarioEmail");
 
-  let savedEmail = localStorage.getItem("usuarioEmail");
+  let s = await sb.auth.getSession();
+  let supaUser = s.data.session?.user?.email;
 
-  // tenta pegar sessão do supabase
-  let session = await sb.auth.getSession();
-  let supaUser = session.data.session?.user?.email;
-
-  let finalEmail = savedEmail || supaUser;
+  const finalEmail = saved || supaUser;
 
   if(!finalEmail){
-    document.getElementById("loginOverlay").style.display = "flex";
+    loginOverlay.style.display = "flex";
     return;
   }
 
-  // exibir perfil
-  document.getElementById("avatar").innerText = finalEmail.charAt(0).toUpperCase();
-  document.getElementById("userEmail").innerText = finalEmail;
-  document.getElementById("menuEmail").innerText = finalEmail;
+  avatar.innerText = finalEmail.charAt(0).toUpperCase();
+  userEmail.innerText = finalEmail;
+  menuEmail.innerText = finalEmail;
 
-  document.getElementById("loginOverlay").style.display = "none";
+  loginOverlay.style.display = "none";
 }
 
 /* ============================ */
@@ -411,7 +396,7 @@ async function carregarPerfil(){
 /* ============================ */
 async function logout(){
   await sb.auth.signOut();
-  localStorage.removeItem("usuarioEmail");
+  localStorage.clear();
   location.reload();
 }
 
@@ -419,7 +404,7 @@ async function logout(){
 /* SIDEBAR / MENUS              */
 /* ============================ */
 function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("min");
+  sidebar.classList.toggle("min");
 }
 
 function toggleSub(id){
@@ -427,8 +412,8 @@ function toggleSub(id){
 }
 
 function toggleUserMenu(){
-  let m = document.getElementById("userMenu");
-  m.style.display = m.style.display==="block" ? "none" : "block";
+  userMenu.style.display =
+    userMenu.style.display === "block" ? "none" : "block";
 }
 
 function loadPage(url){
@@ -446,13 +431,17 @@ function openHome(){
 /* BOOTSTRAP NA ABERTURA       */
 /* ============================ */
 window.onload = async () => {
-  let savedEmail = localStorage.getItem("usuarioEmail");
-  let session = await sb.auth.getSession();
+  try{
+    let saved = localStorage.getItem("usuarioEmail");
+    let s = await sb.auth.getSession();
 
-  if(savedEmail || session.data.session){
-    carregarPerfil();
-  } else {
-    document.getElementById("loginOverlay").style.display="flex";
+    if(saved || s.data.session){
+      carregarPerfil();
+    } else {
+      loginOverlay.style.display = "flex";
+    }
+  } catch(e){
+    alert("Erro ao iniciar: " + e.message);
   }
 };
 </script>
